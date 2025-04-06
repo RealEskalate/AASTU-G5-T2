@@ -1,0 +1,4 @@
+# FVM-related files
+.fvm/
+.flutter-plugins
+.flutter-plugins-dependencies
