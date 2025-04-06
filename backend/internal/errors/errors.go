@@ -1,5 +1,7 @@
 package errors
 
-type AuthorizationError struct {
-	Message string `json:"message"`
+type CustomError struct {
+	StatusCode int    `json:"status_code"`
+	Message    string `json:"message"`
+	Error      error
 }
