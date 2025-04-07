@@ -15,6 +15,7 @@ type TokenService interface {
 	GenerateToken(email string, tokenType string, role string) (string, error)
 	ValidateToken(token string) (string, string, string, error)
 	HashToken(token string) (string, error)
+	CompareHashedToken(token, hashedToken string) (bool, error)
 }
 
 type tokenService struct {
@@ -25,6 +26,15 @@ type tokenService struct {
 func (t *tokenService) HashToken(token string) (string, error) {
 	hash := sha256.Sum256([]byte(token))
 	return hex.EncodeToString(hash[:]), nil
+}
+
+// how to check different hashed tokens
+func (t *tokenService) CompareHashedToken(token, hashedToken string) (bool, error) {
+	computedHash, err := t.HashToken(token)
+	if err != nil {
+		return false, err
+	}
+	return computedHash == hashedToken, nil
 }
 
 // GenerateToken implements TokenService.
@@ -60,6 +70,12 @@ func (t *tokenService) ValidateToken(token string) (string, string, string, erro
 	claims, ok := parsedToken.Claims.(jwt.MapClaims)
 	if !ok {
 		return "", "", "", jwt.ErrSignatureInvalid
+	}
+
+	if exp, ok := claims["exp"].(float64); ok {
+		if int64(exp) < time.Now().Unix() {
+			return "", "", "", jwt.ErrTokenExpired
+		}
 	}
 
 	email, emailOk := claims["email"].(string)

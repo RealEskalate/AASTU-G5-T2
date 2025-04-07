@@ -10,7 +10,8 @@ func setupUserRoute(router *gin.Engine, controller controller.AuthController) {
 	userGroup := router.Group("/auth")
 	// userGroup.Use(UserMiddleware())
 
-	userGroup.POST("/set-password", nil)    //use registration token
+	userGroup.GET("/set-password", controller.RenderSetPasswordPage)
+	userGroup.POST("/set-password", controller.SetPassword)
 	userGroup.POST("/login", nil)           // with email and password send access and refresh token
 	userGroup.POST("/forgot-password", nil) // email and send reset password token
 	userGroup.POST("/reset-password", nil)  // with reset password token and new password

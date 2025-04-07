@@ -39,7 +39,7 @@ func (e *emailService) SendInvitationEmail(receiver string, token string) error 
 
 You have received an invitation to set your password. Please click the link below to set a new password:
 
-http://localhost:8080/set-password?token=%s
+http://localhost:8080/auth/set-password?token=%s
 
 If you did not request this, please ignore this email.
 

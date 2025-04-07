@@ -5,6 +5,7 @@ import (
 	"a2sv_hub/internal/models"
 	"a2sv_hub/internal/repository"
 	"a2sv_hub/internal/utils"
+	"log"
 )
 
 type AuthUsecase interface {
@@ -23,9 +24,10 @@ type authUsecase struct {
 // SetPassword implements AuthUsecase.
 func (a *authUsecase) SetPassword(token string, password string) *errors.CustomError {
 	// token validation
+	log.Println("lets set the password", token, password)
 	email, tokenType, _, err := a.tokenService.ValidateToken(token)
 	if err != nil {
-		return &errors.CustomError{StatusCode: 401, Message: "invalid token", Error: err}
+		return &errors.CustomError{StatusCode: 401, Message: err.Error(), Error: err}
 	}
 	if tokenType != "invitation" {
 		return &errors.CustomError{StatusCode: 401, Message: "invalid token type", Error: err}
@@ -37,8 +39,18 @@ func (a *authUsecase) SetPassword(token string, password string) *errors.CustomE
 		return &errors.CustomError{StatusCode: 500, Message: "failed to hash password", Error: err}
 	}
 
+	saved_token, customerr := a.authRepo.GetSavedToken(email)
+	if customerr != nil {
+		return customerr
+	}
+
+	val, err := a.tokenService.CompareHashedToken(token, saved_token)
+	if val == false || err != nil {
+		return &errors.CustomError{StatusCode: 500, Message: err.Error(), Error: err}
+	}
+
 	// store on the db
-	customerr := a.authRepo.SetPassword(email, hashedPassword)
+	customerr = a.authRepo.SetPassword(email, hashedPassword)
 	if customerr != nil {
 		return customerr
 	}
@@ -55,18 +67,22 @@ func (a *authUsecase) SendInvitationToken(email string, group string) *errors.Cu
 		return &errors.CustomError{StatusCode: 500, Message: "failed to generate token", Error: err}
 	}
 
+	// add to the user to the db if it doesn't exist before
+	hashed_token, err := a.tokenService.HashToken(invitation_token)
+	if err != nil {
+		return &errors.CustomError{StatusCode: 500, Message: "failed to hash token", Error: err}
+	}
+
+	customerr := a.authRepo.SaveUserEmailAndToken(email, group, hashed_token)
+	if customerr != nil {
+		return customerr
+	}
+
 	// send invitation
 
 	err = a.emailService.SendInvitationEmail(email, invitation_token)
 	if err != nil {
 		return &errors.CustomError{StatusCode: 500, Message: "failed to send email", Error: err}
-	}
-
-	// add to the user to the db if it doesn't exist before
-
-	customerr := a.authRepo.SaveUserEmail(email, group)
-	if err != nil {
-		return customerr
 	}
 
 	return nil
