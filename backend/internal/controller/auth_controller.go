@@ -87,6 +87,14 @@ func (a *authController) SendInvitationToken(c *gin.Context) {
 		GroupShortName string `json:"group_short_name" binding:"required"`
 	}
 
+	if !strings.HasSuffix(requestBody.Email, "@a2sv.org") {
+		c.JSON(400, gin.H{
+			"status":  400,
+			"message": "Email must be in the format name.lastname@a2sv.org",
+		})
+		return
+	}
+
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
 		c.JSON(400, gin.H{
 			"status":  400,
