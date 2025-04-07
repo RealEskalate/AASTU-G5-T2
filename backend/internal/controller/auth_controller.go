@@ -71,7 +71,7 @@ func (a *authController) SetPassword(c *gin.Context) {
 	err := a.authUsecase.SetPassword(token, req.Password)
 	if err != nil {
 		log.Printf("Failed to set password: %v", err)
-		c.String(500, "Failed to set password")
+		c.String(err.StatusCode, err.Message)
 		return
 	}
 
@@ -97,7 +97,7 @@ func (a *authController) SendInvitationToken(c *gin.Context) {
 
 	err := a.authUsecase.SendInvitationToken(requestBody.Email, requestBody.GroupShortName)
 	if err != nil {
-		c.JSON(500, gin.H{
+		c.JSON(err.StatusCode, gin.H{
 			"status":  err.StatusCode,
 			"message": err.Message,
 			"error":   err.Error,
