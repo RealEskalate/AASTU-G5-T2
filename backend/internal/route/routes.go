@@ -28,7 +28,7 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	authControllers := controller.NewAuthController(authUsecases)
 
 	setupHeadAuthRoutes(router, authControllers, tokenService)
-	setupUserRoute(router, authControllers)
+	setupUserRoute(router, authControllers, tokenService)
 
 	return router
 }

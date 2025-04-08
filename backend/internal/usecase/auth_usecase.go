@@ -12,6 +12,10 @@ type AuthUsecase interface {
 	RegisterUser(models.UserModel) (string, string, *errors.CustomError)
 	SendInvitationToken(string, string) *errors.CustomError
 	SetPassword(string, string) *errors.CustomError
+	LoginUser(string, string) (string, string, *errors.CustomError)
+	RefreshToken(token string) (string, *errors.CustomError)
+	UpdateProfile(token string, user models.UserModel) *errors.CustomError
+	GetProfileByEmail(token string) (models.UserModel, *errors.CustomError)
 }
 
 type authUsecase struct {
@@ -19,6 +23,125 @@ type authUsecase struct {
 	tokenService    utils.TokenService
 	passwordService utils.PasswordService
 	emailService    utils.EmailService
+}
+
+// GetProfileByEmail implements AuthUsecase.
+func (a *authUsecase) GetProfileByEmail(token string) (models.UserModel, *errors.CustomError) {
+	email, tokenType, _, err := a.tokenService.ValidateToken(token)
+	if err != nil {
+		return models.UserModel{}, &errors.CustomError{StatusCode: 401, Message: err.Error(), Error: err}
+	}
+	if tokenType != "access_token" {
+		return models.UserModel{}, &errors.CustomError{StatusCode: 401, Message: "invalid token type", Error: nil}
+	}
+
+	user, customErr := a.authRepo.GetUserByEmail(email)
+	if customErr != nil {
+		return models.UserModel{}, customErr
+	}
+
+	return user, nil
+}
+
+// UpdateProfile implements AuthUsecase.
+func (a *authUsecase) UpdateProfile(token string, user models.UserModel) *errors.CustomError {
+	email, tokenType, _, err := a.tokenService.ValidateToken(token)
+	if err != nil {
+		return &errors.CustomError{StatusCode: 401, Message: err.Error(), Error: err}
+	}
+	if tokenType != "access_token" {
+		return &errors.CustomError{StatusCode: 401, Message: "invalid token type", Error: nil}
+	}
+
+	// Fetch the existing user data
+	existingUser, customErr := a.authRepo.GetUserByEmail(email)
+	if customErr != nil {
+		return customErr
+	}
+
+	// Update fields only if they are not empty, otherwise retain existing data
+	if user.Name != "" {
+		existingUser.Name = user.Name
+	}
+	if user.LeetCode != "" {
+		existingUser.LeetCode = user.LeetCode
+	}
+	if user.GitHub != "" {
+		existingUser.GitHub = user.GitHub
+	}
+	if user.LinkedIn != "" {
+		existingUser.LinkedIn = user.LinkedIn
+	}
+	if user.Department != "" {
+		existingUser.Department = user.Department
+	}
+	if user.PreferredLanguage != "" {
+		existingUser.PreferredLanguage = user.PreferredLanguage
+	}
+	if user.Password != "" {
+		existingUser.Password = user.Password
+	}
+	if user.StudentID != "" {
+		existingUser.StudentID = user.StudentID
+	}
+
+	// Update the user in the database
+	customErr = a.authRepo.UpdateUserByEmail(email, existingUser)
+	if customErr != nil {
+		return customErr
+	}
+
+	return nil
+}
+
+// RefreshToken implements AuthUsecase.
+func (a *authUsecase) RefreshToken(token string) (string, *errors.CustomError) {
+	email, tokenType, role, err := a.tokenService.ValidateToken(token)
+	if err != nil {
+		return "", &errors.CustomError{StatusCode: 401, Message: err.Error(), Error: err}
+	}
+	if tokenType != "refresh" {
+		return "", &errors.CustomError{StatusCode: 401, Message: "invalid token type", Error: err}
+	}
+
+	access_token, err := a.tokenService.GenerateToken(email, "access_token", role)
+	if err != nil {
+		return "", &errors.CustomError{StatusCode: 500, Message: "internal server error", Error: nil}
+	}
+
+	return access_token, nil
+}
+
+// LoginUser implements AuthUsecase.
+func (a *authUsecase) LoginUser(email string, password string) (string, string, *errors.CustomError) {
+	// check if the user invited
+	if !a.authRepo.IsUserInvited(email) {
+		return "", "", &errors.CustomError{StatusCode: 401, Message: "user not invited", Error: nil}
+	}
+
+	// check if the user has set password
+	isSetUp, hashedPassword, role := a.authRepo.IsUserSetUp(email)
+	if !isSetUp {
+		return "", "", &errors.CustomError{StatusCode: 401, Message: "user not set up"}
+	}
+
+	// check the password
+	if err := a.passwordService.ComparePassword(password, hashedPassword); err == false {
+		return "", "", &errors.CustomError{StatusCode: 401, Message: "invalid password"}
+	}
+
+	// generate the tokens
+	access_token, err := a.tokenService.GenerateToken(email, "access_token", role)
+	if err != nil {
+		return "", "", &errors.CustomError{StatusCode: 500, Message: "internal server error", Error: nil}
+	}
+	refresh_token, err := a.tokenService.GenerateToken(email, "refresh", role)
+
+	if err != nil {
+		return "", "", &errors.CustomError{StatusCode: 500, Message: "internal server error", Error: nil}
+	}
+
+	return access_token, refresh_token, nil
 }
 
 // SetPassword implements AuthUsecase.

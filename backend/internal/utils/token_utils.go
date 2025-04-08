@@ -39,11 +39,18 @@ func (t *tokenService) CompareHashedToken(token, hashedToken string) (bool, erro
 
 // GenerateToken implements TokenService.
 func (t *tokenService) GenerateToken(email string, tokenType string, role string) (string, error) {
+	var expTime time.Time
+	if tokenType == "invitation_token" || tokenType == "access_token" {
+		expTime = time.Now().Add(time.Hour * 24 * 7)
+	} else {
+		expTime = time.Now().Add(time.Hour * 24 * 365)
+	}
+
 	claims := jwt.MapClaims{
 		"email":     email,
 		"tokenType": tokenType,
 		"role":      role,
-		"exp":       time.Now().Add(time.Hour * 24 * 365).Unix(),
+		"exp":       expTime.Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedToken, err := token.SignedString([]byte(t.secretKey))
