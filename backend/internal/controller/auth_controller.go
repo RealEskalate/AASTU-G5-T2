@@ -151,7 +151,7 @@ func (a *authController) RefreshToken(c *gin.Context) {
 	// Extract refresh token from Authorization header
 	refreshToken := parts[1]
 
-	accessToken, err := a.authUsecase.RefreshToken(refreshToken)
+	accessToken, refresh_token, err := a.authUsecase.RefreshToken(refreshToken)
 	if err != nil {
 		c.JSON(err.StatusCode, gin.H{
 			"status":  err.StatusCode,
@@ -162,9 +162,10 @@ func (a *authController) RefreshToken(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"status":       200,
-		"message":      "Token refreshed successfully",
-		"access_token": accessToken,
+		"status":        200,
+		"message":       "Token refreshed successfully",
+		"access_token":  accessToken,
+		"refresh_token": refresh_token,
 	})
 }
 

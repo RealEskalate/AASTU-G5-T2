@@ -10,7 +10,7 @@ import (
 type AuthRepo interface {
 	SaveUser(models.UserModel) error
 	SaveUserEmailAndToken(email string, group string, invitation_tokens string) *errors.CustomError // user_tokens table
-	GetSavedToken(email string) (string, *errors.CustomError)                                       // from user_tokens get invitation token
+	GetSavedToken(email string, token_type string) (string, *errors.CustomError)                    // from user_tokens get invitation token
 	SetPassword(email string, password string) *errors.CustomError
 	GetUserByEmail(email string) (models.UserModel, *errors.CustomError)
 	UpdateUserByEmail(email string, user models.UserModel) *errors.CustomError
@@ -154,9 +154,9 @@ func (a *authRepo) GetUserByEmail(email string) (models.UserModel, *errors.Custo
 }
 
 // GetSavedToken implements AuthRepo.
-func (a *authRepo) GetSavedToken(email string) (string, *errors.CustomError) {
+func (a *authRepo) GetSavedToken(email string, token_type string) (string, *errors.CustomError) {
 	var token string
-	err := a.db.QueryRow("SELECT token FROM user_tokens WHERE email = $1 AND token_type = 'invitation_token'", email).Scan(&token)
+	err := a.db.QueryRow("SELECT token FROM user_tokens WHERE email = $1 AND token_type = $2 ", email, token_type).Scan(&token)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return "", &errors.CustomError{StatusCode: 404, Message: "Invalid token"}

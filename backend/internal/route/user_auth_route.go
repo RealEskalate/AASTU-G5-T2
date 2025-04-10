@@ -20,8 +20,6 @@ func setupUserRoute(router *gin.Engine, controller controller.AuthController, to
 	// userGroup.POST("/set-password", controller.SetPassword)
 	userGroup.POST("/login", controller.LoginUser)
 	userGroup.POST("/refresh-token", controller.RefreshToken)
-	userGroup.POST("/forgot-password", nil)
-	userGroup.POST("/reset-password", nil)                // with reset password token and new password
 	userGroup.PUT("/myprofile", controller.UpdateProfile) // with access token fil@l other data
 	userGroup.GET("/myprofile", controller.GetMyProfile)  // with access token get user profile
 	userGroup.GET("/user-profile", nil)                   // with access token get all user profile

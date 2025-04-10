@@ -40,7 +40,7 @@ func (t *tokenService) CompareHashedToken(token, hashedToken string) (bool, erro
 // GenerateToken implements TokenService.
 func (t *tokenService) GenerateToken(email string, tokenType string, role string) (string, error) {
 	var expTime time.Time
-	if tokenType == "invitation_token" || tokenType == "access_token" {
+	if tokenType == "invitation_token" || tokenType == "reset_password" {
 		expTime = time.Now().Add(time.Hour * 24 * 7)
 	} else {
 		expTime = time.Now().Add(time.Hour * 24 * 365)

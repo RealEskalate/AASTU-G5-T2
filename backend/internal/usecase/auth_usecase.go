@@ -13,7 +13,7 @@ type AuthUsecase interface {
 	SendInvitationToken(string, string) *errors.CustomError
 	SetPassword(string, string) *errors.CustomError
 	LoginUser(string, string) (string, string, *errors.CustomError)
-	RefreshToken(token string) (string, *errors.CustomError)
+	RefreshToken(token string) (string, string, *errors.CustomError)
 	UpdateProfile(token string, user models.UserModel) *errors.CustomError
 	GetProfileByEmail(token string) (models.UserModel, *errors.CustomError)
 	RequestResetPassword(string) *errors.CustomError
@@ -179,21 +179,25 @@ func (a *authUsecase) UpdateProfile(token string, user models.UserModel) *errors
 }
 
 // RefreshToken implements AuthUsecase.
-func (a *authUsecase) RefreshToken(token string) (string, *errors.CustomError) {
+func (a *authUsecase) RefreshToken(token string) (string, string, *errors.CustomError) {
 	email, tokenType, role, err := a.tokenService.ValidateToken(token)
 	if err != nil {
-		return "", &errors.CustomError{StatusCode: 401, Message: err.Error(), Error: err}
+		return "", "", &errors.CustomError{StatusCode: 401, Message: err.Error(), Error: err}
 	}
 	if tokenType != "refresh_token" {
-		return "", &errors.CustomError{StatusCode: 401, Message: "invalid token type", Error: err}
+		return "", "", &errors.CustomError{StatusCode: 401, Message: "invalid token type", Error: err}
 	}
 
 	access_token, err := a.tokenService.GenerateToken(email, "access_token", role)
 	if err != nil {
-		return "", &errors.CustomError{StatusCode: 500, Message: "internal server error", Error: nil}
+		return "", "", &errors.CustomError{StatusCode: 500, Message: "internal server error", Error: nil}
+	}
+	refresh_token, err := a.tokenService.GenerateToken(email, "refresh_token", role)
+	if err != nil {
+		return "", "", &errors.CustomError{StatusCode: 500, Message: "internal server error", Error: nil}
 	}
 
-	return access_token, nil
+	return access_token, refresh_token, nil
 }
 
 // LoginUser implements AuthUsecase.
@@ -234,8 +238,8 @@ func (a *authUsecase) SetPassword(token string, password string) *errors.CustomE
 	if err != nil {
 		return &errors.CustomError{StatusCode: 401, Message: err.Error(), Error: err}
 	}
-	if tokenType != "invitation_token" {
-		return &errors.CustomError{StatusCode: 401, Message: "invalid token type", Error: err}
+	if tokenType != "invitation_token" && tokenType != "reset_password" {
+		return &errors.CustomError{StatusCode: 401, Message: "invalid token type", Error: nil}
 	}
 
 	// hash password
@@ -244,7 +248,7 @@ func (a *authUsecase) SetPassword(token string, password string) *errors.CustomE
 		return &errors.CustomError{StatusCode: 500, Message: "failed to hash password", Error: err}
 	}
 
-	saved_token, customerr := a.authRepo.GetSavedToken(email)
+	saved_token, customerr := a.authRepo.GetSavedToken(email, tokenType)
 	if customerr != nil {
 		return customerr
 	}
