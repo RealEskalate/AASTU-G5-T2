@@ -12,7 +12,6 @@ func RoleMiddleWare(tokenService utils.TokenService, allowedRoles ...string) gin
 		clientToken := c.Request.Header.Get("Authorization")
 
 		if clientToken == "" {
-
 			c.JSON(401, gin.H{"status": 401, "message": "No token provided"})
 			c.Abort()
 			return

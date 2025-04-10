@@ -14,12 +14,12 @@ func setupGroupRoutes(router *gin.Engine, controller controller.GroupController,
 	groupRoutes.Use(middleware.AuthMiddleWare(tokenService), middleware.RoleMiddleWare(tokenService, "head", "super_admin"))
 
 	groupRoutes.POST("/", controller.CreateNewGroup)
-	groupRoutes.PUT("/:group_id", nil)
-	groupRoutes.DELETE("/:group_id", nil)
+	groupRoutes.PUT("/:group_id", controller.UpdateGroup)
+	groupRoutes.DELETE("/:group_id", controller.DeleteGroup)
 
 	usersRoute := router.Group("/groups")
 	usersRoute.Use(middleware.AuthMiddleWare(tokenService))
 	usersRoute.GET("/", controller.GetAllGroups)
-	usersRoute.GET("/:group_id", nil)
+	usersRoute.GET("/:group_id", controller.GetGroupById)
 
 }

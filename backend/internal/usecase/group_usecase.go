@@ -91,8 +91,11 @@ func (g *groupUsecase) UpdateGroup(id int, groupModel models.GroupModel) *errors
 	if groupModel.Description == "" {
 		groupModel.Description = existingGroup.Description
 	}
-	if groupModel.HOA == 0 {
+	if groupModel.HOA == nil {
 		groupModel.HOA = existingGroup.HOA
+	}
+	if groupModel.Country == "" {
+		groupModel.Country = existingGroup.Country
 	}
 
 	// Add similar checks for other fields as needed

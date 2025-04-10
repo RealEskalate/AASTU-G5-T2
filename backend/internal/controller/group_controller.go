@@ -58,7 +58,7 @@ func (g *groupController) DeleteGroup(c *gin.Context) {
 func (g *groupController) GetAllGroups(c *gin.Context) {
 	groups, err := g.groupUsecase.GetAllGroups()
 	if err != nil {
-		c.JSON(500, gin.H{"error": "Failed to retrieve groups"})
+		c.JSON(err.StatusCode, gin.H{"error": err, "message": err.Message, "status": err.StatusCode})
 		return
 	}
 
@@ -75,7 +75,7 @@ func (g *groupController) GetGroupById(c *gin.Context) {
 
 	group, customerr := g.groupUsecase.GetGroupById(id)
 	if customerr != nil {
-		c.JSON(500, gin.H{"error": "Failed to retrieve group"})
+		c.JSON(customerr.StatusCode, gin.H{"error": customerr.Error, "message": customerr.Message, "status": customerr.StatusCode})
 		return
 	}
 
