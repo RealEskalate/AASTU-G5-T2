@@ -24,12 +24,16 @@ func AuthMiddleWare(tokenService utils.TokenService) gin.HandlerFunc {
 		}
 
 		clientToken = splitToken[1]
-		_, _, _, err := tokenService.ValidateToken(clientToken)
+		email, token_type, role, err := tokenService.ValidateToken(clientToken)
 		if err != nil {
 			c.JSON(401, gin.H{"status": 401, "message": "No token provided", "error": err})
 			c.Abort()
 			return
 		}
+
+		c.SetCookie("email", email, 3600, "/", "", false, true)
+		c.SetCookie("token_type", token_type, 3600, "/", "", false, true)
+		c.SetCookie("role", role, 3600, "/", "", false, true)
 		c.Next()
 
 	}

@@ -3,6 +3,7 @@ package controller
 import (
 	"a2sv_hub/internal/models"
 	"a2sv_hub/internal/usecase"
+	"a2sv_hub/internal/utils"
 	"log"
 	"strings"
 
@@ -11,17 +12,48 @@ import (
 
 type AuthController interface {
 	SetPassword(c *gin.Context)
-	CreateUser(c *gin.Context)
 	SendInvitationToken(c *gin.Context)
 	RenderSetPasswordPage(c *gin.Context)
 	LoginUser(c *gin.Context)
 	RefreshToken(c *gin.Context)
 	UpdateProfile(c *gin.Context)
 	GetMyProfile(c *gin.Context)
+	RequestResetPassword(c *gin.Context)
+	CreateUser(c *gin.Context) // temp to create super admin user
 }
 
 type authController struct {
 	authUsecase usecase.AuthUsecase
+}
+
+// RequestResetPassword implements AuthController.
+func (a *authController) RequestResetPassword(c *gin.Context) {
+	var req struct {
+		Email string `json:"email" binding:"required,email"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{
+			"status":  400,
+			"message": "Email is required",
+		})
+		return
+	}
+
+	err := a.authUsecase.RequestResetPassword(req.Email)
+	if err != nil {
+		c.JSON(err.StatusCode, gin.H{
+			"status":  err.StatusCode,
+			"message": err.Message,
+			"error":   err.Error,
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"status":  200,
+		"message": "Reset password link sent successfully",
+	})
 }
 
 // GetProfile implements AuthController.
@@ -48,9 +80,10 @@ func (a *authController) GetMyProfile(c *gin.Context) {
 		return
 	}
 
+	user_profile := utils.MapToUserProfile(profile)
 	c.JSON(200, gin.H{
 		"status":  200,
-		"profile": profile,
+		"profile": user_profile,
 	})
 
 }
@@ -243,13 +276,13 @@ func (a *authController) SendInvitationToken(c *gin.Context) {
 		return
 	}
 
-	if !strings.HasSuffix(requestBody.Email, "@a2sv.org") {
-		c.JSON(400, gin.H{
-			"status":  400,
-			"message": "Email must be in the format name.lastname@a2sv.org",
-		})
-		return
-	}
+	// if !strings.HasSuffix(requestBody.Email, "@a2sv.org") {
+	// 	c.JSON(400, gin.H{
+	// 		"status":  400,
+	// 		"message": "Email must be in the format name.lastname@a2sv.org",
+	// 	})
+	// 	return
+	// }
 
 	err := a.authUsecase.SendInvitationToken(requestBody.Email, requestBody.GroupShortName)
 	if err != nil {

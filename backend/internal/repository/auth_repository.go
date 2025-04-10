@@ -8,19 +8,22 @@ import (
 )
 
 type AuthRepo interface {
-	SaveUser(models.UserModel, string) error
-	SaveUserEmailAndToken(email string, group string, invitation_tokens string) *errors.CustomError
+	SaveUser(models.UserModel) error
+	SaveUserEmailAndToken(email string, group string, invitation_tokens string) *errors.CustomError // user_tokens table
+	GetSavedToken(email string) (string, *errors.CustomError)                                       // from user_tokens get invitation token
 	SetPassword(email string, password string) *errors.CustomError
-	GetSavedToken(email string) (string, *errors.CustomError)
-	// LoginUser(email string, password string) (string, *errors.CustomError)
-	IsUserInvited(email string) bool
-	IsUserSetUp(email string) (bool, string, string)
 	GetUserByEmail(email string) (models.UserModel, *errors.CustomError)
 	UpdateUserByEmail(email string, user models.UserModel) *errors.CustomError
+	SendResetPasswordEmail(email string, token string) *errors.CustomError
 }
 
 type authRepo struct {
 	db *sql.DB
+}
+
+// SendResetPasswordEmail implements AuthRepo.
+func (a *authRepo) SendResetPasswordEmail(email string, token string) *errors.CustomError {
+	panic("unimplemented")
 }
 
 // UpdateUserByEmail implements AuthRepo.
@@ -56,68 +59,99 @@ func (a *authRepo) GetUserByEmail(email string) (models.UserModel, *errors.Custo
 	var user models.UserModel
 
 	query := `
-		SELECT id, role_id, name, country_id, university, email, password 
-		FROM users 
-		WHERE email = $1
+		SELECT 
+			u.id,
+			COALESCE(r.type, '') AS role,
+			COALESCE(u.name, '') AS name,
+			COALESCE(c.name, '') AS country,
+			COALESCE(u.university, '') AS university,
+			u.email,
+			COALESCE(u.leetcode, '') AS leetcode,
+			COALESCE(u.codeforces, '') AS codeforces,
+			COALESCE(u.github, '') AS github,
+			COALESCE(u.photo, '') AS photo,
+			COALESCE(u.preferred_language, '') AS preferred_language,
+			COALESCE(u.hackerrank, '') AS hackerrank,
+			COALESCE(g.short_name, '') AS group_name,
+			COALESCE(u.phone, '') AS phone,
+			COALESCE(u.telegram_username, '') AS telegram_username,
+			COALESCE(u.telegram_uid, '') AS telegram_uid,
+			COALESCE(u.linkedin, '') AS linkedin,
+			COALESCE(u.student_id, '') AS student_id,
+			COALESCE(u.short_bio, '') AS short_bio,
+			COALESCE(u.instagram, '') AS instagram,
+			COALESCE(u.birthday, '1970-01-01') AS birthday,
+			COALESCE(u.cv, '') AS cv,
+			COALESCE(u.joined_date, '1970-01-01') AS joined_date,
+			COALESCE(u.expected_graduation_date, '1970-01-01') AS expected_graduation_date,
+			COALESCE(u.mentor_name, '') AS mentor_name,
+			COALESCE(u.tshirt_color, '') AS tshirt_color,
+			COALESCE(u.tshirt_size, '') AS tshirt_size,
+			COALESCE(u.gender, '') AS gender,
+			COALESCE(u.code_of_conduct, '') AS code_of_conduct,
+			COALESCE(u.password, '') AS password,
+			COALESCE(u.created_at, NOW()) AS created_at,
+			COALESCE(u.updated_at, NOW()) AS updated_at,
+			COALESCE(u.config, '') AS config,
+			COALESCE(u.department, '') AS department,
+			COALESCE(u.inactive, false) AS inactive,
+			COALESCE(u.firstlogin, false) AS firstlogin
+		FROM users u
+		LEFT JOIN countries c ON u.country_id = c.id
+		LEFT JOIN roles r ON u.role_id = r.id
+		LEFT JOIN groups g ON u.group_id = g.id
+		WHERE u.email = $1
 	`
 
 	err := a.db.QueryRow(query, email).Scan(
 		&user.ID,
-		&user.RoleID,
+		&user.Role,
 		&user.Name,
-		&user.CountryID,
+		&user.Country,
 		&user.University,
 		&user.Email,
+		&user.LeetCode,
+		&user.Codeforces,
+		&user.GitHub,
+		&user.Photo,
+		&user.PreferredLanguage,
+		&user.HackerRank,
+		&user.Group,
+		&user.Phone,
+		&user.TelegramUsername,
+		&user.TelegramUID,
+		&user.LinkedIn,
+		&user.StudentID,
+		&user.ShortBio,
+		&user.Instagram,
+		&user.Birthday,
+		&user.CV,
+		&user.JoinedDate,
+		&user.ExpectedGraduationDate,
+		&user.MentorName,
+		&user.TShirtColor,
+		&user.TShirtSize,
+		&user.Gender,
+		&user.CodeOfConduct,
 		&user.Password,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+		&user.Config,
+		&user.Department,
+		&user.Inactive,
+		&user.FirstLogin,
 	)
+
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return models.UserModel{}, &errors.CustomError{StatusCode: 404, Message: "User not found"}
 		}
-		log.Println("error retrieving user by email:", err)
-		return models.UserModel{}, &errors.CustomError{StatusCode: 500, Message: "Database error", Error: err}
+		log.Println("DB error fetching user:", err)
+		return models.UserModel{}, &errors.CustomError{StatusCode: 500, Message: "Error fetching user", Error: err}
 	}
 
 	return user, nil
 }
-
-// IsUserInvited implements AuthRepo.
-func (a *authRepo) IsUserInvited(email string) bool {
-	var exists bool
-	err := a.db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)", email).Scan(&exists)
-	if err != nil {
-		log.Println("error checking if email exists in users table:", err)
-		return false
-	}
-	return exists
-}
-
-// IsUserSetUp implements AuthRepo.
-func (a *authRepo) IsUserSetUp(email string) (bool, string, string) {
-	var password, role string
-
-	var isSetUp bool
-
-	err := a.db.QueryRow(`
-		SELECT 
-			CASE WHEN password IS NOT NULL THEN TRUE ELSE FALSE END AS is_set_up, 
-			password, 
-			(SELECT type FROM roles WHERE id = role_id) AS role 
-		FROM users 
-		WHERE email = $1
-	`, email).Scan(&isSetUp, &password, &role)
-	if err != nil {
-		log.Println("error checking if user is set up:", err)
-		return false, "", ""
-	}
-
-	return isSetUp, password, role
-}
-
-// LoginUser implements AuthRepo.
-// func (a *authRepo) LoginUser(email string, password string) (string, *errors.CustomError) {
-// 	panic("unimplemented")
-// }
 
 // GetSavedToken implements AuthRepo.
 func (a *authRepo) GetSavedToken(email string) (string, *errors.CustomError) {
@@ -242,23 +276,35 @@ func (a *authRepo) SaveUserEmailAndToken(email string, group string, invitationT
 	return nil
 }
 
-// SaveUser implements AuthRepo.
-func (a *authRepo) SaveUser(user models.UserModel, token string) error {
-	query := "INSERT INTO users (role_id, name, country_id, university, email, password) VALUES ($1, $2, $3, $4, $5, $6)"
-	query2 := "INSERT INTO user_tokens (email, token, token_type) VALUES ($1, $2, $3)"
+// SaveUser implements AuthRepo.  this is just for super admin only
+func (a *authRepo) SaveUser(user models.UserModel) error {
+	var roleID, countryID int
 
-	log.Println("data from repo", user.RoleID, user.Name, user.CountryID, user.University, user.Email, user.Password)
-	_, err := a.db.Exec(query, user.RoleID, user.Name, user.CountryID, user.University, user.Email, user.Password)
+	// Fetch role_id from roles table
+	err := a.db.QueryRow("SELECT id FROM roles WHERE type = $1", user.Role).Scan(&roleID)
 	if err != nil {
-		log.Println("error on  users table", err)
-		return err
-	}
-	_, err = a.db.Exec(query2, user.Email, token, "access_token")
-	if err != nil {
-		log.Println("error on  users_session table", err)
+		log.Println("error fetching role_id:", err)
 		return err
 	}
 
+	// Fetch country_id from countries table
+	err = a.db.QueryRow("SELECT id FROM countries WHERE name = $1", user.Country).Scan(&countryID)
+	if err != nil {
+		log.Println("error fetching country_id:", err)
+		return err
+	}
+
+	query := `
+		INSERT INTO users (role_id, name, country_id, university, email, password) 
+		VALUES ($1, $2, $3, $4, $5, $6)
+	`
+
+	log.Println("Inserting user with role_id and country_id", roleID, countryID)
+	_, err = a.db.Exec(query, roleID, user.Name, countryID, user.University, user.Email, user.Password)
+	if err != nil {
+		log.Println("error inserting into users table:", err)
+		return err
+	}
 	return nil
 }
 

@@ -25,12 +25,15 @@ func RoleMiddleWare(tokenService utils.TokenService, allowedRoles ...string) gin
 		}
 
 		clientToken = splitToken[1]
-		_, _, role, err := tokenService.ValidateToken(clientToken)
+		email, token_type, role, err := tokenService.ValidateToken(clientToken)
 		if err != nil {
 			c.JSON(401, gin.H{"status": 401, "message": "No token provided", "error": err})
 			c.Abort()
 			return
 		}
+		c.SetCookie("email", email, 3600, "/", "", false, true)
+		c.SetCookie("token_type", token_type, 3600, "/", "", false, true)
+		c.SetCookie("role", role, 3600, "/", "", false, true)
 
 		for _, allowed := range allowedRoles {
 			if role == allowed {

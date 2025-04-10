@@ -16,6 +16,7 @@ type AuthUsecase interface {
 	RefreshToken(token string) (string, *errors.CustomError)
 	UpdateProfile(token string, user models.UserModel) *errors.CustomError
 	GetProfileByEmail(token string) (models.UserModel, *errors.CustomError)
+	RequestResetPassword(string) *errors.CustomError
 }
 
 type authUsecase struct {
@@ -23,6 +24,31 @@ type authUsecase struct {
 	tokenService    utils.TokenService
 	passwordService utils.PasswordService
 	emailService    utils.EmailService
+}
+
+// RequestResetPassword implements AuthUsecase.
+func (a *authUsecase) RequestResetPassword(email string) *errors.CustomError {
+
+	// Check if the user exists in the database
+	user, customErr := a.authRepo.GetUserByEmail(email)
+	if customErr != nil {
+		return customErr
+	}
+
+	// Generate a reset password token
+	resetToken, err := a.tokenService.GenerateToken(user.Email, "reset_password", "user")
+	if err != nil {
+		return &errors.CustomError{StatusCode: 500, Message: "failed to generate reset password token", Error: err}
+	}
+
+	// Send the reset password email
+	err = a.emailService.SendResetPasswordEmail(user.Email, resetToken)
+	if err != nil {
+		return &errors.CustomError{StatusCode: 500, Message: "failed to send reset password email", Error: err}
+	}
+
+	return nil
+
 }
 
 // GetProfileByEmail implements AuthUsecase.
@@ -60,28 +86,86 @@ func (a *authUsecase) UpdateProfile(token string, user models.UserModel) *errors
 	}
 
 	// Update fields only if they are not empty, otherwise retain existing data
-	if user.Name != "" {
+	if user.Name != "" && user.Name != existingUser.Name {
 		existingUser.Name = user.Name
 	}
-	if user.LeetCode != "" {
+	if user.University != "" && user.University != existingUser.University {
+		existingUser.University = user.University
+	}
+	if user.LeetCode != "" && user.LeetCode != existingUser.LeetCode {
 		existingUser.LeetCode = user.LeetCode
 	}
-	if user.GitHub != "" {
+	if user.Codeforces != "" && user.Codeforces != existingUser.Codeforces {
+		existingUser.Codeforces = user.Codeforces
+	}
+	if user.GitHub != "" && user.GitHub != existingUser.GitHub {
 		existingUser.GitHub = user.GitHub
 	}
-	if user.LinkedIn != "" {
-		existingUser.LinkedIn = user.LinkedIn
+	if user.Photo != "" && user.Photo != existingUser.Photo {
+		existingUser.Photo = user.Photo
 	}
-	if user.Department != "" {
-		existingUser.Department = user.Department
-	}
-	if user.PreferredLanguage != "" {
+	if user.PreferredLanguage != "" && user.PreferredLanguage != existingUser.PreferredLanguage {
 		existingUser.PreferredLanguage = user.PreferredLanguage
 	}
-	if user.Password != "" {
+	if user.HackerRank != "" && user.HackerRank != existingUser.HackerRank {
+		existingUser.HackerRank = user.HackerRank
+	}
+	if user.Phone != "" && user.Phone != existingUser.Phone {
+		existingUser.Phone = user.Phone
+	}
+	if user.TelegramUsername != "" && user.TelegramUsername != existingUser.TelegramUsername {
+		existingUser.TelegramUsername = user.TelegramUsername
+	}
+	if user.TelegramUID != "" && user.TelegramUID != existingUser.TelegramUID {
+		existingUser.TelegramUID = user.TelegramUID
+	}
+	if user.LinkedIn != "" && user.LinkedIn != existingUser.LinkedIn {
+		existingUser.LinkedIn = user.LinkedIn
+	}
+	if user.StudentID != "" && user.StudentID != existingUser.StudentID {
+		existingUser.StudentID = user.StudentID
+	}
+	if user.ShortBio != "" && user.ShortBio != existingUser.ShortBio {
+		existingUser.ShortBio = user.ShortBio
+	}
+	if user.Instagram != "" && user.Instagram != existingUser.Instagram {
+		existingUser.Instagram = user.Instagram
+	}
+	if !user.Birthday.IsZero() && user.Birthday != existingUser.Birthday {
+		existingUser.Birthday = user.Birthday
+	}
+	if user.CV != "" && user.CV != existingUser.CV {
+		existingUser.CV = user.CV
+	}
+
+	if !user.ExpectedGraduationDate.IsZero() && user.ExpectedGraduationDate != existingUser.ExpectedGraduationDate {
+		existingUser.ExpectedGraduationDate = user.ExpectedGraduationDate
+	}
+
+	if user.TShirtColor != "" && user.TShirtColor != existingUser.TShirtColor {
+		existingUser.TShirtColor = user.TShirtColor
+	}
+	if user.TShirtSize != "" && user.TShirtSize != existingUser.TShirtSize {
+		existingUser.TShirtSize = user.TShirtSize
+	}
+	if user.Gender != "" && user.Gender != existingUser.Gender {
+		existingUser.Gender = user.Gender
+	}
+
+	if user.Password != "" && user.Password != existingUser.Password {
 		existingUser.Password = user.Password
 	}
-	if user.StudentID != "" {
+
+	if user.Department != "" && user.Department != existingUser.Department {
+		existingUser.Department = user.Department
+	}
+	// if user.Inactive != existingUser.Inactive {
+	// 	existingUser.Inactive = user.Inactive
+	// }
+	// if user.FirstLogin != existingUser.FirstLogin {
+	// 	existingUser.FirstLogin = user.FirstLogin
+	// }
+	if user.StudentID != existingUser.StudentID {
 		existingUser.StudentID = user.StudentID
 	}
 
@@ -100,7 +184,7 @@ func (a *authUsecase) RefreshToken(token string) (string, *errors.CustomError) {
 	if err != nil {
 		return "", &errors.CustomError{StatusCode: 401, Message: err.Error(), Error: err}
 	}
-	if tokenType != "refresh" {
+	if tokenType != "refresh_token" {
 		return "", &errors.CustomError{StatusCode: 401, Message: "invalid token type", Error: err}
 	}
 
@@ -115,27 +199,25 @@ func (a *authUsecase) RefreshToken(token string) (string, *errors.CustomError) {
 // LoginUser implements AuthUsecase.
 func (a *authUsecase) LoginUser(email string, password string) (string, string, *errors.CustomError) {
 	// check if the user invited
-	if !a.authRepo.IsUserInvited(email) {
-		return "", "", &errors.CustomError{StatusCode: 401, Message: "user not invited", Error: nil}
-	}
 
 	// check if the user has set password
-	isSetUp, hashedPassword, role := a.authRepo.IsUserSetUp(email)
-	if !isSetUp {
-		return "", "", &errors.CustomError{StatusCode: 401, Message: "user not set up"}
+	user, customerr := a.authRepo.GetUserByEmail(email)
+	if customerr != nil {
+		return "", "", customerr
 	}
 
 	// check the password
-	if err := a.passwordService.ComparePassword(password, hashedPassword); err == false {
-		return "", "", &errors.CustomError{StatusCode: 401, Message: "invalid password"}
+	if err := a.passwordService.ComparePassword(user.Password, password); err == false {
+		log.Println("incorrect password", password, user.Password)
+		return "", "", &errors.CustomError{StatusCode: 401, Message: "incorrect password"}
 	}
 
 	// generate the tokens
-	access_token, err := a.tokenService.GenerateToken(email, "access_token", role)
+	access_token, err := a.tokenService.GenerateToken(email, "access_token", user.Role)
 	if err != nil {
 		return "", "", &errors.CustomError{StatusCode: 500, Message: "internal server error", Error: nil}
 	}
-	refresh_token, err := a.tokenService.GenerateToken(email, "refresh", role)
+	refresh_token, err := a.tokenService.GenerateToken(email, "refresh_token", user.Role)
 
 	if err != nil {
 		return "", "", &errors.CustomError{StatusCode: 500, Message: "internal server error", Error: nil}
@@ -152,7 +234,7 @@ func (a *authUsecase) SetPassword(token string, password string) *errors.CustomE
 	if err != nil {
 		return &errors.CustomError{StatusCode: 401, Message: err.Error(), Error: err}
 	}
-	if tokenType != "invitation" {
+	if tokenType != "invitation_token" {
 		return &errors.CustomError{StatusCode: 401, Message: "invalid token type", Error: err}
 	}
 
@@ -185,7 +267,7 @@ func (a *authUsecase) SetPassword(token string, password string) *errors.CustomE
 // SendInvitationToken implements AuthUsecase.
 func (a *authUsecase) SendInvitationToken(email string, group string) *errors.CustomError {
 	// generate token
-	invitation_token, err := a.tokenService.GenerateToken(email, "invitation", "student")
+	invitation_token, err := a.tokenService.GenerateToken(email, "invitation_token", "student")
 	if err != nil {
 		return &errors.CustomError{StatusCode: 500, Message: "failed to generate token", Error: err}
 	}
@@ -231,7 +313,7 @@ func (a *authUsecase) RegisterUser(user models.UserModel) (string, string, *erro
 		return "", "", &errors.CustomError{StatusCode: 500, Message: "failed to generate refresh token", Error: err}
 	}
 
-	err = a.authRepo.SaveUser(user, access_token)
+	err = a.authRepo.SaveUser(user)
 	if err != nil {
 		return "", "", &errors.CustomError{StatusCode: 500, Message: "failed to save the user", Error: err}
 	}
