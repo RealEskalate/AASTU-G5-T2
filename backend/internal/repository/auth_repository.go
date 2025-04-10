@@ -8,22 +8,54 @@ import (
 )
 
 type AuthRepo interface {
+	PromoteUser(email string, role string, group string) *errors.CustomError
 	SaveUser(models.UserModel) error
 	SaveUserEmailAndToken(email string, group string, invitation_tokens string) *errors.CustomError // user_tokens table
 	GetSavedToken(email string, token_type string) (string, *errors.CustomError)                    // from user_tokens get invitation token
 	SetPassword(email string, password string) *errors.CustomError
 	GetUserByEmail(email string) (models.UserModel, *errors.CustomError)
 	UpdateUserByEmail(email string, user models.UserModel) *errors.CustomError
-	SendResetPasswordEmail(email string, token string) *errors.CustomError
 }
 
 type authRepo struct {
 	db *sql.DB
 }
 
-// SendResetPasswordEmail implements AuthRepo.
-func (a *authRepo) SendResetPasswordEmail(email string, token string) *errors.CustomError {
-	panic("unimplemented")
+// PromoteUsers implements AuthRepo.
+func (a *authRepo) PromoteUser(email string, role string, group string) *errors.CustomError {
+	var roleID, groupID int
+
+	// Check if the role exists in the roles table
+	err := a.db.QueryRow("SELECT id FROM roles WHERE type = $1", role).Scan(&roleID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Println("Role does not exist:", role)
+			return &errors.CustomError{StatusCode: 400, Message: "Invalid role"}
+		}
+		log.Println("Error checking role existence:", err)
+		return &errors.CustomError{StatusCode: 500, Message: "Database error", Error: err}
+	}
+
+	// Check if the group exists in the groups table
+	err = a.db.QueryRow("SELECT id FROM groups WHERE LOWER(short_name) = LOWER($1)", group).Scan(&groupID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Println("Group does not exist:", group)
+			return &errors.CustomError{StatusCode: 400, Message: "Invalid group"}
+		}
+		log.Println("Error checking group existence:", err)
+		return &errors.CustomError{StatusCode: 500, Message: "Database error", Error: err}
+	}
+
+	// Update the user's role_id and group_id in the users table
+	query := "UPDATE users SET role_id = $1, group_id = $2 WHERE email = $3"
+	_, err = a.db.Exec(query, roleID, groupID, email)
+	if err != nil {
+		log.Println("Error updating user role and group:", err)
+		return &errors.CustomError{StatusCode: 500, Message: "Failed to update user role and group", Error: err}
+	}
+
+	return nil
 }
 
 // UpdateUserByEmail implements AuthRepo.

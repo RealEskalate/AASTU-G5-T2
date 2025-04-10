@@ -13,6 +13,7 @@ import (
 )
 
 type AuthController interface {
+	PromoteUsers(c *gin.Context)
 	SetPassword(c *gin.Context)
 	SendInvitationToken(c *gin.Context)
 	RenderSetPasswordPage(c *gin.Context)
@@ -27,6 +28,38 @@ type AuthController interface {
 type authController struct {
 	authUsecase       usecase.AuthUsecase
 	fileUploadService utils.FileUploadService
+}
+
+// PromoteUsers implements AuthController.
+func (a *authController) PromoteUsers(c *gin.Context) {
+	var req struct {
+		Email string `json:"email" binding:"required"`
+		Role  string `json:"role" binding:"required"`
+		Group string `json:"group_short_name"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{
+			"status":  400,
+			"message": "Email and role is required",
+		})
+		return
+	}
+
+	err := a.authUsecase.PromoteUser(req.Email, req.Role, req.Group)
+	if err != nil {
+		c.JSON(err.StatusCode, gin.H{
+			"status":  err.StatusCode,
+			"message": err.Message,
+			"error":   err.Error,
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"status":  200,
+		"message": "Users promoted successfully",
+	})
 }
 
 // RequestResetPassword implements AuthController.
@@ -191,45 +224,6 @@ func (a *authController) UpdateProfile(c *gin.Context) {
 		"message": "Profile updated successfully",
 	})
 }
-
-// UpdateProfile implements AuthController.
-// func (a *authController) UpdateProfile(c *gin.Context) {
-// 	authHeader := c.GetHeader("Authorization")
-
-// 	parts := strings.Split(authHeader, " ")
-// 	if len(parts) != 2 || parts[0] != "Bearer" {
-// 		c.JSON(401, gin.H{
-// 			"status":  401,
-// 			"message": "Invalid Authorization header format",
-// 		})
-// 		return
-// 	}
-// 	token := parts[1]
-
-// 	var user models.UserModel
-// 	if err := c.ShouldBindJSON(&user); err != nil {
-// 		c.JSON(400, gin.H{
-// 			"status":  400,
-// 			"message": "Invalid user data",
-// 		})
-// 		return
-// 	}
-
-// 	err := a.authUsecase.UpdateProfile(token, user)
-// 	if err != nil {
-// 		c.JSON(err.StatusCode, gin.H{
-// 			"status":  err.StatusCode,
-// 			"message": err.Message,
-// 			"error":   err.Error,
-// 		})
-// 		return
-// 	}
-
-// 	c.JSON(200, gin.H{
-// 		"status":  200,
-// 		"message": "Profile updated successfully",
-// 	})
-// }
 
 // RefreshToken implements AuthController.
 func (a *authController) RefreshToken(c *gin.Context) {

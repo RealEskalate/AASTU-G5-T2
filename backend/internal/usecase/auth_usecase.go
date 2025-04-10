@@ -9,6 +9,7 @@ import (
 )
 
 type AuthUsecase interface {
+	PromoteUser(string, string, string) *errors.CustomError
 	RegisterUser(models.UserModel) (string, string, *errors.CustomError)
 	SendInvitationToken(string, string) *errors.CustomError
 	SetPassword(string, string) *errors.CustomError
@@ -24,6 +25,16 @@ type authUsecase struct {
 	tokenService    utils.TokenService
 	passwordService utils.PasswordService
 	emailService    utils.EmailService
+}
+
+// PromoteUsers implements AuthUsecase.
+func (a *authUsecase) PromoteUser(email string, role string, group string) *errors.CustomError {
+	err := a.authRepo.PromoteUser(email, role, group)
+	if err != nil {
+		return &errors.CustomError{StatusCode: 500, Message: err.Message, Error: err.Error}
+	}
+	return nil
+
 }
 
 // RequestResetPassword implements AuthUsecase.
@@ -159,12 +170,7 @@ func (a *authUsecase) UpdateProfile(token string, user models.UserModel) *errors
 	if user.Department != "" && user.Department != existingUser.Department {
 		existingUser.Department = user.Department
 	}
-	// if user.Inactive != existingUser.Inactive {
-	// 	existingUser.Inactive = user.Inactive
-	// }
-	// if user.FirstLogin != existingUser.FirstLogin {
-	// 	existingUser.FirstLogin = user.FirstLogin
-	// }
+
 	if user.StudentID != existingUser.StudentID {
 		existingUser.StudentID = user.StudentID
 	}

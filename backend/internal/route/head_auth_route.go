@@ -13,7 +13,7 @@ func setupHeadAuthRoutes(router *gin.Engine, controller controller.AuthControlle
 	superAdminGroup.POST("/create_user", controller.CreateUser)
 	superAdminGroup.Use(middleware.AuthMiddleWare(tokenService), middleware.RoleMiddleWare(tokenService, "super_admin"))
 
-	superAdminGroup.PUT("/promote-user", nil)
+	superAdminGroup.PUT("/promote-user", controller.PromoteUsers)
 
 	headAuthGroup := router.Group("/head")
 	headAuthGroup.Use(middleware.AuthMiddleWare(tokenService), middleware.RoleMiddleWare(tokenService, "head", "super_admin"))
