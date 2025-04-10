@@ -22,10 +22,11 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	tokenService := utils.NewTokenService()
 	passwordService := utils.NewPasswordService()
 	emailService := utils.NewEmailService()
+	fileUploadService := utils.NewFileUploadService()
 
 	authRepository := repository.NewAuthRepo(db)
 	authUsecases := usecase.NewAuthUsecase(authRepository, tokenService, passwordService, emailService)
-	authControllers := controller.NewAuthController(authUsecases)
+	authControllers := controller.NewAuthController(authUsecases, fileUploadService)
 
 	setupHeadAuthRoutes(router, authControllers, tokenService)
 	setupUserRoute(router, authControllers, tokenService)

@@ -28,17 +28,39 @@ func (a *authRepo) SendResetPasswordEmail(email string, token string) *errors.Cu
 
 // UpdateUserByEmail implements AuthRepo.
 func (a *authRepo) UpdateUserByEmail(email string, user models.UserModel) *errors.CustomError {
+	log.Println("Updating user with email:", email, user, user.Gender)
 	query := `
-		UPDATE users 
-		SET name = $1, university = $2, leetcode = $3, codeforces = $4, github = $5, 
-			photo = $6, preferred_language = $7, hackerrank = $8, phone = $9, 
-			telegram_username = $10, linkedin = $11, student_id = $12, short_bio = $13, 
-			instagram = $14, birthday = $15, cv = $16, joined_date = $17, 
-			expected_graduation_date = $18, mentor_name = $19, tshirt_color = $20, 
-			tshirt_size = $21, gender = $22, code_of_conduct = $23, config = $24, 
-			department = $25, inactive = $26, firstlogin = $27 
-		WHERE email = $28
-	`
+	UPDATE users 
+	SET 
+		name = COALESCE(NULLIF($1, ''), NULL), 
+		university = COALESCE(NULLIF($2, ''), NULL), 
+		leetcode = COALESCE(NULLIF($3, ''), NULL),
+		codeforces = COALESCE(NULLIF($4, ''), NULL),
+		github = COALESCE(NULLIF($5, ''), NULL),
+		photo = COALESCE(NULLIF($6, ''), NULL),
+		preferred_language = COALESCE(NULLIF($7, ''), NULL),
+		hackerrank = COALESCE(NULLIF($8, ''), NULL),
+		phone = COALESCE(NULLIF($9, ''), NULL),
+		telegram_username = COALESCE(NULLIF($10, ''), NULL),
+		linkedin = COALESCE(NULLIF($11, ''), NULL),
+		student_id = COALESCE(NULLIF($12, ''), NULL),
+		short_bio = COALESCE(NULLIF($13, ''), NULL),
+		instagram = COALESCE(NULLIF($14, ''), NULL),
+		birthday = COALESCE(NULLIF($15, ''), NULL)::timestamp, -- Casting to timestamp
+		cv = COALESCE(NULLIF($16, ''), NULL),
+		joined_date = COALESCE(NULLIF($17, ''), NULL)::timestamp, -- Casting to timestamp
+		expected_graduation_date = COALESCE(NULLIF($18, ''), NULL)::timestamp, -- Casting to timestamp
+		mentor_name = COALESCE(NULLIF($19, ''), NULL),
+		tshirt_color = COALESCE(NULLIF($20, ''), NULL),
+		tshirt_size = COALESCE(NULLIF($21, ''), NULL),
+		gender = COALESCE(NULLIF($22, ''), NULL),
+		code_of_conduct = COALESCE(NULLIF($23, ''), NULL),
+		config = COALESCE(NULLIF($24, ''), NULL),
+		department = COALESCE(NULLIF($25, ''), NULL),
+		inactive = $26,
+		firstlogin = $27
+	WHERE email = $28
+`
 
 	_, err := a.db.Exec(query, user.Name, user.University, user.LeetCode, user.Codeforces, user.GitHub,
 		user.Photo, user.PreferredLanguage, user.HackerRank, user.Phone, user.TelegramUsername,

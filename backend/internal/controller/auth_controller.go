@@ -5,7 +5,9 @@ import (
 	"a2sv_hub/internal/usecase"
 	"a2sv_hub/internal/utils"
 	"log"
+	"os"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,7 +25,8 @@ type AuthController interface {
 }
 
 type authController struct {
-	authUsecase usecase.AuthUsecase
+	authUsecase       usecase.AuthUsecase
+	fileUploadService utils.FileUploadService
 }
 
 // RequestResetPassword implements AuthController.
@@ -87,11 +90,9 @@ func (a *authController) GetMyProfile(c *gin.Context) {
 	})
 
 }
-
-// UpdateProfile implements AuthController.
 func (a *authController) UpdateProfile(c *gin.Context) {
+	// Extract the token from the Authorization header
 	authHeader := c.GetHeader("Authorization")
-
 	parts := strings.Split(authHeader, " ")
 	if len(parts) != 2 || parts[0] != "Bearer" {
 		c.JSON(401, gin.H{
@@ -102,30 +103,133 @@ func (a *authController) UpdateProfile(c *gin.Context) {
 	}
 	token := parts[1]
 
-	var user models.UserModel
-	if err := c.ShouldBindJSON(&user); err != nil {
+	// Parse the form data (including file)
+	if err := c.Request.ParseMultipartForm(10 << 20); err != nil {
 		c.JSON(400, gin.H{
 			"status":  400,
-			"message": "Invalid user data",
+			"message": "Could not parse form data",
 		})
 		return
 	}
 
-	err := a.authUsecase.UpdateProfile(token, user)
-	if err != nil {
-		c.JSON(err.StatusCode, gin.H{
-			"status":  err.StatusCode,
-			"message": err.Message,
-			"error":   err.Error,
+	// Initialize the user model with form data
+	var user models.UserModel
+
+	// Bind the fields from form data to the user model
+	user.Name = c.PostForm("name")
+	user.University = c.PostForm("university")
+	user.LeetCode = c.PostForm("leetcode")
+	user.Codeforces = c.PostForm("codeforces")
+	user.GitHub = c.PostForm("github")
+	user.PreferredLanguage = c.PostForm("preferred_language")
+	user.HackerRank = c.PostForm("hackerrank")
+	user.Phone = c.PostForm("phone")
+	user.TelegramUsername = c.PostForm("telegram_username")
+	user.TelegramUID = c.PostForm("telegram_uid")
+	user.LinkedIn = c.PostForm("linkedin")
+	user.StudentID = c.PostForm("student_id")
+	user.ShortBio = c.PostForm("short_bio")
+	user.Instagram = c.PostForm("instagram")
+	// Parse and convert the `birthday` field from form
+	if birthday := c.PostForm("birthday"); birthday != "" {
+		parsedBirthday, err := time.Parse("2006-01-02", birthday)
+		if err == nil {
+			user.Birthday = parsedBirthday
+		}
+	}
+
+	user.CV = c.PostForm("cv")
+
+	// Continue binding other fields...
+	if expectedGraduationDate := c.PostForm("expected_graduation_date"); expectedGraduationDate != "" {
+		parsedGraduationDate, err := time.Parse("2006-01-02", expectedGraduationDate)
+		if err == nil {
+			user.ExpectedGraduationDate = parsedGraduationDate
+		}
+	}
+	user.TShirtColor = c.PostForm("tshirt_color")
+	user.TShirtSize = c.PostForm("tshirt_size")
+	user.Gender = c.PostForm("gender")
+	user.Password = c.PostForm("password")
+	user.Department = c.PostForm("department")
+
+	user.UpdatedAt = time.Now()
+
+	file, err := c.FormFile("photo")
+	if err == nil { // Check if an image file is uploaded
+		// Save the file temporarily
+		tempPath := "./tmp/" + file.Filename
+		if err := c.SaveUploadedFile(file, tempPath); err != nil {
+			c.JSON(500, gin.H{"error": "Unable to save file"})
+			return
+		}
+		defer os.Remove(tempPath)
+
+		// Call the file upload service to get the URL for the image
+		imageURL, err := a.fileUploadService.UploadFile(tempPath, file.Filename)
+		if err != nil {
+			c.JSON(500, gin.H{"error": err.Error, "message": err.Message})
+			return
+		}
+		user.Photo = imageURL // Set the photo URL to the user model
+	}
+
+	// Now update the profile with the updated user object
+	customerr := a.authUsecase.UpdateProfile(token, user)
+	if customerr != nil {
+		c.JSON(customerr.StatusCode, gin.H{
+			"status":  customerr.StatusCode,
+			"message": customerr.Message,
+			"error":   customerr.Error,
 		})
 		return
 	}
 
+	// Return success response
 	c.JSON(200, gin.H{
 		"status":  200,
 		"message": "Profile updated successfully",
 	})
 }
+
+// UpdateProfile implements AuthController.
+// func (a *authController) UpdateProfile(c *gin.Context) {
+// 	authHeader := c.GetHeader("Authorization")
+
+// 	parts := strings.Split(authHeader, " ")
+// 	if len(parts) != 2 || parts[0] != "Bearer" {
+// 		c.JSON(401, gin.H{
+// 			"status":  401,
+// 			"message": "Invalid Authorization header format",
+// 		})
+// 		return
+// 	}
+// 	token := parts[1]
+
+// 	var user models.UserModel
+// 	if err := c.ShouldBindJSON(&user); err != nil {
+// 		c.JSON(400, gin.H{
+// 			"status":  400,
+// 			"message": "Invalid user data",
+// 		})
+// 		return
+// 	}
+
+// 	err := a.authUsecase.UpdateProfile(token, user)
+// 	if err != nil {
+// 		c.JSON(err.StatusCode, gin.H{
+// 			"status":  err.StatusCode,
+// 			"message": err.Message,
+// 			"error":   err.Error,
+// 		})
+// 		return
+// 	}
+
+// 	c.JSON(200, gin.H{
+// 		"status":  200,
+// 		"message": "Profile updated successfully",
+// 	})
+// }
 
 // RefreshToken implements AuthController.
 func (a *authController) RefreshToken(c *gin.Context) {
@@ -329,6 +433,6 @@ func (a *authController) CreateUser(c *gin.Context) {
 	})
 }
 
-func NewAuthController(authUsecase usecase.AuthUsecase) AuthController {
-	return &authController{authUsecase: authUsecase}
+func NewAuthController(authUsecase usecase.AuthUsecase, fileUploadService utils.FileUploadService) AuthController {
+	return &authController{authUsecase: authUsecase, fileUploadService: fileUploadService}
 }
