@@ -6,6 +6,7 @@ import (
 	"a2sv_hub/internal/utils"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -21,6 +22,7 @@ type AuthController interface {
 	RefreshToken(c *gin.Context)
 	UpdateProfile(c *gin.Context)
 	GetMyProfile(c *gin.Context)
+	UserProfile(c *gin.Context)
 	RequestResetPassword(c *gin.Context)
 	CreateUser(c *gin.Context) // temp to create super admin user
 }
@@ -28,6 +30,34 @@ type AuthController interface {
 type authController struct {
 	authUsecase       usecase.AuthUsecase
 	fileUploadService utils.FileUploadService
+}
+
+// UserProfile implements AuthController.
+func (a *authController) UserProfile(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(400, gin.H{
+			"status":  400,
+			"message": "Invalid user ID",
+		})
+		return
+	}
+
+	profile, customErr := a.authUsecase.UserProfile(id)
+	if err != nil {
+		c.JSON(customErr.StatusCode, gin.H{
+			"status":  customErr.StatusCode,
+			"message": customErr.Message,
+			"error":   customErr.Error,
+		})
+		return
+	}
+
+	userProfile := utils.MapToUserProfile(*profile)
+	c.JSON(200, gin.H{
+		"status":  200,
+		"profile": userProfile,
+	})
 }
 
 // PromoteUsers implements AuthController.

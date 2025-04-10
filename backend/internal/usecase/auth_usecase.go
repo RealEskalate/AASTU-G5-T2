@@ -18,6 +18,7 @@ type AuthUsecase interface {
 	UpdateProfile(token string, user models.UserModel) *errors.CustomError
 	GetProfileByEmail(token string) (models.UserModel, *errors.CustomError)
 	RequestResetPassword(string) *errors.CustomError
+	UserProfile(id int) (*models.UserModel, *errors.CustomError)
 }
 
 type authUsecase struct {
@@ -25,6 +26,16 @@ type authUsecase struct {
 	tokenService    utils.TokenService
 	passwordService utils.PasswordService
 	emailService    utils.EmailService
+}
+
+// UserProfile implements AuthUsecase.
+func (a *authUsecase) UserProfile(id int) (*models.UserModel, *errors.CustomError) {
+	userProfile, err := a.authRepo.GetUserProfileByID(id)
+	if err != nil {
+		return &models.UserModel{}, err
+	}
+
+	return &userProfile, nil
 }
 
 // PromoteUsers implements AuthUsecase.

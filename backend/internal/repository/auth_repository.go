@@ -15,10 +15,111 @@ type AuthRepo interface {
 	SetPassword(email string, password string) *errors.CustomError
 	GetUserByEmail(email string) (models.UserModel, *errors.CustomError)
 	UpdateUserByEmail(email string, user models.UserModel) *errors.CustomError
+	GetUserProfileByID(id int) (models.UserModel, *errors.CustomError)
 }
 
 type authRepo struct {
 	db *sql.DB
+}
+
+// GetUserProfileByID implements AuthRepo.
+func (a *authRepo) GetUserProfileByID(id int) (models.UserModel, *errors.CustomError) {
+	var user models.UserModel
+
+	query := `
+		SELECT 
+			u.id,
+			COALESCE(r.type, '') AS role,
+			COALESCE(u.name, '') AS name,
+			COALESCE(c.name, '') AS country,
+			COALESCE(u.university, '') AS university,
+			u.email,
+			COALESCE(u.leetcode, '') AS leetcode,
+			COALESCE(u.codeforces, '') AS codeforces,
+			COALESCE(u.github, '') AS github,
+			COALESCE(u.photo, '') AS photo,
+			COALESCE(u.preferred_language, '') AS preferred_language,
+			COALESCE(u.hackerrank, '') AS hackerrank,
+			COALESCE(g.short_name, '') AS group_name,
+			COALESCE(u.phone, '') AS phone,
+			COALESCE(u.telegram_username, '') AS telegram_username,
+			COALESCE(u.telegram_uid, '') AS telegram_uid,
+			COALESCE(u.linkedin, '') AS linkedin,
+			COALESCE(u.student_id, '') AS student_id,
+			COALESCE(u.short_bio, '') AS short_bio,
+			COALESCE(u.instagram, '') AS instagram,
+			COALESCE(u.birthday, '1970-01-01') AS birthday,
+			COALESCE(u.cv, '') AS cv,
+			COALESCE(u.joined_date, '1970-01-01') AS joined_date,
+			COALESCE(u.expected_graduation_date, '1970-01-01') AS expected_graduation_date,
+			COALESCE(u.mentor_name, '') AS mentor_name,
+			COALESCE(u.tshirt_color, '') AS tshirt_color,
+			COALESCE(u.tshirt_size, '') AS tshirt_size,
+			COALESCE(u.gender, '') AS gender,
+			COALESCE(u.code_of_conduct, '') AS code_of_conduct,
+			COALESCE(u.password, '') AS password,
+			COALESCE(u.created_at, NOW()) AS created_at,
+			COALESCE(u.updated_at, NOW()) AS updated_at,
+			COALESCE(u.config, '') AS config,
+			COALESCE(u.department, '') AS department,
+			COALESCE(u.inactive, false) AS inactive,
+			COALESCE(u.firstlogin, false) AS firstlogin
+		FROM users u
+		LEFT JOIN countries c ON u.country_id = c.id
+		LEFT JOIN roles r ON u.role_id = r.id
+		LEFT JOIN groups g ON u.group_id = g.id
+		WHERE u.id = $1
+	`
+
+	err := a.db.QueryRow(query, id).Scan(
+		&user.ID,
+		&user.Role,
+		&user.Name,
+		&user.Country,
+		&user.University,
+		&user.Email,
+		&user.LeetCode,
+		&user.Codeforces,
+		&user.GitHub,
+		&user.Photo,
+		&user.PreferredLanguage,
+		&user.HackerRank,
+		&user.Group,
+		&user.Phone,
+		&user.TelegramUsername,
+		&user.TelegramUID,
+		&user.LinkedIn,
+		&user.StudentID,
+		&user.ShortBio,
+		&user.Instagram,
+		&user.Birthday,
+		&user.CV,
+		&user.JoinedDate,
+		&user.ExpectedGraduationDate,
+		&user.MentorName,
+		&user.TShirtColor,
+		&user.TShirtSize,
+		&user.Gender,
+		&user.CodeOfConduct,
+		&user.Password,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+		&user.Config,
+		&user.Department,
+		&user.Inactive,
+		&user.FirstLogin,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return models.UserModel{}, &errors.CustomError{StatusCode: 404, Message: "User not found"}
+		}
+		log.Println("DB error fetching user:", err)
+		return models.UserModel{}, &errors.CustomError{StatusCode: 500, Message: "Error fetching user", Error: err}
+	}
+
+	return user, nil
+
 }
 
 // PromoteUsers implements AuthRepo.

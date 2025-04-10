@@ -21,5 +21,5 @@ func setupUserRoute(router *gin.Engine, controller controller.AuthController, to
 	userGroup.PUT("/myprofile", controller.UpdateProfile) // with access token file and other data
 	userGroup.GET("/myprofile", controller.GetMyProfile)  // with access token get user profile
 
-	userGroup.GET("/user-profile", nil) // with access token get all user profile
+	userGroup.GET("/user-profile/:id", controller.UserProfile) // with access token get all user profile
 }
