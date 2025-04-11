@@ -2,25 +2,35 @@ package main
 
 import (
 	"a2sv_hub/internal/infrastructure"
+	"a2sv_hub/internal/route"
 	"log"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
 	// Initialize database connection
+
+	err := godotenv.Load("D:/AASTU-G5-T2/backend/.env")
+	if err != nil {
+		log.Println("No .env file found, using system env vars")
+	}
+
 	db, err := infrastructure.NewDB()
 	if err != nil {
 		log.Fatalf("Database connection failed: %v", err)
 	}
-	defer db.Close() // Ensure the connection is closed when main exits
+	defer db.Close()
 
-	// If we reach here, the connection is successful
-	log.Println("Successfully connected to PostgreSQL database!")
-
-	// Optional: Run a simple query to further verify
-	var version string
-	err = db.QueryRow("SELECT version()").Scan(&version)
-	if err != nil {
-		log.Fatalf("Failed to query database version: %v", err)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
 	}
-	log.Printf("PostgreSQL version: %s", version)
+
+	r := route.SetupRouter(db)
+
+	if err := r.Run(":" + port); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
 }

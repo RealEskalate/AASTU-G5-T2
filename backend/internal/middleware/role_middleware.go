@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AuthMiddleWare(tokenService utils.TokenService) gin.HandlerFunc {
+func RoleMiddleWare(tokenService utils.TokenService, allowedRoles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		clientToken := c.Request.Header.Get("Authorization")
 
@@ -30,11 +30,18 @@ func AuthMiddleWare(tokenService utils.TokenService) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-
 		c.SetCookie("email", email, 3600, "/", "", false, true)
 		c.SetCookie("token_type", token_type, 3600, "/", "", false, true)
 		c.SetCookie("role", role, 3600, "/", "", false, true)
-		c.Next()
+
+		for _, allowed := range allowedRoles {
+			if role == allowed {
+				c.Next()
+				return
+			}
+		}
+
+		c.AbortWithStatusJSON(403, gin.H{"error": "You are not authorized to access this"})
 
 	}
 }
