@@ -1,0 +1,16 @@
+package route
+
+import (
+	"a2sv_hub/internal/controller"
+	"a2sv_hub/internal/middleware"
+	"a2sv_hub/internal/utils"
+
+	"github.com/gin-gonic/gin"
+)
+
+func setupSubmissionRoutes(router *gin.Engine, controller controller.SubmissionController, tokenService utils.TokenService) {
+	subRoute := router.Group("/submission")
+	subRoute.Use(middleware.AuthMiddleWare(tokenService))
+
+	subRoute.POST(":problemID", controller.SubmitProblem)
+}

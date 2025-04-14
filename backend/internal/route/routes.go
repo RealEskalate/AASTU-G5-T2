@@ -36,5 +36,10 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	groupControllers := controller.NewGroupController(groupUsecases)
 	setupGroupRoutes(router, groupControllers, tokenService)
 
+	submissionRepository := repository.NewSubmissionRepository(db)
+	submissionUsecase := usecase.NewSubmissionUsecase(submissionRepository)
+	submissionControllers := controller.NewSubmissionController(submissionUsecase)
+	setupSubmissionRoutes(router, submissionControllers, tokenService)
+
 	return router
 }
