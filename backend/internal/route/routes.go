@@ -17,7 +17,7 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	log.Println("Successfully connected to PostgreSQL database!")
 
 	router := gin.Default()
-	router.LoadHTMLFiles("D:/AASTU-G5-T2/backend/templates/set_password.html")
+	router.LoadHTMLFiles("backend/templates/set_password.html")
 
 	tokenService := utils.NewTokenService()
 	passwordService := utils.NewPasswordService()
