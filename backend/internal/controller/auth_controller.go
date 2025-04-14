@@ -405,13 +405,13 @@ func (a *authController) SendInvitationToken(c *gin.Context) {
 		return
 	}
 
-	// if !strings.HasSuffix(requestBody.Email, "@a2sv.org") {
-	// 	c.JSON(400, gin.H{
-	// 		"status":  400,
-	// 		"message": "Email must be in the format name.lastname@a2sv.org",
-	// 	})
-	// 	return
-	// }
+	if !strings.HasSuffix(requestBody.Email, "@a2sv.org") {
+		c.JSON(400, gin.H{
+			"status":  400,
+			"message": "Email must be in the format name.lastname@a2sv.org",
+		})
+		return
+	}
 
 	err := a.authUsecase.SendInvitationToken(requestBody.Email, requestBody.GroupShortName)
 	if err != nil {
