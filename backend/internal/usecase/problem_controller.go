@@ -7,8 +7,7 @@ import (
 )
 
 type ProblemUsecase interface {
-	GetAllProblems() ([]models.ProblemModel, *errors.CustomError)
-	
+	GetAllProblems() ([]models.Problem, *errors.CustomError)
 }
 
 type problemUsecase struct {
@@ -21,7 +20,7 @@ func NewProblemUsecase(repo repository.ProblemRepository) ProblemUsecase {
 	}
 }
 
-func (p *problemUsecase) GetAllProblems() ([]models.ProblemModel, *errors.CustomError) {
+func (p *problemUsecase) GetAllProblems() ([]models.Problem, *errors.CustomError) {
 	problems, err := p.problemRepo.GetAllProblems()
 	if err != nil {
 		return nil, err

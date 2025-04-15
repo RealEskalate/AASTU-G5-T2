@@ -1,24 +1,17 @@
 package models
 
-type GroupModel struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	ShortName   string `json:"short_name"`
-	Description string `json:"description"`
-	Country     string `json:"country"`
-	CreatedAt   string `json:"created_at"`
-	UpdatedAt   string `json:"updated_at"`
-	HOA         *int   `json:"hoa_id"`
-}
+import "time"
 
-type GroupResponse struct {
-	ID          int                   `json:"id"`
-	Name        string                `json:"name"`
-	ShortName   string                `json:"short_name"`
-	Description string                `json:"description"`
-	Country     string                `json:"country"`
-	HOAName     string                `json:"hoa_name"`
-	Hoa_id      *int                  `json:"hoa_id"`
-	StudentList []UserProfileResponse `json:"students_list"`
-	HeadsList   []UserProfileResponse `json:"heads_list"`
+type Problem struct {
+	ID          int       `json:"id"`
+	ContestID   *int      `json:"contest_id,omitempty"`
+	TrackID     *int      `json:"track_id,omitempty"`
+	Name        string    `json:"name"`
+	Difficulty  string    `json:"difficulty"`
+	Tags        []string  `json:"tags"`
+	Platform    string    `json:"platform"`
+	Link        string    `json:"link"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	UsersSolved []int     `json:"users_solved,omitempty"` // populated at query time
 }
