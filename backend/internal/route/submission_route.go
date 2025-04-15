@@ -12,5 +12,6 @@ func setupSubmissionRoutes(router *gin.Engine, controller controller.SubmissionC
 	subRoute := router.Group("/submission")
 	subRoute.Use(middleware.AuthMiddleWare(tokenService))
 
-	subRoute.POST(":problemID", controller.SubmitProblem)
+	subRoute.POST("/", controller.SubmitProblem)
+	subRoute.GET(":submissionID", controller.GetSubmissionById)
 }
