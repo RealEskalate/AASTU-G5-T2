@@ -12,7 +12,7 @@ import (
 func main() {
 	// Initialize database connection
 
-	err := godotenv.Load("D:/AASTU-G5-T2/backend/.env")
+	err := godotenv.Load("../.env")
 	if err != nil {
 		log.Println("No .env file found, using system env vars")
 	}
