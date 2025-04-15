@@ -33,6 +33,3 @@ Thumbs.db
 *.test
 *.out
 
-# Go-specific files
-go.sum
-!go.mod
