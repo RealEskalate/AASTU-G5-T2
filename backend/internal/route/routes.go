@@ -46,5 +46,10 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	problemControllers := controller.NewProblemController(problemUsecases)
 	setupProblemRoutes(router, problemControllers, tokenService)
 	
+	trackRepository := repository.NewTrackRepository(db)
+	trackUsecases := usecase.NewTrackUsecase(trackRepository)
+	trackControllers := controller.NewTrackController(trackUsecases)
+	setupTrackRoutes(router, trackControllers, tokenService)
+
 	return router
 }
