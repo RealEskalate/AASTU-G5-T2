@@ -18,8 +18,4 @@ func setupHeadAuthRoutes(router *gin.Engine, controller controller.AuthControlle
 	headAuthGroup.Use(middleware.AuthMiddleWare(tokenService), middleware.RoleMiddleWare(tokenService, "head", "super_admin"))
 	headAuthGroup.POST("/send-invitation-token", controller.SendInvitationToken)
 
-	headAuthGroup.POST("/group", nil)
-	headAuthGroup.PUT("/group/:group_id", nil)
-	headAuthGroup.DELETE("/group/:group_id", nil)
-
 }

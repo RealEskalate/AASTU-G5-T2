@@ -17,7 +17,7 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	log.Println("Successfully connected to PostgreSQL database!")
 
 	router := gin.Default()
-	router.LoadHTMLFiles("D:/AASTU-G5-T2/backend/templates/set_password.html")
+	router.LoadHTMLFiles("../templates/set_password.html")
 
 	tokenService := utils.NewTokenService()
 	passwordService := utils.NewPasswordService()
@@ -41,5 +41,10 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	submissionControllers := controller.NewSubmissionController(submissionUsecase)
 	setupSubmissionRoutes(router, submissionControllers, tokenService)
 
+	problemRepository := repository.NewProblemRepository(db)
+	problemUsecases := usecase.NewProblemUsecase(problemRepository)
+	problemControllers := controller.NewProblemController(problemUsecases)
+	setupProblemRoutes(router, problemControllers, tokenService)
+	
 	return router
 }

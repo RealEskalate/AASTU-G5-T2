@@ -38,7 +38,7 @@ func (e *emailService) SendResetPasswordEmail(receiver string, token string) err
 
 You have received a password reset link. Please click the link below to set a new password:
 
-http://localhost:8080/auth/request-reset-password-link?token=%s
+https://aastu-g5-t2.onrender.com/auth/request-reset-password-link?token=%s
 
 If you did not request this, please ignore this email.
 
@@ -86,7 +86,7 @@ func (e *emailService) SendInvitationEmail(receiver string, token string) error 
 
 You have received an invitation to set your password. Please click the link below to set a new password:
 
-http://localhost:8080/auth/set-password?token=%s
+https://aastu-g5-t2.onrender.com/auth/set-password?token=%s
 
 If you did not request this, please ignore this email.
 
