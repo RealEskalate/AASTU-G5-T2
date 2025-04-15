@@ -17,7 +17,7 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	log.Println("Successfully connected to PostgreSQL database!")
 
 	router := gin.Default()
-	router.LoadHTMLFiles("D:/AASTU-G5-T2/backend/templates/set_password.html")
+	router.LoadHTMLFiles("C:/Users/redie/Desktop/A2SV/A2SV-HUB-Backend/AASTU-G5-T2/backend/templates/set_password.html")
 
 	tokenService := utils.NewTokenService()
 	passwordService := utils.NewPasswordService()
@@ -35,6 +35,11 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	groupUsecases := usecase.NewGroupUsecase(groupRepository, tokenService, emailService)
 	groupControllers := controller.NewGroupController(groupUsecases)
 	setupGroupRoutes(router, groupControllers, tokenService)
+
+	trackRepository := repository.NewTrackRepository(db)
+	trackUsecases := usecase.NewTrackUsecase(trackRepository)
+	trackControllers := controller.NewTrackController(trackUsecases)
+	setupTrackRoutes(router, trackControllers, tokenService)
 
 	return router
 }
