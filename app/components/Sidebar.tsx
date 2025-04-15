@@ -98,7 +98,7 @@ function Sidebar() {
             <div className="text-gray-400 flex items-center gap-2 py-2 px-4 mx-3 rounded-lg ml-6">
               <div className="border-l h-12"></div>
               <Link
-                href="/"
+                href="/progress"
                 className="flex items-center justify-between w-full hover:bg-gray-100 hover:rounded-lg p-3 px-4"
               >
                 {!isCollapsed && <span>Progress</span>}
