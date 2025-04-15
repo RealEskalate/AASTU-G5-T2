@@ -9,6 +9,7 @@ import (
 
 type SubmissionUsecase interface {
 	Submit(submission models.SubmissionModel) *errors.CustomError
+	GetSubmissionById(id int) (models.SubmissionModel, *errors.CustomError)
 }
 
 type submissionUsecase struct {
@@ -24,4 +25,13 @@ func (u *submissionUsecase) Submit(sub models.SubmissionModel) *errors.CustomErr
 	sub.UpdatedAt = sub.CreatedAt
 	sub.Verified = false // default on submit
 	return u.repo.CreateSubmission(sub)
+}
+
+func (u *submissionUsecase) GetSubmissionById(id int) (models.SubmissionModel, *errors.CustomError) {
+	submission, err := u.repo.GetSubmissionById(id)
+	if err != nil {
+		return models.SubmissionModel{}, err
+	}
+
+	return submission, nil
 }

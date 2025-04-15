@@ -8,6 +8,7 @@ import (
 
 type SubmissionRepository interface {
 	CreateSubmission(submission models.SubmissionModel) *errors.CustomError
+	GetSubmissionById(id int) (models.SubmissionModel, *errors.CustomError)
 }
 
 type submissionRepository struct {
@@ -37,4 +38,22 @@ func (r *submissionRepository) CreateSubmission(sub models.SubmissionModel) *err
 		return &errors.CustomError{StatusCode: 400, Message: "Failed to insert submission", Error: err}
 	}
 	return nil
+}
+
+func (r *submissionRepository) GetSubmissionById(id int) (models.SubmissionModel, *errors.CustomError) {
+	var submission models.SubmissionModel
+	query := `SELECT * FROM submissions WHERE id = $1`
+	err := r.db.QueryRow(query, id).Scan(&submission.ID, &submission.ProblemID,
+		&submission.UserID, &submission.TimeSpent,
+		&submission.Tries, &submission.Code,
+		&submission.Language, &submission.CreatedAt,
+		&submission.UpdatedAt, &submission.Verified,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return models.SubmissionModel{}, &errors.CustomError{StatusCode: 404, Message: "Submission not found"}
+		}
+		return models.SubmissionModel{}, &errors.CustomError{StatusCode: 400, Message: "Failed to retrieve submission", Error: err}
+	}
+	return submission, nil
 }
