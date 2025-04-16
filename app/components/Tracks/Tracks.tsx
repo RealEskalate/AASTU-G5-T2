@@ -1,5 +1,6 @@
 import React from "react";
 import TracksProgress from "./TracksProgress";
+import ProgressStats from "./ProgressStat";
 
 function Tracks() {
   return (
@@ -9,6 +10,9 @@ function Tracks() {
         <p className="text-gray-400">All</p>
       </div>
       <TracksProgress/>
+      <div className="max-w-md mx-auto mt-10">
+    </div>
+      <ProgressStats />
     </div>
   );
 }
