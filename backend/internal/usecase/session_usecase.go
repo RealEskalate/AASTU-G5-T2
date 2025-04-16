@@ -12,10 +12,30 @@ type SessionUsecase interface {
 	GetSessionById(id int) (models.SessionModel, *errors.CustomError)
 	UpdateSession(id int, sessionModel models.SessionModel) *errors.CustomError
 	DeleteSession(id int) *errors.CustomError
+	AddGroupToSession(id int, groupLecturerIDs map[string]int) *errors.CustomError
 }
 
 type sessionUsecase struct {
 	sessionRepo repository.SessionRepository
+}
+
+// AddGroupToSession implements SessionUsecase.
+func (s *sessionUsecase) AddGroupToSession(id int, groupLecturerIDs map[string]int) *errors.CustomError {
+	session, err := s.sessionRepo.GetSessionById(id)
+	if err != nil {
+		return err
+	}
+
+	// Merge existing and new group_lecturer_id, ensuring uniqueness
+	for groupID, lecturerID := range groupLecturerIDs {
+		session.GroupLecturerID[groupID] = lecturerID
+	}
+
+	// Update the session with the merged group_lecturer_id
+	if err := s.sessionRepo.UpdateSession(id, session); err != nil {
+		return err
+	}
+	return nil
 }
 
 // CreateSession implements SessionUsecase.
