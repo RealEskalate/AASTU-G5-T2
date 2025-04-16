@@ -23,21 +23,15 @@ func (s *sessionRepository) CreateSession(sessionModel models.SessionModel) *err
 	query := `
 		INSERT INTO sessions (
 			name, description, start_time, end_time, meet_link, location, 
-			resource_link, recording_link, calendar_event_id, lecturer_id, stipend_amount, created_at, updated_at
+			resource_link, recording_link, calendar_event_id, stipend_amount, created_at, updated_at
 		)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW())
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW())
+		RETURNING id
 	`
 	emptyString := ""
 
 	// Set empty strings explicitly for nullable string fields
-	if sessionModel.Name == "" {
-		sessionModel.Name = ""
-	}
-	if sessionModel.Description == "" {
-		sessionModel.Description = ""
-	}
 	if sessionModel.MeetLink == nil {
-
 		sessionModel.MeetLink = &emptyString
 	}
 	if sessionModel.Location == nil {
@@ -53,26 +47,47 @@ func (s *sessionRepository) CreateSession(sessionModel models.SessionModel) *err
 		sessionModel.CalendarEventID = &emptyString
 	}
 
-	var lecturerID interface{} = nil
-	if sessionModel.LecturerID != nil {
-		var exists bool
-		err := s.db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE id = $1)", sessionModel.LecturerID).Scan(&exists)
+	// Validate group_lecturer_id map
+	for groupID, lecturerID := range sessionModel.GroupLecturerID {
+		var groupExists bool
+		err := s.db.QueryRow("SELECT EXISTS(SELECT 1 FROM groups WHERE short_name = $1)", groupID).Scan(&groupExists)
+		if err != nil {
+			return &errors.CustomError{Message: "failed to check group existence", StatusCode: 500, Error: err}
+		}
+		if !groupExists {
+			return &errors.CustomError{Message: "group not found", StatusCode: 404, Error: nil}
+		}
+
+		var lecturerExists bool
+		err = s.db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE id = $1)", lecturerID).Scan(&lecturerExists)
 		if err != nil {
 			return &errors.CustomError{Message: "failed to check lecturer existence", StatusCode: 500, Error: err}
 		}
-		if exists {
-			lecturerID = sessionModel.LecturerID
+		if !lecturerExists {
+			return &errors.CustomError{Message: "lecturer not found", StatusCode: 404, Error: nil}
 		}
 	}
 
-	_, err := s.db.Exec(
+	var sessionID int
+	err := s.db.QueryRow(
 		query,
 		sessionModel.Name, sessionModel.Description, sessionModel.StartTime, sessionModel.EndTime,
 		sessionModel.MeetLink, sessionModel.Location, sessionModel.ResourceLink, sessionModel.RecordingLink,
-		sessionModel.CalendarEventID, lecturerID, sessionModel.StipendAmount,
-	)
+		sessionModel.CalendarEventID, sessionModel.StipendAmount,
+	).Scan(&sessionID)
 	if err != nil {
 		return &errors.CustomError{Message: "failed to create session", StatusCode: 500, Error: err}
+	}
+
+	// Insert group_lecturer_id mappings into session_group_lecturers table
+	for groupID, lecturerID := range sessionModel.GroupLecturerID {
+		_, err := s.db.Exec(
+			"INSERT INTO session_group_lecturers (session_id, group_short_name, lecturer_id) VALUES ($1, $2, $3)",
+			sessionID, groupID, lecturerID,
+		)
+		if err != nil {
+			return &errors.CustomError{Message: "failed to associate session with group and lecturer", StatusCode: 500, Error: err}
+		}
 	}
 
 	return nil
@@ -80,8 +95,6 @@ func (s *sessionRepository) CreateSession(sessionModel models.SessionModel) *err
 
 // DeleteSession implements SessionRepository.
 func (s *sessionRepository) DeleteSession(id int) *errors.CustomError {
-	query := `DELETE FROM sessions WHERE id = $1`
-
 	// Check if the session exists before attempting to delete it
 	var exists bool
 	err := s.db.QueryRow("SELECT EXISTS(SELECT 1 FROM sessions WHERE id = $1)", id).Scan(&exists)
@@ -92,7 +105,14 @@ func (s *sessionRepository) DeleteSession(id int) *errors.CustomError {
 		return &errors.CustomError{Message: "session not found", StatusCode: 404, Error: nil}
 	}
 
-	_, err = s.db.Exec(query, id)
+	// Delete from session_group_lecturers table first to maintain referential integrity
+	_, err = s.db.Exec("DELETE FROM session_group_lecturers WHERE session_id = $1", id)
+	if err != nil {
+		return &errors.CustomError{Message: "failed to delete session group lecturers", StatusCode: 500, Error: err}
+	}
+
+	// Delete from sessions table
+	_, err = s.db.Exec("DELETE FROM sessions WHERE id = $1", id)
 	if err != nil {
 		return &errors.CustomError{Message: "failed to delete session", StatusCode: 500, Error: err}
 	}
@@ -104,7 +124,7 @@ func (s *sessionRepository) DeleteSession(id int) *errors.CustomError {
 func (s *sessionRepository) GetAllSessions() ([]models.SessionModel, *errors.CustomError) {
 	query := `
 		SELECT id, name, description, start_time, end_time, meet_link, location, 
-			resource_link, recording_link, calendar_event_id, lecturer_id, stipend_amount, created_at, updated_at
+			resource_link, recording_link, calendar_event_id, stipend_amount, created_at, updated_at
 		FROM sessions;
 	`
 
@@ -117,7 +137,6 @@ func (s *sessionRepository) GetAllSessions() ([]models.SessionModel, *errors.Cus
 	var sessions []models.SessionModel
 	for rows.Next() {
 		var session models.SessionModel
-		var lecturerID sql.NullInt64
 
 		err := rows.Scan(
 			&session.ID,
@@ -130,7 +149,6 @@ func (s *sessionRepository) GetAllSessions() ([]models.SessionModel, *errors.Cus
 			&session.ResourceLink,
 			&session.RecordingLink,
 			&session.CalendarEventID,
-			&lecturerID, // read as nullable
 			&session.StipendAmount,
 			&session.CreatedAt,
 			&session.UpdatedAt,
@@ -139,11 +157,27 @@ func (s *sessionRepository) GetAllSessions() ([]models.SessionModel, *errors.Cus
 			return nil, &errors.CustomError{Message: "failed to scan session", StatusCode: 500, Error: err}
 		}
 
-		if lecturerID.Valid {
-			id := int(lecturerID.Int64)
-			session.LecturerID = &id
-		} else {
-			session.LecturerID = nil
+		// Fetch group_lecturer_id mappings for the session
+		groupLecturerQuery := `
+			SELECT group_short_name, lecturer_id 
+			FROM session_group_lecturers 
+			WHERE session_id = $1;
+		`
+		groupLecturerRows, err := s.db.Query(groupLecturerQuery, session.ID)
+		if err != nil {
+			return nil, &errors.CustomError{Message: "failed to query session group lecturers", StatusCode: 500, Error: err}
+		}
+		defer groupLecturerRows.Close()
+
+		session.GroupLecturerID = make(map[string]int)
+		for groupLecturerRows.Next() {
+			var lecturerID int
+			var groupID string
+			err := groupLecturerRows.Scan(&groupID, &lecturerID)
+			if err != nil {
+				return nil, &errors.CustomError{Message: "failed to scan session group lecturer", StatusCode: 500, Error: err}
+			}
+			session.GroupLecturerID[groupID] = lecturerID
 		}
 
 		sessions = append(sessions, session)
@@ -156,7 +190,7 @@ func (s *sessionRepository) GetAllSessions() ([]models.SessionModel, *errors.Cus
 func (s *sessionRepository) GetSessionById(id int) (models.SessionModel, *errors.CustomError) {
 	query := `
 		SELECT id, name, description, start_time, end_time, meet_link, location, 
-			resource_link, recording_link, calendar_event_id, lecturer_id, stipend_amount, created_at, updated_at
+			resource_link, recording_link, calendar_event_id, stipend_amount, created_at, updated_at
 		FROM sessions WHERE id = $1;
 	`
 
@@ -172,16 +206,38 @@ func (s *sessionRepository) GetSessionById(id int) (models.SessionModel, *errors
 		&session.ResourceLink,
 		&session.RecordingLink,
 		&session.CalendarEventID,
-		&session.LecturerID,
 		&session.StipendAmount,
 		&session.CreatedAt,
 		&session.UpdatedAt,
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return session, &errors.CustomError{Message: "session not found", StatusCode: 404, Error: err}
+			return session, &errors.CustomError{Message: "session not found", StatusCode: 404, Error: nil}
 		}
 		return session, &errors.CustomError{Message: "failed to query session", StatusCode: 500, Error: err}
+	}
+
+	// Fetch group_lecturer_id mappings for the session
+	groupLecturerQuery := `
+		SELECT group_short_name, lecturer_id 
+		FROM session_group_lecturers 
+		WHERE session_id = $1;
+	`
+	groupLecturerRows, err := s.db.Query(groupLecturerQuery, session.ID)
+	if err != nil {
+		return session, &errors.CustomError{Message: "failed to query session group lecturers", StatusCode: 500, Error: err}
+	}
+	defer groupLecturerRows.Close()
+
+	session.GroupLecturerID = make(map[string]int)
+	for groupLecturerRows.Next() {
+		var lecturerID int
+		var groupID string
+		err := groupLecturerRows.Scan(&groupID, &lecturerID)
+		if err != nil {
+			return session, &errors.CustomError{Message: "failed to scan session group lecturer", StatusCode: 500, Error: err}
+		}
+		session.GroupLecturerID[groupID] = lecturerID
 	}
 
 	return session, nil
@@ -189,23 +245,51 @@ func (s *sessionRepository) GetSessionById(id int) (models.SessionModel, *errors
 
 // UpdateSession implements SessionRepository.
 func (s *sessionRepository) UpdateSession(id int, sessionModel models.SessionModel) *errors.CustomError {
+	// Check if the session exists before attempting to update it
+	var exists bool
+	err := s.db.QueryRow("SELECT EXISTS(SELECT 1 FROM sessions WHERE id = $1)", id).Scan(&exists)
+	if err != nil {
+		return &errors.CustomError{Message: "failed to check session existence", StatusCode: 500, Error: err}
+	}
+	if !exists {
+		return &errors.CustomError{Message: "session not found", StatusCode: 404, Error: nil}
+	}
+
 	query := `
 		UPDATE sessions SET
 			name = $1, description = $2, start_time = $3, end_time = $4,
 			meet_link = $5, location = $6, resource_link = $7, recording_link = $8,
-			calendar_event_id = $9, lecturer_id = $10, stipend_amount = $11, updated_at = NOW()
-		WHERE id = $12;
+			calendar_event_id = $9, stipend_amount = $10, updated_at = NOW()
+		WHERE id = $11;
 	`
 
-	_, err := s.db.Exec(
+	_, err = s.db.Exec(
 		query,
 		sessionModel.Name, sessionModel.Description, sessionModel.StartTime, sessionModel.EndTime,
 		sessionModel.MeetLink, sessionModel.Location, sessionModel.ResourceLink, sessionModel.RecordingLink,
-		sessionModel.CalendarEventID, sessionModel.LecturerID, sessionModel.StipendAmount,
+		sessionModel.CalendarEventID, sessionModel.StipendAmount,
 		id,
 	)
 	if err != nil {
 		return &errors.CustomError{Message: "failed to update session", StatusCode: 500, Error: err}
+	}
+
+	// Update group_lecturer_id mappings in session_group_lecturers table
+	// First, delete existing mappings for the session
+	_, err = s.db.Exec("DELETE FROM session_group_lecturers WHERE session_id = $1", id)
+	if err != nil {
+		return &errors.CustomError{Message: "failed to delete existing session group lecturers", StatusCode: 500, Error: err}
+	}
+
+	// Insert updated group_lecturer_id mappings
+	for groupID, lecturerID := range sessionModel.GroupLecturerID {
+		_, err := s.db.Exec(
+			"INSERT INTO session_group_lecturers (session_id, group_short_name, lecturer_id) VALUES ($1, $2, $3)",
+			id, groupID, lecturerID,
+		)
+		if err != nil {
+			return &errors.CustomError{Message: "failed to update session group lecturers", StatusCode: 500, Error: err}
+		}
 	}
 
 	return nil

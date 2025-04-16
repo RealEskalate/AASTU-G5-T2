@@ -87,8 +87,8 @@ func (s *sessionUsecase) UpdateSession(id int, sessionModel models.SessionModel)
 	if sessionModel.CalendarEventID != nil {
 		existingSession.CalendarEventID = sessionModel.CalendarEventID
 	}
-	if sessionModel.LecturerID != nil {
-		existingSession.LecturerID = sessionModel.LecturerID
+	if sessionModel.GroupLecturerID != nil {
+		existingSession.GroupLecturerID = sessionModel.GroupLecturerID
 	}
 	if sessionModel.StipendAmount != nil {
 		existingSession.StipendAmount = sessionModel.StipendAmount
