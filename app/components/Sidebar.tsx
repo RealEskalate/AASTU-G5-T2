@@ -26,7 +26,7 @@ function Sidebar() {
   };
 
   return (
-    <div className={`h-screen ${isCollapsed ? "w-30" : "w-[20%]"} hidden xl:block border-r border-dashed border-gray-400 overflow-y-auto transition-all duration-300`}>
+    <div className={`h-screen ${isCollapsed ? "w-30" : "w-[20%]"} hidden lg:block border-r border-dashed border-gray-400 overflow-y-auto transition-all duration-300`}>
       <div className="flex items-center justify-between px-2 py-5">
         {!isCollapsed && <Image src={logo} alt="logo" width={120} height={120} />}
         <button
