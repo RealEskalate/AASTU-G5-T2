@@ -133,7 +133,7 @@ export default function SessionsPage() {
   ];
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
+    <div className="container mx-auto p-6 w-full px-10">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">Sessions</h1>
         <div className="flex gap-4 mb-6">

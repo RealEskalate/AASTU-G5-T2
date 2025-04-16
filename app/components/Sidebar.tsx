@@ -14,6 +14,7 @@ import profilepic from "@/public/images/profilepic.jpg";
 import { GiTeamIdea } from "react-icons/gi";
 import { HiHandRaised } from "react-icons/hi2";
 import { MdEvent } from "react-icons/md";
+import { Brain } from "lucide-react";
 
 function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -126,7 +127,7 @@ function Sidebar() {
 
           {/* Problems Link */}
           <Link
-            href="/"
+            href="/problems"
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <PiNetwork className="text-gray-500 text-xl" />
@@ -169,7 +170,7 @@ function Sidebar() {
             <div className="text-gray-400 flex items-center gap-2 py-2 px-4 mx-3 rounded-lg ml-6">
               <div className="border-l h-12"></div>
               <Link
-                href="/"
+                href="/problems"
                 className="flex items-center justify-between w-full hover:bg-gray-100 hover:rounded-lg p-3 px-4"
               >
                 {!isCollapsed && <span>Upsolve</span>}
@@ -211,7 +212,7 @@ function Sidebar() {
             )}
           </Link>
           <Link
-            href="/"
+            href="/forum"
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <GiTeamIdea className="text-gray-500 text-xl" />
@@ -226,6 +227,15 @@ function Sidebar() {
             <MdEvent className="text-gray-500 text-xl" />
             {!isCollapsed && (
               <span className="text-gray-500 font-semibold">Events</span>
+            )}
+          </Link>
+          <Link
+            href="/sessions"
+            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
+          >
+            <Brain className="text-gray-500 text-xl" />
+            {!isCollapsed && (
+              <span className="text-gray-500 font-semibold">Session</span>
             )}
           </Link>
         </div>

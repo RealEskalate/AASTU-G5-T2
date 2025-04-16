@@ -29,7 +29,7 @@ const ForumPost = ({
   comments,
 }: ForumPostProps) => {
   return (
-    <div className="py-6 border-b border-gray-200">
+    <div className="py-6 border-b border-gray-200 w-full">
       <div className="flex items-start gap-3 mb-3">
         <Image
           src={avatar || "/placeholder.svg?height=40&width=40"}
@@ -123,7 +123,7 @@ export default function ForumPage() {
   ];
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
+    <div className="container mx-auto p-6 w-full px-10">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Forum</h1>
