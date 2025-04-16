@@ -18,7 +18,7 @@ func setupTrackRoutes(router *gin.Engine, controller controller.TrackController,
 	trackRoutes.GET("/:track_id/problems", controller.GetProblemsByDay)
 	trackRoutes.GET("/:track_id", controller.GetTrackByID)
 
-	
+
 	trackRoutesHead := router.Group("/tracks")
 	trackRoutesHead.Use(middleware.RoleMiddleWare(tokenService, "head", "super_admin"))
 
@@ -27,11 +27,5 @@ func setupTrackRoutes(router *gin.Engine, controller controller.TrackController,
 	trackRoutesHead.DELETE("/:track_id", controller.DeleteTrack)
 	
 
-	
-	// trackRoutesHead.POST("/",nil)
-
-	// trackRoutesHead.PUT("/:track_id", nil)
-
-	// trackRoutesHead.DELETE("/:track_id",nil )
 
 }
