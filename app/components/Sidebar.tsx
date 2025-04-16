@@ -177,7 +177,7 @@ function Sidebar() {
             {!isCollapsed && <span className="text-gray-500 font-semibold">Roadmap</span>}
           </Link>
           <Link
-            href="/"
+            href="/users"
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <BsPerson className="text-gray-500 text-xl" />

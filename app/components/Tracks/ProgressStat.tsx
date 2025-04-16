@@ -61,7 +61,7 @@ const ProgressStat = ({ value, total, label, color }: ProgressStatProps) => {
 
 export default function ProgressStats() {
   return (
-    <div className=" flex flex-col  md:flex-row justify-between p-6 bg-white rounded-lg border border-gray-200 shadow-sm mb-10 ">
+    <div className=" flex flex-col  md:flex-row justify-between p-6 bg-white rounded-lg border border-gray-100 shadow-sm mb-10 ">
       <ProgressStat value={165} total={59} label="Solved" color="green" />
       <div className="hidden md:block w-px bg-gray-200 mx-4"></div>
       <ProgressStat value={59} total={165} label="Available" color="yellow" />
