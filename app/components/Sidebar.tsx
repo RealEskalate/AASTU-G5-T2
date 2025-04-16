@@ -26,9 +26,15 @@ function Sidebar() {
   };
 
   return (
-    <div className={`h-screen ${isCollapsed ? "w-30" : "w-[20%]"} hidden lg:block border-r border-dashed border-gray-400 overflow-y-auto transition-all duration-300`}>
+    <div
+      className={`h-screen ${
+        isCollapsed ? "w-30" : "w-[20%]"
+      } hidden lg:block border-r border-dashed border-gray-400 overflow-y-auto transition-all duration-300`}
+    >
       <div className="flex items-center justify-between px-2 py-5">
-        {!isCollapsed && <Image src={logo} alt="logo" width={120} height={120} />}
+        {!isCollapsed && (
+          <Image src={logo} alt="logo" width={120} height={120} />
+        )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
           className={`flex relative hover:bg-gray-200 rounded-full w-10 h-10 items-center justify-center transition-transform duration-300 ${
@@ -66,17 +72,22 @@ function Sidebar() {
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <BiHome className="text-gray-500 text-xl" />
-            {!isCollapsed && <span className="text-gray-500 font-semibold">Home</span>}
+            {!isCollapsed && (
+              <span className="text-gray-500 font-semibold">Home</span>
+            )}
           </Link>
 
           {/* Track Dropdown */}
-          <Link href={"./tracks"}
+          <Link
+            href={"./tracks"}
             className="flex justify-between items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2 cursor-pointer"
             onClick={() => setIsTrackOpen(!isTrackOpen)}
           >
             <div className="flex gap-3 items-center">
               <TbTrack className="text-gray-500 text-xl" />
-              {!isCollapsed && <span className="text-gray-500 font-semibold">Track</span>}
+              {!isCollapsed && (
+                <span className="text-gray-500 font-semibold">Track</span>
+              )}
             </div>
             {!isCollapsed && (
               <div className="hover:bg-gray-200 rounded-full p-2">
@@ -119,32 +130,35 @@ function Sidebar() {
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <PiNetwork className="text-gray-500 text-xl" />
-            {!isCollapsed && <span className="text-gray-500 font-semibold">Problems</span>}
+            {!isCollapsed && (
+              <span className="text-gray-500 font-semibold">Problems</span>
+            )}
           </Link>
 
           {/* Contests Dropdown */}
-          <Link
-                href="/contests">
-                 <div
-            className="flex justify-between items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2 cursor-pointer"
-            onClick={() => setIsContestOpen(!isContestOpen)}
-          >
-            <div className="flex gap-3 items-center">
-              <BiRun className="text-gray-500 text-xl" />
-              {!isCollapsed && <span className="text-gray-500 font-semibold">Contests</span>}
-            </div>
-            {!isCollapsed && (
-              <div className="hover:bg-gray-200 rounded-full p-2">
-                <GrNext
-                  className={`text-gray-500 text-sm transition-transform duration-300 ${
-                    isContestOpen ? "rotate-90" : "rotate-0"
-                  }`}
-                />
+          <Link href="/contests">
+            <div
+              className="flex justify-between items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2 cursor-pointer"
+              onClick={() => setIsContestOpen(!isContestOpen)}
+            >
+              <div className="flex gap-3 items-center">
+                <BiRun className="text-gray-500 text-xl" />
+                {!isCollapsed && (
+                  <span className="text-gray-500 font-semibold">Contests</span>
+                )}
               </div>
-            )}
-          </div> 
-                </Link>
-          
+              {!isCollapsed && (
+                <div className="hover:bg-gray-200 rounded-full p-2">
+                  <GrNext
+                    className={`text-gray-500 text-sm transition-transform duration-300 ${
+                      isContestOpen ? "rotate-90" : "rotate-0"
+                    }`}
+                  />
+                </div>
+              )}
+            </div>
+          </Link>
+
           <motion.div
             variants={dropdownVariants}
             initial="closed"
@@ -170,39 +184,49 @@ function Sidebar() {
             </div>
           </motion.div>
           <Link
-            href="/"
+            href="/roadmap"
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <BiMapPin className="text-gray-500 text-xl" />
-            {!isCollapsed && <span className="text-gray-500 font-semibold">Roadmap</span>}
+            {!isCollapsed && (
+              <span className="text-gray-500 font-semibold">Roadmap</span>
+            )}
           </Link>
           <Link
             href="/users"
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <BsPerson className="text-gray-500 text-xl" />
-            {!isCollapsed && <span className="text-gray-500 font-semibold">Users</span>}
+            {!isCollapsed && (
+              <span className="text-gray-500 font-semibold">Users</span>
+            )}
           </Link>
           <Link
-            href="/"
+            href="/groups"
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <BsPeople className="text-gray-500 text-xl" />
-            {!isCollapsed && <span className="text-gray-500 font-semibold">Groups</span>}
+            {!isCollapsed && (
+              <span className="text-gray-500 font-semibold">Groups</span>
+            )}
           </Link>
           <Link
             href="/"
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <GiTeamIdea className="text-gray-500 text-xl" />
-            {!isCollapsed && <span className="text-gray-500 font-semibold">Forum</span>}
+            {!isCollapsed && (
+              <span className="text-gray-500 font-semibold">Forum</span>
+            )}
           </Link>
           <Link
             href="/"
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <MdEvent className="text-gray-500 text-xl" />
-            {!isCollapsed && <span className="text-gray-500 font-semibold">Events</span>}
+            {!isCollapsed && (
+              <span className="text-gray-500 font-semibold">Events</span>
+            )}
           </Link>
         </div>
       </div>
@@ -214,35 +238,47 @@ function Sidebar() {
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <HiHandRaised className="text-gray-500 text-xl" />
-            {!isCollapsed && <span className="text-gray-500 font-semibold">Take Attendance</span>}
+            {!isCollapsed && (
+              <span className="text-gray-500 font-semibold">
+                Take Attendance
+              </span>
+            )}
           </Link>
           <Link
             href="/"
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <BsPlusSquare className="text-gray-500 text-xl" />
-            {!isCollapsed && <span className="text-gray-500 font-semibold">Add Problem</span>}
+            {!isCollapsed && (
+              <span className="text-gray-500 font-semibold">Add Problem</span>
+            )}
           </Link>
           <Link
             href="/"
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <BsPlusSquare className="text-gray-500 text-xl" />
-            {!isCollapsed && <span className="text-gray-500 font-semibold">Add Contest</span>}
+            {!isCollapsed && (
+              <span className="text-gray-500 font-semibold">Add Contest</span>
+            )}
           </Link>
           <Link
             href="/"
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <BsPlusSquare className="text-gray-500 text-xl" />
-            {!isCollapsed && <span className="text-gray-500 font-semibold">Add Track</span>}
+            {!isCollapsed && (
+              <span className="text-gray-500 font-semibold">Add Track</span>
+            )}
           </Link>
           <Link
             href="/"
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <BsPlusSquare className="text-gray-500 text-xl" />
-            {!isCollapsed && <span className="text-gray-500 font-semibold">Add Event</span>}
+            {!isCollapsed && (
+              <span className="text-gray-500 font-semibold">Add Event</span>
+            )}
           </Link>
         </div>
       </div>
@@ -254,7 +290,11 @@ function Sidebar() {
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <BsPersonPlus className="text-gray-500 text-xl" />
-            {!isCollapsed && <span className="text-gray-500 font-semibold">Generate Invite</span>}
+            {!isCollapsed && (
+              <span className="text-gray-500 font-semibold">
+                Generate Invite
+              </span>
+            )}
           </Link>
         </div>
       </div>
