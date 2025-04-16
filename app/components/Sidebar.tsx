@@ -70,7 +70,7 @@ function Sidebar() {
           </Link>
 
           {/* Track Dropdown */}
-          <div
+          <Link href={"./tracks"}
             className="flex justify-between items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2 cursor-pointer"
             onClick={() => setIsTrackOpen(!isTrackOpen)}
           >
@@ -87,7 +87,7 @@ function Sidebar() {
                 />
               </div>
             )}
-          </div>
+          </Link>
           <motion.div
             variants={dropdownVariants}
             initial="closed"

@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
 import { ArrowBigDown, ArrowBigUp, MessageCircle } from "lucide-react";
 import React from "react";
-import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 function TracksProgress() {
   console.log(buildStyles);
@@ -27,10 +27,10 @@ function TracksProgress() {
             value={75}
             text={`225`}
             styles={buildStyles({
-              pathColor: 'url(#gradient)',
-              textColor: '#1f2937',
-              trailColor: '#e5e7eb',
-              textSize: '20px',
+              pathColor: "url(#gradient)",
+              textColor: "#1f2937",
+              trailColor: "#e5e7eb",
+              textSize: "20px",
             })}
           />
           {/* Adding gradient for the path */}
@@ -38,14 +38,37 @@ function TracksProgress() {
             <defs>
               <linearGradient id="gradient" gradientTransform="rotate(90)">
                 <stop offset="0%" stopColor="#6ee7b7" />
-                <stop offset="100%" stopColor="#10b981" />
+                <stop offset="100%" stopColor="#00ab55" />
               </linearGradient>
             </defs>
           </svg>
         </div>
       </div>
 
-      <div className="text-center mt-4 text-gray-500 font-semibold">
+      <div className="flex justify-between items-center mb-4 text-lg text-gray-500 font-semibold">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-5 h-5 bg-[#00ab55] rounded-sm"></div>
+          <span>Solved</span>
+        </div>
+        <div className="flex items-center gap-2 mb-4 text-gray-700">
+          <span>165</span>
+          <span>Problems</span>
+        </div>
+      </div>
+      <div className="flex justify-between items-center mb-4 text-lg text-gray-500 font-semibold">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-5 h-5 bg-gray-200 rounded-sm"></div>
+          <span>Available</span>
+        </div>
+        <div className="flex items-center gap-2 mb-4 text-gray-700">
+          <span>59</span>
+          <span >Problems</span>
+        </div>
+      </div>
+      <div className="flex justify-center items-center mb-4 text-white font-semibold bg-green-600 hover:bg-green-700 rounded-lg py-1.5 text-center">
+        Exercises
+      </div>
+      <div className="flex justify-center items-center mb-4 border border-green-600  font-semibold text-green-600 hover:text-green-700 rounded-lg py-1.5 text-center">
         Problems
       </div>
     </div>
