@@ -123,7 +123,9 @@ function Sidebar() {
           </Link>
 
           {/* Contests Dropdown */}
-          <div
+          <Link
+                href="/contests">
+                 <div
             className="flex justify-between items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2 cursor-pointer"
             onClick={() => setIsContestOpen(!isContestOpen)}
           >
@@ -140,7 +142,9 @@ function Sidebar() {
                 />
               </div>
             )}
-          </div>
+          </div> 
+                </Link>
+          
           <motion.div
             variants={dropdownVariants}
             initial="closed"
