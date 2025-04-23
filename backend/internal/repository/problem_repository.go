@@ -12,6 +12,8 @@ import (
 
 type ProblemRepository interface {
 	GetAllProblems() ([]models.Problem, *errors.CustomError)
+	AddProblem(problem models.Problem) *errors.CustomError
+	AddProblemToTrack(problemID int, trackID string) *errors.CustomError
 }
 
 type problemRepository struct {
@@ -75,4 +77,56 @@ func (r *problemRepository) GetAllProblems() ([]models.Problem, *errors.CustomEr
 	}
 
 	return problems, nil
+}
+
+   
+func (r *problemRepository) AddProblem(problem models.Problem) *errors.CustomError {
+	query := `
+		INSERT INTO problems (name, contest_id, platform, link, created_at, updated_at, tag, track_id, difficulty)
+		VALUES ($1, $2, $3, $4, NOW(), NOW(), $5, $6, $7)
+	`
+
+	tagsStr := strings.Join(problem.Tags, ",") // convert []string to comma-separated string
+
+	_, err := r.db.Exec(query,
+		problem.Name,
+		problem.ContestID,
+		problem.Platform,
+		problem.Link,
+		tagsStr,
+		problem.TrackID,
+		problem.Difficulty,
+	)
+
+	if err != nil {
+		log.Println("Error inserting problem:", err)
+		return &errors.CustomError{
+			Message:    "failed to insert problem into the database",
+			StatusCode: 500,
+			Error:      err,
+		}
+	}
+
+	return nil
+}
+
+
+func (r *problemRepository) AddProblemToTrack(problemID int, trackID string) *errors.CustomError {
+	query := `
+		UPDATE problems
+		SET track_id = $1, updated_at = NOW()
+		WHERE id = $2
+	`
+
+	_, err := r.db.Exec(query, trackID, problemID)
+	if err != nil {
+		log.Println("Error updating problem's track_id:", err)
+		return &errors.CustomError{
+			Message:    "failed to update problem's track",
+			StatusCode: 500,
+			Error:      err,
+		}
+	}
+
+	return nil
 }
