@@ -51,5 +51,10 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	sessionController := controller.NewSessionController(sessionUsecases)
 	setupSessionRoutes(router, sessionController, tokenService)
 
+	attendanceRepo := repository.NewAttendanceRepository(db)
+	attendanceUsecases := usecase.NewAttendanceUsecase(attendanceRepo, authRepository, sessionRepository, tokenService)
+	attendanceController := controller.NewAttendanceController(attendanceUsecases)
+	setupAttendanceRoutes(router, attendanceController, tokenService)
+
 	return router
 }
