@@ -16,10 +16,90 @@ type AuthRepo interface {
 	GetUserByEmail(email string) (models.UserModel, *errors.CustomError)
 	UpdateUserByEmail(email string, user models.UserModel) *errors.CustomError
 	GetUserProfileByID(id int) (models.UserModel, *errors.CustomError)
+	GetAllUsers(group, country, name string) ([]*models.UserProfileResponse, *errors.CustomError)
 }
 
 type authRepo struct {
 	db *sql.DB
+}
+
+// GetAllUsers implements AuthRepo.
+func (a *authRepo) GetAllUsers(group string, country string, name string) ([]*models.UserProfileResponse, *errors.CustomError) {
+	var users []*models.UserProfileResponse
+	query := `
+		SELECT 
+			u.id,
+			COALESCE(u.name, '') AS name,
+			u.email,
+			COALESCE(u.photo, '') AS photo,
+			COALESCE(u.university, '') AS university,
+			COALESCE(r.type, '') AS role,
+			COALESCE(c.name, '') AS country,
+			COALESCE(u.joined_date, '1970-01-01') AS joined_date,
+			COALESCE(u.expected_graduation_date, '1970-01-01') AS expected_graduation_date,
+			COALESCE(u.short_bio, '') AS short_bio,
+			COALESCE(u.leetcode, '') AS leetcode,
+			COALESCE(u.codeforces, '') AS codeforces,
+			COALESCE(u.github, '') AS github,
+			COALESCE(u.instagram, '') AS instagram,
+			COALESCE(u.phone, '') AS phone,
+			COALESCE(u.student_id, '') AS student_id,
+			COALESCE(u.telegram_username, '') AS telegram_username,
+			COALESCE(g.short_name, '') AS group_name,
+			COALESCE(u.department, '') AS department
+		FROM users u
+		LEFT JOIN countries c ON u.country_id = c.id
+		LEFT JOIN roles r ON u.role_id = r.id
+		LEFT JOIN groups g ON u.group_id = g.id
+		WHERE 
+			($1 = '' OR LOWER(g.short_name) = LOWER($1)) AND
+			($2 = '' OR LOWER(c.name) = LOWER($2)) AND
+			($3 = '' OR LOWER(u.name) LIKE LOWER('%' || $3 || '%'))
+	`
+
+	rows, err := a.db.Query(query, group, country, name)
+	if err != nil {
+		log.Println("Error querying users:", err)
+		return nil, &errors.CustomError{StatusCode: 500, Message: "Error fetching users", Error: err}
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var user models.UserProfileResponse
+		err := rows.Scan(
+			&user.ID,
+			&user.Name,
+			&user.Email,
+			&user.Photo,
+			&user.University,
+			&user.Role,
+			&user.Country,
+			&user.JoinedDate,
+			&user.ExpectedGraduationDate,
+			&user.ShortBio,
+			&user.LeetCode,
+			&user.Codeforces,
+			&user.GitHub,
+			&user.Instagram,
+			&user.Phone,
+			&user.StudentID,
+			&user.TelegramUsername,
+			&user.Group,
+			&user.Department,
+		)
+		if err != nil {
+			log.Println("Error scanning user row:", err)
+			return nil, &errors.CustomError{StatusCode: 500, Message: "Error processing user data", Error: err}
+		}
+		users = append(users, &user)
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Println("Error iterating over user rows:", err)
+		return nil, &errors.CustomError{StatusCode: 500, Message: "Error iterating user data", Error: err}
+	}
+
+	return users, nil
 }
 
 // GetUserProfileByID implements AuthRepo.
