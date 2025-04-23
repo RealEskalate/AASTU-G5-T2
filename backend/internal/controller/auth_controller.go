@@ -37,7 +37,7 @@ type authController struct {
 // GetAllUsers implements AuthController.
 func (a *authController) GetAllUsers(c *gin.Context) {
 	// Get optional query parameters
-	group := c.Query("group")
+	group := c.Query("group_short_name")
 	country := c.Query("country")
 	name := c.Query("name")
 
