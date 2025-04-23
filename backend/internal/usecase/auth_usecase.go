@@ -19,6 +19,7 @@ type AuthUsecase interface {
 	GetProfileByEmail(token string) (models.UserModel, *errors.CustomError)
 	RequestResetPassword(string) *errors.CustomError
 	UserProfile(id int) (*models.UserModel, *errors.CustomError)
+	// GetUserByID(id string) (models.UserModel, *errors.CustomError)
 }
 
 type authUsecase struct {

@@ -13,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// get all users and filter by group
 type AuthController interface {
 	PromoteUsers(c *gin.Context)
 	SetPassword(c *gin.Context)
