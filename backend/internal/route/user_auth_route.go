@@ -13,6 +13,7 @@ func setupUserRoute(router *gin.Engine, controller controller.AuthController, to
 	router.POST("/auth/set-password", controller.SetPassword)
 	router.POST("/auth/request-reset-password-link", controller.RequestResetPassword)
 	router.POST("/auth/login", controller.LoginUser)
+	router.GET("/users", controller.GetAllUsers)
 
 	userGroup := router.Group("/auth")
 	userGroup.Use(middleware.AuthMiddleWare(tokenService))

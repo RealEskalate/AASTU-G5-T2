@@ -19,6 +19,7 @@ type AuthUsecase interface {
 	GetProfileByEmail(token string) (models.UserModel, *errors.CustomError)
 	RequestResetPassword(string) *errors.CustomError
 	UserProfile(id int) (*models.UserModel, *errors.CustomError)
+	GetAllUsers(group, country, name string) ([]*models.UserProfileResponse, *errors.CustomError)
 	// GetUserByID(id string) (models.UserModel, *errors.CustomError)
 }
 
@@ -27,6 +28,16 @@ type authUsecase struct {
 	tokenService    utils.TokenService
 	passwordService utils.PasswordService
 	emailService    utils.EmailService
+}
+
+// GetAllUsers implements AuthUsecase.
+func (a *authUsecase) GetAllUsers(group string, country string, name string) ([]*models.UserProfileResponse, *errors.CustomError) {
+	users, err := a.authRepo.GetAllUsers(group, country, name)
+	if err != nil {
+		return nil, &errors.CustomError{StatusCode: 500, Message: "failed to fetch users", Error: err.Error}
+	}
+
+	return users, nil
 }
 
 // UserProfile implements AuthUsecase.
