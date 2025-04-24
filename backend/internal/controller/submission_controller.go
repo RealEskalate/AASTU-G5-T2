@@ -31,12 +31,12 @@ func (sc *submissionController) SubmitProblem(c *gin.Context) {
 		return
 	}
 
-	problemIDStr := c.Param("problemID")
-	problemID, err := strconv.Atoi(problemIDStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid problem ID"})
-		return
-	}
+	// problemIDStr := c.Param("problem_id")
+	// problemID, err := strconv.Atoi(problemIDStr)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid problem ID"})
+	// 	return
+	// }
 
 	userIDVal, exists := c.Get("user_id")
 	if !exists {
@@ -46,8 +46,8 @@ func (sc *submissionController) SubmitProblem(c *gin.Context) {
 	userID := userIDVal.(int)
 
 	submission := models.SubmissionModel{
-		ProblemID: problemID,
 		UserID:    userID,
+		ProblemID: req.ProblemID,
 		TimeSpent: req.TimeSpent,
 		Tries:     req.Tries,
 		Code:      req.Code,
@@ -64,7 +64,7 @@ func (sc *submissionController) SubmitProblem(c *gin.Context) {
 }
 
 func (sc *submissionController) GetSubmissionById(c *gin.Context) {
-	submissionIDStr := c.Param("submissionID")
+	submissionIDStr := c.Param("submission_id")
 	submissionID, err := strconv.Atoi(submissionIDStr)
 	if err != nil {
 		c.JSON(400, gin.H{"error": "Invalid submission ID"})
