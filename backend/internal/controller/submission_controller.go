@@ -5,6 +5,7 @@ import (
 	"a2sv_hub/internal/usecase"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,16 +16,41 @@ type SubmissionController interface {
 }
 
 type submissionController struct {
-	usecase usecase.SubmissionUsecase
+	usecase     usecase.SubmissionUsecase
+	authUsecase usecase.AuthUsecase
 }
 
-func NewSubmissionController(usecase usecase.SubmissionUsecase) SubmissionController {
+func NewSubmissionController(usecase usecase.SubmissionUsecase, authUsecase usecase.AuthUsecase) SubmissionController {
 	return &submissionController{
-		usecase: usecase,
+		usecase:     usecase,
+		authUsecase: authUsecase,
 	}
 }
 
 func (sc *submissionController) SubmitProblem(c *gin.Context) {
+	authHeader := c.GetHeader("Authorization")
+
+	parts := strings.Split(authHeader, " ")
+	if len(parts) != 2 || parts[0] != "Bearer" {
+		c.JSON(401, gin.H{
+			"status":  401,
+			"message": "Invalid Authorization header format",
+		})
+		return
+	}
+	token := parts[1]
+
+	profile, err := sc.authUsecase.GetProfileByEmail(token)
+	if err != nil {
+		c.JSON(err.StatusCode, gin.H{
+			"status":  err.StatusCode,
+			"message": err.Message,
+			"error":   err.Error,
+		})
+		return
+	}
+	userID := profile.ID
+
 	var req models.SubmitRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
@@ -37,13 +63,6 @@ func (sc *submissionController) SubmitProblem(c *gin.Context) {
 	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid problem ID"})
 	// 	return
 	// }
-
-	userIDVal, exists := c.Get("user_id")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
-		return
-	}
-	userID := userIDVal.(int)
 
 	submission := models.SubmissionModel{
 		UserID:    userID,

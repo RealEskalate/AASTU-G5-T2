@@ -67,7 +67,7 @@ func (a *authController) UserProfile(c *gin.Context) {
 	}
 
 	profile, customErr := a.authUsecase.UserProfile(id)
-	if err != nil {
+	if customErr != nil {
 		c.JSON(customErr.StatusCode, gin.H{
 			"status":  customErr.StatusCode,
 			"message": customErr.Message,
