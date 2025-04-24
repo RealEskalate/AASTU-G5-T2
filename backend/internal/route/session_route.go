@@ -12,13 +12,16 @@ func setupSessionRoutes(router *gin.Engine, controller controller.SessionControl
 	sessionRoutes := router.Group("/sessions")
 	sessionRoutes.Use(middleware.AuthMiddleWare(tokenService), middleware.RoleMiddleWare(tokenService, "head", "super_admin"))
 
-	sessionRoutes.POST("/", nil)
-	sessionRoutes.PUT("/:session_id", nil)
-	sessionRoutes.DELETE("/:session_id", nil)
+	sessionRoutes.POST("/", controller.CreateSession)
+	sessionRoutes.PUT("/:session_id", controller.UpdateSession)
+	sessionRoutes.DELETE("/:session_id", controller.DeleteSession)
+	sessionRoutes.PUT("/add_group/:session_id", controller.AddGroupToSession)
 
 	studentSessiosnRoute := router.Group("/sessions")
 	studentSessiosnRoute.Use(middleware.AuthMiddleWare(tokenService))
-	studentSessiosnRoute.GET("/", nil)
-	studentSessiosnRoute.GET("/:session_id", nil)
+	studentSessiosnRoute.GET("/", controller.GetAllSessions)
+	studentSessiosnRoute.GET("/:session_id", controller.GetSessionById)
+
+	// create session for one group only
 
 }

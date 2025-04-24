@@ -13,6 +13,7 @@ func main() {
 	// Initialize database connection
 
 	err := godotenv.Load("D:/AASTU-G5-T2/backend/.env")
+	// log.Println("DB_HOST:", os.Getenv("DB_HOST"))
 	if err != nil {
 		log.Println("No .env file found, using system env vars")
 	}

@@ -13,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// get all users and filter by group
 type AuthController interface {
 	PromoteUsers(c *gin.Context)
 	SetPassword(c *gin.Context)
@@ -24,12 +25,34 @@ type AuthController interface {
 	GetMyProfile(c *gin.Context)
 	UserProfile(c *gin.Context)
 	RequestResetPassword(c *gin.Context)
+	GetAllUsers(c *gin.Context)
 	CreateUser(c *gin.Context) // temp to create super admin user
 }
 
 type authController struct {
 	authUsecase       usecase.AuthUsecase
 	fileUploadService utils.FileUploadService
+}
+
+// GetAllUsers implements AuthController.
+func (a *authController) GetAllUsers(c *gin.Context) {
+	// Get optional query parameters
+	group := c.Query("group_short_name")
+	country := c.Query("country")
+	name := c.Query("name")
+
+	// Pass filters to usecase
+	users, custErr := a.authUsecase.GetAllUsers(group, country, name)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, gin.H{
+			"error":   custErr.Error,
+			"message": custErr.Message,
+			"status":  custErr.StatusCode,
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{"users": users})
 }
 
 // UserProfile implements AuthController.
