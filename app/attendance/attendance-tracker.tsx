@@ -10,7 +10,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import profilepic from "@/public/images/profilepic.jpg";
-import { Avatar } from "@radix-ui/react-avatar";
 
 export default function AttendanceTracker() {
   const [session, setSession] = useState<string>("");
