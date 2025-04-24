@@ -92,12 +92,14 @@ function Sidebar() {
               )}
             </div>
             {!isCollapsed && (
-              <div className="hover:bg-gray-200 rounded-full p-2" onClick={() => setIsTrackOpen(!isTrackOpen)}>
+              <div
+                className="hover:bg-gray-200 rounded-full p-2"
+                onClick={() => setIsTrackOpen(!isTrackOpen)}
+              >
                 <GrNext
                   className={`text-gray-500 text-sm transition-transform duration-300 ${
                     isTrackOpen ? "rotate-90" : "rotate-0"
                   }`}
-                  
                 />
               </div>
             )}
@@ -142,10 +144,7 @@ function Sidebar() {
 
           {/* Contests Dropdown */}
           <Link href="/dashboard/contests" prefetch>
-            <div
-              className="flex justify-between items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2 cursor-pointer"
-              
-            >
+            <div className="flex justify-between items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2 cursor-pointer">
               <div className="flex gap-3 items-center">
                 <BiRun className="text-gray-500 text-xl" />
                 {!isCollapsed && (
@@ -153,7 +152,10 @@ function Sidebar() {
                 )}
               </div>
               {!isCollapsed && (
-                <div className="hover:bg-gray-200 rounded-full p-2" onClick={() => setIsContestOpen(!isContestOpen)}>
+                <div
+                  className="hover:bg-gray-200 rounded-full p-2"
+                  onClick={() => setIsContestOpen(!isContestOpen)}
+                >
                   <GrNext
                     className={`text-gray-500 text-sm transition-transform duration-300 ${
                       isContestOpen ? "rotate-90" : "rotate-0"
@@ -275,6 +277,15 @@ function Sidebar() {
             )}
           </Link>
           <Link
+            href="/dashboard/dailyproblem"
+            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
+          >
+            <BsPlusSquare className="text-gray-500 text-xl" />
+            {!isCollapsed && (
+              <span className="text-gray-500 font-semibold">Daily Problem</span>
+            )}
+          </Link>
+          <Link
             href="/dashboard"
             className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
             prefetch
@@ -307,7 +318,9 @@ function Sidebar() {
         </div>
       </div>
       <div className="pl-4 py-2 pt-4">
-        {!isCollapsed && <p className="font-semibold text-sm">HEAD OF ACADEMY</p>}
+        {!isCollapsed && (
+          <p className="font-semibold text-sm">HEAD OF ACADEMY</p>
+        )}
         <div>
           <Link
             href="/dashboard"
