@@ -3,6 +3,7 @@ package controller
 import (
 	"a2sv_hub/internal/models"
 	"a2sv_hub/internal/usecase"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -19,6 +20,7 @@ type problemController struct {
 }
 
 func (p *problemController) GetAllProblems(c *gin.Context) {
+
 	problems, err := p.problemUsecase.GetAllProblems()
 	if err != nil {
 		c.JSON(err.StatusCode, gin.H{
@@ -39,6 +41,8 @@ func NewProblemController(usecase usecase.ProblemUsecase) ProblemController {
 
 func (p *problemController) AddProblem(c *gin.Context) {
 	var problem models.Problem
+	role, exists := c.Get("role")
+    fmt.Printf("Role in AddProblems: %v, Exists: %v\n", role, exists)
 
 	if err := c.ShouldBindJSON(&problem); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -71,7 +75,8 @@ func (p *problemController) AddProblemToTrack(c *gin.Context) {
 		ProblemID int    `json:"problemID"`
 		TrackID   string `json:"trackID"`
 	}
-
+	role, exists := c.Get("role")
+    fmt.Printf("Role in AddProblemsto: %v, Exists: %v\n", role, exists)
 
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
