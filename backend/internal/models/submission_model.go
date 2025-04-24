@@ -14,6 +14,7 @@ type SubmissionModel struct {
 }
 
 type SubmitRequest struct {
+	ProblemID int    `json:"problem_id" binding:"required"`
 	TimeSpent int    `json:"time_spent" binding:"required"`
 	Tries     int    `json:"tries" binding:"required"`
 	Code      string `json:"code" binding:"required"`

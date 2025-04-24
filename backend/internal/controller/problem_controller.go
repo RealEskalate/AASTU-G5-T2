@@ -6,11 +6,14 @@ import (
 	"fmt"
 	"net/http"
 
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 )
 
 type ProblemController interface {
 	GetAllProblems(c *gin.Context)
+	GetProblemById(c *gin.Context)
 	AddProblem(c *gin.Context)
 	AddProblemToTrack(c *gin.Context)
 }
@@ -33,6 +36,23 @@ func (p *problemController) GetAllProblems(c *gin.Context) {
 	c.JSON(http.StatusOK, problems)
 }
 
+// GetProblemById implements GroupController.
+func (p *problemController) GetProblemById(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("problem_id"))
+	if err != nil {
+		c.JSON(400, gin.H{"error": "Invalid problem ID"})
+		return
+	}
+
+	problem, customerr := p.problemUsecase.GetProblemById(id)
+	if customerr != nil {
+		c.JSON(customerr.StatusCode, gin.H{"error": customerr.Error, "message": customerr.Message, "status": customerr.StatusCode})
+		return
+	}
+
+	c.JSON(200, problem)
+}
+
 func NewProblemController(usecase usecase.ProblemUsecase) ProblemController {
 	return &problemController{
 		problemUsecase: usecase,
@@ -42,7 +62,7 @@ func NewProblemController(usecase usecase.ProblemUsecase) ProblemController {
 func (p *problemController) AddProblem(c *gin.Context) {
 	var problem models.Problem
 	role, exists := c.Get("role")
-    fmt.Printf("Role in AddProblems: %v, Exists: %v\n", role, exists)
+	fmt.Printf("Role in AddProblems: %v, Exists: %v\n", role, exists)
 
 	if err := c.ShouldBindJSON(&problem); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -69,14 +89,13 @@ func (p *problemController) AddProblem(c *gin.Context) {
 	})
 }
 
-
 func (p *problemController) AddProblemToTrack(c *gin.Context) {
 	var request struct {
 		ProblemID int    `json:"problemID"`
 		TrackID   string `json:"trackID"`
 	}
 	role, exists := c.Get("role")
-    fmt.Printf("Role in AddProblemsto: %v, Exists: %v\n", role, exists)
+	fmt.Printf("Role in AddProblemsto: %v, Exists: %v\n", role, exists)
 
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -87,7 +106,6 @@ func (p *problemController) AddProblemToTrack(c *gin.Context) {
 		return
 	}
 
-	
 	err := p.problemUsecase.AddProblemToTrack(request.ProblemID, request.TrackID)
 	if err != nil {
 		c.JSON(err.StatusCode, gin.H{
