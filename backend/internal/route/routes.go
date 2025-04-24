@@ -3,6 +3,7 @@ package route
 import (
 	"a2sv_hub/config"
 	"a2sv_hub/internal/controller"
+	"time"
 
 	"a2sv_hub/internal/repository"
 	"a2sv_hub/internal/usecase"
@@ -10,6 +11,7 @@ import (
 	"database/sql"
 	"log"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,6 +20,16 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	log.Println("Successfully connected to PostgreSQL database!")
 
 	router := gin.Default()
+
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
 	router.LoadHTMLFiles("../templates/set_password.html")
 
 	tokenService := utils.NewTokenService()
