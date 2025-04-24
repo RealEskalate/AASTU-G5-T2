@@ -16,7 +16,7 @@ export default function GroupCard({ group }: GroupCardProps) {
 
   return (
     <div
-      className={`p-6 rounded-lg border ${group.highlight ? "bg-green-50" : "bg-white"} cursor-pointer hover:shadow-md transition-shadow`}
+      className={`p-6 rounded-lg border ${group.highlight ? "bg-green-50" : "bg-white"} cursor-pointer hover:bg-green-100 transition-shadow`}
       onClick={handleClick}
     >
       <div className="space-y-2">
@@ -26,14 +26,14 @@ export default function GroupCard({ group }: GroupCardProps) {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-8 mt-8">
-        <div>
+      <div className="flex gap-6  pt-20">
+        <div className="border-l-4 border-gray-300 pl-2">
           <p className="text-sm text-gray-500">Time Spent</p>
-          <p className="text-xl font-semibold">{group.timeSpent.toLocaleString()}</p>
+          <p className="text-xl ">{group.timeSpent.toLocaleString()}</p>
         </div>
-        <div>
+        <div className="border-l-4 border-gray-300 pl-2">
           <p className="text-sm text-gray-500">Avg. Rating</p>
-          <p className="text-xl font-semibold">{group.avgRating.toLocaleString()}</p>
+          <p className="text-lg ">{group.avgRating.toLocaleString()}</p>
         </div>
       </div>
     </div>

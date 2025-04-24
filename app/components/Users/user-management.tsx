@@ -14,7 +14,7 @@ export default function UserManagement() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
+    <div className="w-full max-w-7xl mx-auto pb-10">
       {/* Tabs */}
       <div className="flex w-full justify-between">
         {["Users", "Groups", "Countries"].map((tab) => (

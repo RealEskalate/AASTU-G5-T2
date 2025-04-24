@@ -65,24 +65,25 @@ function Sidebar() {
 
       {/* Sidebar Navigation */}
       <div className="pl-4 py-2 pt-4">
-        {!isCollapsed && <p className="font-semibold">STUDENT</p>}
+        {!isCollapsed && <p className="font-semibold text-sm">STUDENT</p>}
         <div>
           {/* Home Link */}
           <Link
-            href="/"
-            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            href="/dashboard"
+            className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 focus:text-green-300 py-3 px-4 mx-3 rounded-lg mt-2"
+            prefetch
           >
-            <BiHome className="text-gray-500 text-xl" />
+            <BiHome className="text-gray-500 text-xl  " />
             {!isCollapsed && (
-              <span className="text-gray-500 font-semibold">Home</span>
+              <span className="text-gray-500 font-semibold ">Home</span>
             )}
           </Link>
 
           {/* Track Dropdown */}
           <Link
-            href={"./tracks"}
-            className="flex justify-between items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2 cursor-pointer"
-            onClick={() => setIsTrackOpen(!isTrackOpen)}
+            href={"/dashboard/tracks"}
+            className="flex justify-between items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2 cursor-pointer"
+            prefetch
           >
             <div className="flex gap-3 items-center">
               <TbTrack className="text-gray-500 text-xl" />
@@ -91,11 +92,12 @@ function Sidebar() {
               )}
             </div>
             {!isCollapsed && (
-              <div className="hover:bg-gray-200 rounded-full p-2">
+              <div className="hover:bg-gray-200 rounded-full p-2" onClick={() => setIsTrackOpen(!isTrackOpen)}>
                 <GrNext
                   className={`text-gray-500 text-sm transition-transform duration-300 ${
                     isTrackOpen ? "rotate-90" : "rotate-0"
                   }`}
+                  
                 />
               </div>
             )}
@@ -110,8 +112,9 @@ function Sidebar() {
             <div className="text-gray-400 flex items-center gap-2 py-2 px-4 mx-3 rounded-lg ml-6">
               <div className="border-l h-12"></div>
               <Link
-                href="/progress"
-                className="flex items-center justify-between w-full hover:bg-gray-100 hover:rounded-lg p-3 px-4"
+                href="/dashboard/progress"
+                className="flex items-center justify-between w-full hover:bg-gray-100 focus:bg-green-100 hover:rounded-lg p-3 px-4"
+                prefetch
               >
                 {!isCollapsed && <span>Progress</span>}
                 {!isCollapsed && (
@@ -127,8 +130,9 @@ function Sidebar() {
 
           {/* Problems Link */}
           <Link
-            href="/problems"
-            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            href="/dashboard/problems"
+            className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            prefetch
           >
             <PiNetwork className="text-gray-500 text-xl" />
             {!isCollapsed && (
@@ -137,10 +141,10 @@ function Sidebar() {
           </Link>
 
           {/* Contests Dropdown */}
-          <Link href="/contests">
+          <Link href="/dashboard/contests" prefetch>
             <div
-              className="flex justify-between items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2 cursor-pointer"
-              onClick={() => setIsContestOpen(!isContestOpen)}
+              className="flex justify-between items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2 cursor-pointer"
+              
             >
               <div className="flex gap-3 items-center">
                 <BiRun className="text-gray-500 text-xl" />
@@ -149,7 +153,7 @@ function Sidebar() {
                 )}
               </div>
               {!isCollapsed && (
-                <div className="hover:bg-gray-200 rounded-full p-2">
+                <div className="hover:bg-gray-200 rounded-full p-2" onClick={() => setIsContestOpen(!isContestOpen)}>
                   <GrNext
                     className={`text-gray-500 text-sm transition-transform duration-300 ${
                       isContestOpen ? "rotate-90" : "rotate-0"
@@ -170,8 +174,9 @@ function Sidebar() {
             <div className="text-gray-400 flex items-center gap-2 py-2 px-4 mx-3 rounded-lg ml-6">
               <div className="border-l h-12"></div>
               <Link
-                href="/problems"
-                className="flex items-center justify-between w-full hover:bg-gray-100 hover:rounded-lg p-3 px-4"
+                href="/dashboard/problems"
+                className="flex items-center justify-between w-full hover:bg-gray-100 focus:bg-green-100 hover:rounded-lg p-3 px-4"
+                prefetch
               >
                 {!isCollapsed && <span>Upsolve</span>}
                 {!isCollapsed && (
@@ -185,8 +190,9 @@ function Sidebar() {
             </div>
           </motion.div>
           <Link
-            href="/roadmap"
-            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            href="/dashboard/roadmap"
+            className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            prefetch
           >
             <BiMapPin className="text-gray-500 text-xl" />
             {!isCollapsed && (
@@ -194,8 +200,9 @@ function Sidebar() {
             )}
           </Link>
           <Link
-            href="/users"
-            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            href="/dashboard/users"
+            className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            prefetch
           >
             <BsPerson className="text-gray-500 text-xl" />
             {!isCollapsed && (
@@ -203,8 +210,9 @@ function Sidebar() {
             )}
           </Link>
           <Link
-            href="/groups"
-            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            href="/dashboard/groups"
+            className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            prefetch
           >
             <BsPeople className="text-gray-500 text-xl" />
             {!isCollapsed && (
@@ -212,8 +220,9 @@ function Sidebar() {
             )}
           </Link>
           <Link
-            href="/forum"
-            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            href="/dashboard/forum"
+            className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            prefetch
           >
             <GiTeamIdea className="text-gray-500 text-xl" />
             {!isCollapsed && (
@@ -221,8 +230,9 @@ function Sidebar() {
             )}
           </Link>
           <Link
-            href="/events"
-            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            href="/dashboard/events"
+            className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            prefetch
           >
             <MdEvent className="text-gray-500 text-xl" />
             {!isCollapsed && (
@@ -230,8 +240,9 @@ function Sidebar() {
             )}
           </Link>
           <Link
-            href="/sessions"
-            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            href="/dashboard/sessions"
+            className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            prefetch
           >
             <Brain className="text-gray-500 text-xl" />
             {!isCollapsed && (
@@ -241,11 +252,12 @@ function Sidebar() {
         </div>
       </div>
       <div className="pl-4 py-2 pt-4">
-        {!isCollapsed && <p className="font-semibold">HEAD</p>}
+        {!isCollapsed && <p className="font-semibold text-sm">HEAD</p>}
         <div>
           <Link
-            href="/"
-            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            href="/dashboard"
+            className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            prefetch
           >
             <HiHandRaised className="text-gray-500 text-xl" />
             {!isCollapsed && (
@@ -255,8 +267,9 @@ function Sidebar() {
             )}
           </Link>
           <Link
-            href="/"
-            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            href="/dashboard"
+            className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            prefetch
           >
             <BsPlusSquare className="text-gray-500 text-xl" />
             {!isCollapsed && (
@@ -264,8 +277,9 @@ function Sidebar() {
             )}
           </Link>
           <Link
-            href="/"
-            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            href="/dashboard"
+            className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            prefetch
           >
             <BsPlusSquare className="text-gray-500 text-xl" />
             {!isCollapsed && (
@@ -273,8 +287,9 @@ function Sidebar() {
             )}
           </Link>
           <Link
-            href="/"
-            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            href="/dashboard"
+            className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            prefetch
           >
             <BsPlusSquare className="text-gray-500 text-xl" />
             {!isCollapsed && (
@@ -282,8 +297,9 @@ function Sidebar() {
             )}
           </Link>
           <Link
-            href="/"
-            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            href="/dashboard"
+            className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            prefetch
           >
             <BsPlusSquare className="text-gray-500 text-xl" />
             {!isCollapsed && (
@@ -293,11 +309,11 @@ function Sidebar() {
         </div>
       </div>
       <div className="pl-4 py-2 pt-4">
-        {!isCollapsed && <p className="font-semibold">HEAD OF ACADEMY</p>}
+        {!isCollapsed && <p className="font-semibold text-sm">HEAD OF ACADEMY</p>}
         <div>
           <Link
-            href="/"
-            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            href="/dashboard"
+            className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <BsPersonPlus className="text-gray-500 text-xl" />
             {!isCollapsed && (

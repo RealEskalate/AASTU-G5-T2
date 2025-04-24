@@ -10,20 +10,20 @@ interface RoadmapItemProps {
   isLast?: boolean;
 }
 
-// Update the RoadmapItem component to include an isLast prop to control the connecting line
+
 const RoadmapItem = ({
   title,
   progress,
   isRecommended = false,
   isLast = false,
 }: RoadmapItemProps) => {
-  // Calculate the stroke-dasharray and stroke-dashoffset for the progress arc
+
   const radius = 30;
   const circumference = 2 * Math.PI * radius;
   const dashoffset = circumference - (progress / 100) * circumference;
 
   return (
-    <div className="flex items-start gap-6 relative">
+    <div className="flex items-start gap-6 relative  ">
       <div className="relative flex-shrink-0">
         {/* Progress circle */}
         <div className="w-[60px] h-[60px] rounded-full bg-gray-100 flex items-center justify-center relative">
@@ -93,7 +93,7 @@ export default function Roadmap() {
   ];
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
+    <div className="container mx-auto p-6 w-full px-10">
       <h1 className="text-2xl font-bold text-gray-900 mb-3">Roadmap</h1>
 
       {/* Breadcrumb */}

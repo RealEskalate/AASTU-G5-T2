@@ -1,5 +1,5 @@
 import React from 'react'
-import Tracks from '../components/Tracks/Tracks'
+import Tracks from '@/app/components/Tracks/Tracks'
 
 function page() {
   return (
