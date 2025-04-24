@@ -12,7 +12,7 @@ type Config struct {
 }
 
 func LoadConfig() Config {
-    err := godotenv.Load()
+    err := godotenv.Load("C:/Users/redie/Desktop/A2SV/A2SV-HUB-Backend/AASTU-G5-T2/backend/.env")
     if err != nil {
         log.Fatal("Error loading .env file")
     }
