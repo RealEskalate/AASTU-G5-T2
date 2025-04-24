@@ -1,5 +1,5 @@
+import Users from '@/app/components/Users/Users'
 import React from 'react'
-import Users from '../components/Users/Users'
 
 function page() {
   return (
