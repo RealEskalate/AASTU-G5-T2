@@ -244,7 +244,7 @@ function Sidebar() {
         {!isCollapsed && <p className="font-semibold">HEAD</p>}
         <div>
           <Link
-            href="/"
+            href="/attendance"
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <HiHandRaised className="text-gray-500 text-xl" />
