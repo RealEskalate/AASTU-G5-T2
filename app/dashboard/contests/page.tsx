@@ -1,6 +1,7 @@
+import ContestsList from "@/app/components/contests-list";
+import RatingsList from "@/app/components/ratings-list";
 import { ChevronDown } from "lucide-react";
-import ContestsList from "../components/contests-list";
-import RatingsList from "../components/ratings-list";
+
 
 export default function ContestsPage() {
   return (

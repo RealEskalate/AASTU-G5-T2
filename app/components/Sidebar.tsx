@@ -255,7 +255,7 @@ function Sidebar() {
         {!isCollapsed && <p className="font-semibold text-sm">HEAD</p>}
         <div>
           <Link
-            href="/attendance"
+            href="/dashboard/attendance"
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <HiHandRaised className="text-gray-500 text-xl" />
@@ -266,7 +266,7 @@ function Sidebar() {
             )}
           </Link>
           <Link
-            href="/addproblem"
+            href="/dashboard/addproblem"
             className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <BsPlusSquare className="text-gray-500 text-xl" />

@@ -1,5 +1,6 @@
+import Problems from '@/app/components/Problems'
 import React from 'react'
-import Problems from '../components/Problems'
+
 
 function page() {
   return (

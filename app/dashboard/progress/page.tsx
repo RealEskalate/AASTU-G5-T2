@@ -1,5 +1,6 @@
+import ProgressComp from '@/app/components/Progress/ProgressComp'
 import React from 'react'
-import ProgressComp from '../components/Progress/ProgressComp'
+
 
 function page() {
   return (
