@@ -1,6 +1,7 @@
 package route
 
 import (
+	"a2sv_hub/config"
 	"a2sv_hub/internal/controller"
 	"time"
 
@@ -72,6 +73,14 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	trackUsecases := usecase.NewTrackUsecase(trackRepository)
 	trackControllers := controller.NewTrackController(trackUsecases)
 	setupTrackRoutes(router, trackControllers, tokenService)
+
+	
+    cfg := config.LoadConfig()
+    codeforcesRepository := repository.NewCodeforcesRepository(cfg, db)
+    codeforcesUsecases := usecase.NewCodeforcesUsecase(codeforcesRepository)
+    codeforcesControllers := controller.NewCodeforcesController(codeforcesUsecases)
+    setupCodeforcesRoutes(router, codeforcesControllers, tokenService)
+
 
 	return router
 }

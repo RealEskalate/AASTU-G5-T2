@@ -76,33 +76,34 @@ func (r *trackRepository) GetTrackByID(trackID int) (*models.Track, error) {
 
 func (r *trackRepository) GetTrackProgressList(trackId, groupId int) ([]models.TrackProgress, error) {
 	query := `
-		WITH total_problems AS (
-			SELECT COUNT(*) as total
-			FROM problems
-			WHERE track_id = $1
-		), solved_counts AS (
-			SELECT 
-				s.user_id, 
-				COUNT(DISTINCT s.problem_id) as solved
-			FROM submissions s
-			INNER JOIN problems p ON p.id = s.problem_id
-			WHERE p.track_id = $1 AND s.verified = true
-			GROUP BY s.user_id
-		)
-		SELECT 
-			u.id as user_id,
-			u.name as name,  
-			COALESCE(sc.solved, 0) as solved,
-			tp.total as exercises,
-			(tp.total - COALESCE(sc.solved, 0)) as available,
-			ROUND(((COALESCE(sc.solved, 0)::float / tp.total) * 100)::numeric, 2) as completion
-		FROM users u
-		LEFT JOIN solved_counts sc ON u.id = sc.user_id,
-		total_problems tp
-		WHERE u.group_id = $2 
-		ORDER BY u.id;
+WITH total_problems AS (
+            SELECT COUNT(*) as total
+            FROM problems
+            WHERE track_id = $1
+        ), solved_counts AS (
+            SELECT 
+                s.user_id, 
+                COUNT(DISTINCT s.problem_id) as solved
+            FROM submissions s
+            INNER JOIN problems p ON p.id = s.problem_id
+            WHERE p.track_id = $1 AND s.verified = true
+            GROUP BY s.user_id
+        )
+        SELECT 
+            u.id as user_id,
+            u.name as name,  
+            COALESCE(sc.solved, 0) as solved,
+            tp.total as exercises,
+            (tp.total - COALESCE(sc.solved, 0)) as available,
+            ROUND(((COALESCE(sc.solved, 0)::float / NULLIF(tp.total, 0)) * 100)::numeric, 2) as completion
+        FROM users u
+        LEFT JOIN solved_counts sc ON u.id = sc.user_id,
+        total_problems tp
+        WHERE u.group_id = $2 
+        ORDER BY u.id;
 	`
 	
+	fmt.Printf("Executing query with trackId: %d, groupId: %d\n", trackId, groupId)
 	rows, err := r.db.Query(query, trackId, groupId)
 	fmt.Printf("rows: %+v\n", rows)
 	fmt.Printf("errorows: %+v\n", err)
@@ -130,15 +131,13 @@ func (r *trackRepository) GetTrackProgressList(trackId, groupId int) ([]models.T
 		progressList = append(progressList, progress)
 	}
 	fmt.Printf("Progressrepo: %+v\n", progressList)
-
+	fmt.Printf("Fetched progressList: %+v\n", progressList)
 	return progressList, nil
 }
 
 
 func (r *trackRepository) GetProblemsByDay(trackId int) (map[string]models.DayGroup, error) {
-	query := `Nothing done. Let me sort of don't worry. 
-		SELECT 
-			p.id, p.name, p.difficulty, p.platform, p.tag, p.link, 
+	query := `SELECT p.id, p.name, p.difficulty, p.platform, p.tag, p.link, 
 			p.created_at::date as day,
 			ARRAY_REMOVE(ARRAY_AGG(DISTINCT s.user_id), NULL) as users_solved
 		FROM problems p
