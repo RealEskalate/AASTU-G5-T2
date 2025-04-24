@@ -13,5 +13,6 @@ type Problem struct {
 	Link        string    `json:"link"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	UsersSolved []int     `json:"users_solved,omitempty"` // populated at query time
+	UsersSolved []int     `json:"users_solved,omitempty"` 
+	Index       *string   `json:"index,omitempty" db:"index"` // populated at query time
 }
