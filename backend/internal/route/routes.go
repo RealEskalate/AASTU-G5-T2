@@ -22,12 +22,11 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
+		AllowAllOrigins: true,
+		AllowMethods:    []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:    []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:   []string{"Content-Length"},
+		MaxAge:          12 * time.Hour,
 	}))
 
 	router.LoadHTMLFiles("../templates/set_password.html")
@@ -74,13 +73,11 @@ func SetupRouter(db *sql.DB) *gin.Engine {
 	trackControllers := controller.NewTrackController(trackUsecases)
 	setupTrackRoutes(router, trackControllers, tokenService)
 
-	
-    cfg := config.LoadConfig()
-    codeforcesRepository := repository.NewCodeforcesRepository(cfg, db)
-    codeforcesUsecases := usecase.NewCodeforcesUsecase(codeforcesRepository)
-    codeforcesControllers := controller.NewCodeforcesController(codeforcesUsecases)
-    setupCodeforcesRoutes(router, codeforcesControllers, tokenService)
-
+	cfg := config.LoadConfig()
+	codeforcesRepository := repository.NewCodeforcesRepository(cfg, db)
+	codeforcesUsecases := usecase.NewCodeforcesUsecase(codeforcesRepository)
+	codeforcesControllers := controller.NewCodeforcesController(codeforcesUsecases)
+	setupCodeforcesRoutes(router, codeforcesControllers, tokenService)
 
 	return router
 }
