@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode'; 
+import {jwtDecode} from 'jwt-decode';
 
 interface User {
-  id: string; 
+  id: string;
   email: string;
 }
 
@@ -21,7 +21,6 @@ const initialState: AuthState = {
   error: null,
 };
 
-// Interface for the API response
 interface LoginResponse {
   access_token: string;
   refresh_token: string;
@@ -29,31 +28,27 @@ interface LoginResponse {
   status: number;
 }
 
-// Interface for the JWT payload (adjust based on actual JWT content)
 interface JwtPayload {
   email: string;
   role: string;
   exp: number;
   tokenType: string;
-  // Add id if present in the JWT
 }
 
 export const login = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
+      console.log('Login credentials:', credentials);
       const response = await axios.post<LoginResponse>('https://aastu-g5-t2.onrender.com/auth/login', credentials);
       console.log('Login response:', response.data);
-
-      // Decode the JWT to extract user info
       const decoded: JwtPayload = jwtDecode(response.data.access_token);
-
-      // Construct the user object
       const user: User = {
-        id: decoded.email, // Use email as id if no id is provided; adjust if id exists
+        id: decoded.email, // Fallback; adjust if id is available
         email: decoded.email,
       };
-
+      // Store token in cookies
+      document.cookie = `auth_token=${response.data.access_token}; path=/; max-age=3600; SameSite=Strict`;
       return {
         user,
         token: response.data.access_token,
@@ -70,9 +65,12 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout(state) {
+      console.log('Logout action dispatched');
       state.user = null;
       state.token = null;
       localStorage.removeItem('persist:root');
+      // Clear token cookie
+      document.cookie = 'auth_token=; path=/; max-age=0; SameSite=Strict';
     },
   },
   extraReducers: (builder) => {

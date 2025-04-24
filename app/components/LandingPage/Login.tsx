@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { login } from '@/redux/slices/authSlice';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { login } from "@/redux/slices/authSlice";
+import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
-import { EyeOff, Eye } from 'lucide-react';
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { EyeOff, Eye } from "lucide-react";
 
 export default function Login({
   btnname,
@@ -27,14 +27,14 @@ export default function Login({
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     if (user) {
-      setEmail('');
-      setPassword('');
-      router.push('/dashboard');
+      setEmail("");
+      setPassword("");
+      router.push("/dashboard");
     }
   }, [user, router]);
 
@@ -74,7 +74,7 @@ export default function Login({
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
@@ -94,10 +94,7 @@ export default function Login({
               <Checkbox id="remember" />
               <Label htmlFor="remember">Remember me</Label>
             </div>
-            <a
-              href="#"
-              className="text-green-600 font-medium hover:underline"
-            >
+            <a href="#" className="text-green-600 font-medium hover:underline">
               Forgot password?
             </a>
           </div>
@@ -107,7 +104,7 @@ export default function Login({
             className="w-full bg-green-600 hover:bg-green-700"
             disabled={loading}
           >
-            {loading ? 'Logging in…' : 'Login'}
+            {loading ? "Logging in…" : "Login"}
           </Button>
         </form>
       </DropdownMenuContent>
