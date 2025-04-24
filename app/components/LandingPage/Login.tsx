@@ -34,7 +34,7 @@ export default function Login({
     if (user) {
       setEmail('');
       setPassword('');
-      router.push('/dashboard'); 
+      router.push('/dashboard');
     }
   }, [user, router]);
 

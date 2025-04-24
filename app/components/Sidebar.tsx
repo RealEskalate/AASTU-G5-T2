@@ -255,9 +255,8 @@ function Sidebar() {
         {!isCollapsed && <p className="font-semibold text-sm">HEAD</p>}
         <div>
           <Link
-            href="/dashboard"
-            className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
-            prefetch
+            href="/attendance"
+            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <HiHandRaised className="text-gray-500 text-xl" />
             {!isCollapsed && (
@@ -267,9 +266,8 @@ function Sidebar() {
             )}
           </Link>
           <Link
-            href="/dashboard"
-            className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
-            prefetch
+            href="/addproblem"
+            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
           >
             <BsPlusSquare className="text-gray-500 text-xl" />
             {!isCollapsed && (
