@@ -10,9 +10,9 @@ import (
 
 type AttendanceUsecase interface {
 	TakeAttendanceOfGroup(session_id int, attendance map[int]string, attendance_type string, email string) *errors.CustomError
-	GetAttendanceByGroupAndSession(group_short_name string, session_id int) ([]models.AttendanceModel, *errors.CustomError) // user_id -> {checkin -> status, checkout -> status}
-	GetAttendanceForStudent(user_id int) ([]models.AttendanceModel, *errors.CustomError)                                    // get student previous month attendance
-	DeleteAttendanceOfStudent(user_id int, session_id int, attendance_type string) *errors.CustomError                      // delete attendance for a group and session
+	GetAttendanceByGroupAndSession(group_short_name string, session_id int, attendance_type string) ([]models.AttendanceModel, *errors.CustomError) // user_id -> {checkin -> status, checkout -> status}
+	GetAttendanceForStudent(user_id int) ([]models.AttendanceModel, *errors.CustomError)                                                            // get student previous month attendance
+	DeleteAttendanceOfStudent(user_id int, session_id int, attendance_type string) *errors.CustomError                                              // delete attendance for a group and session
 	// UpdateAttendanceOfStudentBySession(attendance models.AttendanceModel) *errors.CustomError                                              // update attendance for a student by session id
 }
 
@@ -36,8 +36,8 @@ func (a *attendanceUsecase) DeleteAttendanceOfStudent(user_id int, session_id in
 }
 
 // GetAttendanceByGroupAndSession implements AttendanceUsecase.
-func (a *attendanceUsecase) GetAttendanceByGroupAndSession(group_short_name string, session_id int) ([]models.AttendanceModel, *errors.CustomError) {
-	attendance, err := a.attendanceRepo.GetAttendanceByGroupAndSession(group_short_name, session_id)
+func (a *attendanceUsecase) GetAttendanceByGroupAndSession(group_short_name string, session_id int, attendance_type string) ([]models.AttendanceModel, *errors.CustomError) {
+	attendance, err := a.attendanceRepo.GetAttendanceByGroupAndSession(group_short_name, session_id, attendance_type)
 	if err != nil {
 		return nil, err
 	}
