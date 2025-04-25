@@ -1,7 +1,45 @@
-import Image from "next/image"
-import { Calendar } from "lucide-react"
-import ratepic from "@/public/rate.png"
+import Image from "next/image";
+import { useState } from "react";
+import { Calendar } from "lucide-react";
+import ratepic from "@/public/rate.png";
+type AttendanceDay = {
+  date: string;
+  status: "present" | "excused" | "absent";
+};
+
+const attendanceData: AttendanceDay[] = Array.from({ length: 288 }, (_, i) => {
+  const status =
+    i === 10 || i === 42 || i === 105 || i === 220 || i === 260
+      ? "excused"
+      : "present";
+  return {
+    date: `2025-${Math.floor(i / 30) + 1}-${(i % 30) + 1}`,
+    status,
+  };
+});
+
 export default function ProfileDashboard() {
+  const [showDetail, setShowDetail] = useState(false);
+
+  const colorMap = {
+    present: "bg-green-500",
+    excused: "bg-yellow-400",
+    absent: "bg-red-500",
+  };
+
+  const absentCount = attendanceData.filter(
+    (d) => d.status === "absent"
+  ).length;
+  const excusedCount = attendanceData.filter(
+    (d) => d.status === "excused"
+  ).length;
+  const presentCount = attendanceData.filter(
+    (d) => d.status === "present"
+  ).length;
+  const total = attendanceData.length;
+  const percentage = Math.round((presentCount / total) * 100);
+
+  
   return (
     <div className="w-full mx-auto p-6 bg-white">
       {/* Consistency Section */}
@@ -59,58 +97,35 @@ export default function ProfileDashboard() {
         </div>
       </div>
 
-
       {/* Attendance Section */}
-      <div className="mb-8">
+      <div>
         <div className="flex justify-between items-center mb-2">
-          <h2 className="text-lg font-medium text-gray-800">Attendance</h2>
-          <button className="flex items-center text-xs text-gray-500">
-            <Calendar className="h-3 w-3 mr-1" />
+          <h2 className="text-lg font-semibold">Attendance</h2>
+          <label className="flex items-center gap-2 text-sm text-gray-600">
             Show detail
-          </button>
+            <input
+              type="checkbox"
+              className="toggle toggle-sm"
+              checked={showDetail}
+              onChange={() => setShowDetail((prev) => !prev)}
+            />
+          </label>
         </div>
-        <div className="border rounded-md p-3 bg-gray-50 shadow-md">
-          <div className="grid grid-cols-12 gap-1 mb-4">
-            {Array(60)
-              .fill(0)
-              .map((_, i) => {
-                // Randomly assign colors for the example, with mostly green
-                const colors = [
-                  "bg-green-500",
-                  "bg-green-500",
-                  "bg-green-500",
-                  "bg-green-500",
-                  "bg-green-500",
-                  "bg-green-500",
-                  "bg-green-500",
-                  "bg-green-500",
-                  "bg-yellow-400",
-                  "bg-orange-400",
-                ];
-                const randomColor =
-                  colors[Math.floor(Math.random() * colors.length)];
-                return (
-                  <div
-                    key={i}
-                    className={`h-5 ${randomColor} rounded-sm`}
-                  ></div>
-                );
-              })}
-          </div>
-          <div className="text-xs text-gray-700 flex items-center gap-4">
-            <span className="flex items-center">
-              <span className="inline-block w-3 h-3 bg-gray-300 mr-1 rounded-sm"></span>{" "}
-              Absent: 6
-            </span>
-            <span className="flex items-center">
-              <span className="inline-block w-3 h-3 bg-yellow-400 mr-1 rounded-sm"></span>{" "}
-              Excused: 31
-            </span>
-            <span className="flex items-center">
-              <span className="inline-block w-3 h-3 bg-green-500 mr-1 rounded-sm"></span>{" "}
-              Present: 248 | 88%
-            </span>
-          </div>
+
+        <div className="flex flex-wrap gap-1">
+          {attendanceData.map((day, idx) => (
+            <div
+              key={idx}
+              className={`w-4 h-4 rounded-sm ${colorMap[day.status]}`}
+              title={`${day.date} - ${day.status}`}
+            />
+          ))}
+        </div>
+
+        <div className="mt-2 text-sm text-gray-700">
+          Absent: <strong>{absentCount}</strong> | Excused:{" "}
+          <strong>{excusedCount}</strong> | Present:{" "}
+          <strong>{presentCount}</strong> | <strong>{percentage}%</strong>
         </div>
       </div>
       <div className="flex">
@@ -151,17 +166,14 @@ export default function ProfileDashboard() {
               <div className="font-semibold text-lg">Strategist | 1522</div>
               <div className="text-sm text-gray-500">Next: Knight III</div>
             </div>
-
-        </div>
-            {/* Division */}
-            <div className="shadow-md col-span-2 rounded-md  flex flex-col items-center">
-
-
+          </div>
+          {/* Division */}
+          <div className="shadow-md col-span-2 rounded-md  flex flex-col items-center">
             <div className="mt-8 text-center">
               <div className="font-semibold text-lg">Div 3</div>
               <div className="text-sm text-blue-500">Division III</div>
             </div>
-            </div>
+          </div>
         </div>
         {/* Stats and Profile Section */}
         <div className=" gap-6 mb-8">
@@ -231,7 +243,6 @@ export default function ProfileDashboard() {
                 </a>
               </div>
 
-
               <div className="flex items-center">
                 <div className="w-6 h-6 bg-blue-400 rounded-sm flex items-center justify-center text-white mr-3">
                   <svg
@@ -274,7 +285,6 @@ export default function ProfileDashboard() {
                 </a>
               </div>
 
-
               <div className="flex items-center">
                 <div className="w-6 h-6 bg-yellow-500 rounded-sm flex items-center justify-center text-white mr-3">
                   <svg
@@ -316,7 +326,6 @@ export default function ProfileDashboard() {
                   https://codeforces.com/profile/samuels5
                 </a>
               </div>
-
 
               <div className="flex items-center">
                 <div className="w-6 h-6 bg-green-600 rounded-sm flex items-center justify-center text-white mr-3">

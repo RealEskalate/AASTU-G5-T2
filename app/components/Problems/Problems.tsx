@@ -1,3 +1,4 @@
+// pages/dashboard/problems.tsx
 "use client";
 import React, { useEffect } from "react";
 import { Columns3Icon, Download } from "lucide-react";
@@ -23,7 +24,7 @@ const Problems: React.FC = () => {
   const { problems, loading, error } = useSelector(
     (state: RootState) => state.problems
   );
-  console.log(problems, loading, error);
+  console.log("response:",problems);
 
   useEffect(() => {
     dispatch(fetchProblems());
@@ -82,9 +83,11 @@ const Problems: React.FC = () => {
             </TableHeader>
             <TableBody>
               {problems.map((problem, index) => (
-                <Link href={"/dashboard/problemsubmission"} key={index}>
+                <Link
+                  href={`/dashboard/problemsubmission?id=${problem.id}`}
+                  key={index}
+                >
                   <TableRow
-                   
                     className="grid grid-cols-[100px_2fr_150px_100px_100px_50px] hover:bg-muted border-b border-gray-200"
                   >
                     <TableCell className="py-6">

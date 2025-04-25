@@ -2,9 +2,12 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { RootState, AppDispatch } from '../store';
 import { login } from './authSlice';
+import { Key } from 'readline';
 
 // Define the shape of a problem
 interface Problem {
+  created_at: any;
+  id: Key | null | undefined;
   difficulty: string;
   name: string;
   tag: string;
@@ -136,6 +139,8 @@ const problemsSlice = createSlice({
       .addCase(fetchProblems.fulfilled, (state, action) => {
         state.loading = false;
         state.problems = action.payload.map((item: any) => ({
+          created_at: item.created_at,
+          id: item.id,
           difficulty: item.difficulty,
           name: item.name,
           tag: item.tag?.filter((tag: string) => tag).join(', ') || 'None', // Updated to use 'tag' from API
