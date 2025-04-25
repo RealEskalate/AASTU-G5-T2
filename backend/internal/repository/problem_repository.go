@@ -82,19 +82,17 @@ func (r *problemRepository) GetAllProblems() ([]models.Problem, *errors.CustomEr
 
 func (r *problemRepository) AddProblem(problem models.Problem) *errors.CustomError {
 	query := `
-		INSERT INTO problems (name, contest_id, platform, link, created_at, updated_at, tag, track_id, difficulty)
-		VALUES ($1, $2, $3, $4, NOW(), NOW(), $5, $6, $7)
+		INSERT INTO problems (name, platform, link, tag, difficulty, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
 	`
 
 	tagsStr := strings.Join(problem.Tag, ",") // convert []string to comma-separated string
 
 	_, err := r.db.Exec(query,
 		problem.Name,
-		problem.ContestID,
 		problem.Platform,
 		problem.Link,
 		tagsStr,
-		problem.TrackID,
 		problem.Difficulty,
 	)
 
