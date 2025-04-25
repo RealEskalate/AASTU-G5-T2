@@ -296,6 +296,15 @@ function Sidebar() {
             )}
           </Link>
           <Link
+            href="/dashboard/dailyproblem"
+            className="flex gap-3 items-center hover:bg-gray-100 py-3 px-4 mx-3 rounded-lg mt-2"
+          >
+            <BsPlusSquare className="text-gray-500 text-xl" />
+            {!isCollapsed && (
+              <span className="text-gray-500 font-semibold">Daily Problem</span>
+            )}
+          </Link>
+          <Link
             href="/dashboard"
             className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
             prefetch
@@ -313,6 +322,16 @@ function Sidebar() {
             <BsPlusSquare className="text-gray-500 text-xl" />
             {!isCollapsed && (
               <span className="text-gray-500 font-semibold">Add Track</span>
+            )}
+          </Link>
+          <Link
+            href="/dashboard/addexercise"
+            className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
+            prefetch
+          >
+            <BsPlusSquare className="text-gray-500 text-xl" />
+            {!isCollapsed && (
+              <span className="text-gray-500 font-semibold">Add Exercise</span>
             )}
           </Link>
           <Link
