@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"encoding/json"
 	"log"
 
 	"strings"
@@ -134,7 +133,7 @@ func (r *problemRepository) AddProblemToTrack(problemID int, trackID string) *er
 // GetProblemById retrieves a problem from the database by its ID.
 func (r *problemRepository) GetProblemById(id int) (models.Problem, *errors.CustomError) {
 	var problem models.Problem
-	var tagsJSON []byte // To store the JSON representation of the tags
+	var tagsStr string // To store the JSON representation of the tags
 
 	query := `SELECT id, contest_id, track_id, name, difficulty, tag, platform, link, created_at, updated_at 
               FROM problems 
@@ -142,7 +141,7 @@ func (r *problemRepository) GetProblemById(id int) (models.Problem, *errors.Cust
 
 	err := r.db.QueryRow(query, id).Scan(
 		&problem.ID, &problem.ContestID, &problem.TrackID, &problem.Name,
-		&problem.Difficulty, &tagsJSON, &problem.Platform, &problem.Link,
+		&problem.Difficulty, &tagsStr, &problem.Platform, &problem.Link,
 		&problem.CreatedAt, &problem.UpdatedAt,
 	)
 	if err != nil {
@@ -152,13 +151,11 @@ func (r *problemRepository) GetProblemById(id int) (models.Problem, *errors.Cust
 		return models.Problem{}, &errors.CustomError{StatusCode: 500, Message: "Failed to retrieve problem", Error: err} // Use 500 for DB errors
 	}
 
-	// Unmarshal the JSON from the database into the Tags slice.
-	if tagsJSON != nil { // Important:  Check for null!
-		err = json.Unmarshal(tagsJSON, &problem.Tag)
-		if err != nil {
-			return models.Problem{}, &errors.CustomError{StatusCode: 500, Message: "Failed to unmarshal tags", Error: err}
-		}
+	tags := strings.Split(tagsStr, ",")
+	for i := range tags {
+		tags[i] = strings.TrimSpace(tags[i])
 	}
+	problem.Tag = tags
 
 	return problem, nil
 }
