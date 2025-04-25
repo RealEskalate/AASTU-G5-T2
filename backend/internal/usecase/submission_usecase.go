@@ -4,7 +4,6 @@ import (
 	"a2sv_hub/internal/errors"
 	"a2sv_hub/internal/models"
 	"a2sv_hub/internal/repository"
-	"time"
 )
 
 type SubmissionUsecase interface {
@@ -21,8 +20,6 @@ func NewSubmissionUsecase(repo repository.SubmissionRepository) SubmissionUsecas
 }
 
 func (u *submissionUsecase) Submit(sub models.SubmissionModel) *errors.CustomError {
-	sub.CreatedAt = time.Now().Format(time.RFC3339)
-	sub.UpdatedAt = sub.CreatedAt
 	sub.Verified = false // default on submit
 	return u.repo.CreateSubmission(sub)
 }
