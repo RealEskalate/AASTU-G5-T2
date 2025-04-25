@@ -12,6 +12,7 @@ import { ArrowUp, ArrowDown } from "lucide-react";
 import { LiaArrowUpSolid } from "react-icons/lia";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const submissions = [
   {
@@ -56,16 +57,33 @@ export default function ProblemSubmission() {
   return (
     <div className="px-10">
       <h1 className="text-3xl font-bold">Submissions</h1>
-      <p className="text-gray-500 mt-1">Problems - <span className="text-black font-medium">E - Kidus and Robot</span></p>
+      <p className="text-gray-500 mt-1">
+        Problems -{" "}
+        <span className="text-black font-medium">E - Kidus and Robot</span>
+      </p>
 
       <div className="flex justify-end gap-4 mt-4">
-        <Button variant="outline" className="bg-blue-600 text-white hover:bg-blue-700">Open Problem</Button>
-        <Button variant="outline" className="bg-green-500 text-white hover:bg-green-600">New Submission</Button>
+        <Button
+          variant="outline"
+          className="bg-blue-600 text-white hover:bg-blue-700"
+        >
+          Open Problem
+        </Button>
+        <Link href="/dashboard/problems/problemsubmission/submissionform">
+          <Button
+            variant="outline"
+            className="bg-green-500 text-white hover:bg-green-600"
+          >
+            New Submission
+          </Button>
+        </Link>
       </div>
 
       <div className="border-b mt-6">
         <nav className="flex space-x-4">
-          <button className="border-b-2 border-green-500 py-2 px-1 text-green-600 font-semibold">Submissions</button>
+          <button className="border-b-2 border-green-500 py-2 px-1 text-green-600 font-semibold">
+            Submissions
+          </button>
           <button className="text-gray-400 py-2 px-1">Comments</button>
         </nav>
       </div>
@@ -93,10 +111,14 @@ export default function ProblemSubmission() {
               <TableHead className="py-6 flex items-center gap-1">
                 Name <ArrowUp className="w-4 h-4" />
               </TableHead>
-              <TableHead className="py-6 flex items-center">Time spent</TableHead>
+              <TableHead className="py-6 flex items-center">
+                Time spent
+              </TableHead>
               <TableHead className="py-6 flex items-center">Tries</TableHead>
               <TableHead className="py-6 flex items-center">Language</TableHead>
-              <TableHead className="py-6 flex items-center">In contest</TableHead>
+              <TableHead className="py-6 flex items-center">
+                In contest
+              </TableHead>
               <TableHead className="py-6 flex items-center">Added</TableHead>
             </TableRow>
           </TableHeader>

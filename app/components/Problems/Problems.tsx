@@ -84,7 +84,7 @@ const Problems: React.FC = () => {
             <TableBody>
               {problems.map((problem, index) => (
                 <Link
-                  href={`/dashboard/problemsubmission?id=${problem.id}`}
+                  href={`/dashboard/problems/problemsubmission?id=${problem.id}`}
                   key={index}
                 >
                   <TableRow
