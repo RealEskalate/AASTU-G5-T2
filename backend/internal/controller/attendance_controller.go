@@ -69,7 +69,9 @@ func (a *attendanceController) GetAttendanceByGroupAndSession(c *gin.Context) {
 		return
 	}
 
-	attendance, custErr := a.attendanceUsecase.GetAttendanceByGroupAndSession(requestData.GroupShortName, sessionID)
+	attendance_type := c.Query("type")
+
+	attendance, custErr := a.attendanceUsecase.GetAttendanceByGroupAndSession(requestData.GroupShortName, sessionID, attendance_type)
 	if custErr != nil {
 		c.JSON(custErr.StatusCode, gin.H{"error": custErr.Error, "message": custErr.Message, "status": custErr.StatusCode})
 		return

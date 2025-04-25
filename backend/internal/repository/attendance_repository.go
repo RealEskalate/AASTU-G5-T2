@@ -9,7 +9,7 @@ import (
 
 type AttendanceRepository interface {
 	GetAttendanceForStudent(user_id int) ([]models.AttendanceModel, *errors.CustomError)
-	GetAttendanceByGroupAndSession(group_short_name string, session_id int) ([]models.AttendanceModel, *errors.CustomError) // user_id -> {checkin -> status, checkout -> status}
+	GetAttendanceByGroupAndSession(group_short_name string, session_id int, attendance_type string) ([]models.AttendanceModel, *errors.CustomError) // user_id -> {checkin -> status, checkout -> status}
 	TakeAttendanceOfGroup(user_id int, session_id int, status string, attendance_type string, headId int) *errors.CustomError
 	DeleteAttendanceOfStudent(user_id int, session_id int, attendance_type string) *errors.CustomError
 }
@@ -45,7 +45,7 @@ func (a *attendanceRepo) DeleteAttendanceOfStudent(user_id int, session_id int, 
 }
 
 // GetAttendanceByGroupAndSession implements AttendanceRepository.
-func (a *attendanceRepo) GetAttendanceByGroupAndSession(group_short_name string, session_id int) ([]models.AttendanceModel, *errors.CustomError) {
+func (a *attendanceRepo) GetAttendanceByGroupAndSession(group_short_name string, session_id int, attendance_type string) ([]models.AttendanceModel, *errors.CustomError) {
 	query := `
 		SELECT a.id, a.user_id, a.head_id, a.status, a.at, a.created_at, a.updated_at, a.session_id, a.type
 		FROM attendances a
@@ -53,7 +53,14 @@ func (a *attendanceRepo) GetAttendanceByGroupAndSession(group_short_name string,
 		INNER JOIN groups g ON u.group_id = g.id
 		WHERE LOWER(g.short_name) = LOWER($1) AND a.session_id = $2
 	`
-	rows, err := a.db.Query(query, group_short_name, session_id)
+
+	args := []interface{}{group_short_name, session_id}
+	if attendance_type != "" {
+		query += " AND a.type = $3"
+		args = append(args, attendance_type)
+	}
+
+	rows, err := a.db.Query(query, args...)
 	if err != nil {
 		return nil, &errors.CustomError{Message: "failed to fetch attendance by group and session", Error: err, StatusCode: 500}
 	}
