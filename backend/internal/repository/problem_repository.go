@@ -136,7 +136,7 @@ func (r *problemRepository) GetProblemById(id int) (models.Problem, *errors.Cust
 	var problem models.Problem
 	var tagsJSON []byte // To store the JSON representation of the tags
 
-	query := `SELECT id, contest_id, track_id, name, difficulty, tags, platform, link, created_at, updated_at 
+	query := `SELECT id, contest_id, track_id, name, difficulty, tag, platform, link, created_at, updated_at 
               FROM problems 
               WHERE id = $1`
 
