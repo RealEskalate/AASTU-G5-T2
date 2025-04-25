@@ -1,6 +1,13 @@
-import Link from "next/link";
-import { Settings } from "lucide-react";
+"use client";
 
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import Link from 'next/link';
+import { Settings } from 'lucide-react';
+import { fetchSessions, clearError } from '@/redux/slices/sessionsSlice'; // Adjust path
+import { RootState, AppDispatch } from '@/redux/store'; // Adjust path
+
+// Define SessionProps for the Session component
 interface SessionProps {
   title: string;
   organizer?: string;
@@ -11,7 +18,8 @@ interface SessionProps {
   hasSettings?: boolean;
 }
 
-const Session = ({
+// Session component
+const Session: React.FC<SessionProps> = ({
   title,
   organizer,
   groups,
@@ -19,7 +27,7 @@ const Session = ({
   date,
   timeRange,
   hasSettings = false,
-}: SessionProps) => {
+}) => {
   return (
     <div className="border-t border-gray-200 py-6">
       <div className="flex justify-between items-start">
@@ -65,72 +73,48 @@ const Session = ({
   );
 };
 
-export default function SessionsPage() {
-  const sessions = [
-    {
-      title: "uytutr",
-      organizer: "gufyytd",
-      groups: ["AASTU Group 55", "AASTU Group 56", "AASTU Group 57"],
-      timeAgo: "4d 23h 49m 19s ago",
-      date: "Fri Apr 11",
-      timeRange: "05:30-08:00",
-      hasSettings: true,
-    },
-    {
-      title: "Camp II <> Fun Contest",
-      groups: [
-        "AAIT Group 51",
-        "AAIT Group 52",
-        "AAIT Group 53",
-        "AAIT Group 54",
-        "AASTU Group 55",
-        "AASTU Group 56",
-        "AASTU Group 57",
-        "ASTU Group 58",
-        "ASTU Group 59",
-      ],
-      timeAgo: "158d 23h 49m 19s ago",
-      date: "Fri Nov 08",
-      timeRange: "05:30-08:00",
-      hasSettings: false,
-    },
-    {
-      title: "Camp II <> Practice Session and Internal Interview Contest",
-      groups: [
-        "AAIT Group 51",
-        "AAIT Group 52",
-        "AAIT Group 53",
-        "AAIT Group 54",
-        "AASTU Group 55",
-        "AASTU Group 56",
-        "AASTU Group 57",
-        "ASTU Group 58",
-        "ASTU Group 59",
-      ],
-      timeAgo: "159d 23h 49m 19s ago",
-      date: "Thu Nov 07",
-      timeRange: "05:30-08:00",
-      hasSettings: false,
-    },
-    {
-      title: "Camp II <> Group Contest",
-      groups: [
-        "AAIT Group 51",
-        "AAIT Group 52",
-        "AAIT Group 53",
-        "AAIT Group 54",
-        "AASTU Group 55",
-        "AASTU Group 56",
-        "AASTU Group 57",
-        "ASTU Group 58",
-        "ASTU Group 59",
-      ],
-      timeAgo: "160d 23h 49m 19s ago",
-      date: "Wed Nov 06",
-      timeRange: "05:30-08:00",
-      hasSettings: false,
-    },
-  ];
+// SessionsPage component
+const SessionsPage: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { sessions, status, error } = useSelector((state: RootState) => state.sessions);
+
+  useEffect(() => {
+    if (status === 'idle') {
+      dispatch(fetchSessions());
+    }
+  }, [dispatch, status]);
+
+  // Function to format time ago
+  const getTimeAgo = (date: string): string => {
+    const now = new Date();
+    const sessionDate = new Date(date);
+    const diffMs = now.getTime() - sessionDate.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHrs = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    return `${diffDays}d ${diffHrs}h ${diffMins}m ago`;
+  };
+
+  // Function to format date
+  const formatDate = (start: string): string => {
+    const date = new Date(start);
+    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  };
+
+  // Function to format time range
+  const formatTimeRange = (start: string, end: string): string => {
+    const startTime = new Date(start).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+    const endTime = new Date(end).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+    return `${startTime}-${endTime}`;
+  };
+
+  if (status === 'loading') return <div>Loading...</div>;
+  if (status === 'failed') return (
+    <div>
+      Error: {error}{' '}
+      <button onClick={() => dispatch(clearError())}>Clear Error</button>
+    </div>
+  );
 
   return (
     <div className="container mx-auto p-6 w-full px-10">
@@ -144,19 +128,21 @@ export default function SessionsPage() {
       </div>
 
       <div>
-        {sessions.map((session, index) => (
+        {sessions.map((session) => (
           <Session
-            key={index}
-            title={session.title}
-            organizer={session.organizer}
-            groups={session.groups}
-            timeAgo={session.timeAgo}
-            date={session.date}
-            timeRange={session.timeRange}
-            hasSettings={session.hasSettings}
+            key={session.id}
+            title={session.name}
+            organizer={session.description.split('.')[0]} // Simplified, adjust as needed
+            groups={Object.keys(session.group_lecturer_id)}
+            timeAgo={getTimeAgo(session.created_at)}
+            date={formatDate(session.start_time)}
+            timeRange={formatTimeRange(session.start_time, session.end_time)}
+            hasSettings={true} // Adjust based on your logic
           />
         ))}
       </div>
     </div>
   );
-}
+};
+
+export default SessionsPage;

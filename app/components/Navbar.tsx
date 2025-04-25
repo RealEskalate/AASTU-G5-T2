@@ -1,10 +1,8 @@
-
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
 import { BiSearch } from "react-icons/bi";
 import { MdNotifications } from "react-icons/md";
-import profilePic from "@/public/images/profilepic.jpg";
 import shining from "@/public/icons/shining.png";
 import Image from "next/image";
 import { MenuIcon } from "lucide-react";
@@ -16,16 +14,29 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAppDispatch } from "@/redux/hooks"; // Import useAppDispatch
-import { logout } from "@/redux/slices/authSlice"; // Import logout action
-import { useRouter } from "next/navigation"; // Import useRouter for navigation
+import { useAppDispatch, useAppSelector } from "@/redux/hooks"; // Adjust path to your hooks
+import { logout } from "@/redux/slices/authSlice"; // Adjust path to authSlice
+import { fetchProfile } from "@/redux/slices/profileSlice"; // Adjust path to profileSlice
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement | null>(null);
-  const dispatch = useAppDispatch(); // Initialize dispatch
-  const router = useRouter(); // Initialize router
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const { profile, loading, error } = useAppSelector((state) => state.profile);
+  const { token, user } = useAppSelector((state) => state.auth);
 
+  // Fetch profile data if not already loaded
+  useEffect(() => {
+    if (token && !profile && !loading && !error) {
+      console.log("Fetching profile with token:", token);
+      dispatch(fetchProfile(token));
+    }
+  }, [dispatch, token, profile, loading, error]);
+
+  // Handle click outside for search bar
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -47,9 +58,16 @@ function Navbar() {
 
   // Handle logout
   const handleLogout = () => {
-    dispatch(logout()); 
-    router.push("/"); 
+    dispatch(logout());
+    router.push("/");
   };
+
+  // Fallback image and name/email
+  const imageSrc = profile?.photo && profile.photo.startsWith('https://res.cloudinary.com')
+    ? profile.photo
+    : "/images/default-profile.jpg";
+  const displayName = profile?.name || user?.email || "Guest";
+  const displayEmail = profile?.email || user?.email || "Not logged in";
 
   return (
     <div className="w-full relative fixed top-0 left-0 z-50">
@@ -101,27 +119,37 @@ function Navbar() {
           {/* Dropdown on Profile Picture */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Image
-                src={profilePic}
-                alt="Profile Picture"
-                className="rounded-full cursor-pointer"
-                width={38}
-                height={38}
-              />
+              <div className="w-[38px] h-[38px] rounded-full overflow-hidden cursor-pointer">
+                <Image
+                  src={imageSrc}
+                  alt="Profile Picture"
+                  className="rounded-full object-cover"
+                  width={38}
+                  height={38}
+                />
+              </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 mt-2">
               <DropdownMenuLabel className="text-gray-500">
-                olana.kelbesa@a2sv.org
+                {displayEmail}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Home</DropdownMenuItem>
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Sync leetcode</DropdownMenuItem>
+              <Link href={"/dashboard"}>
+                <DropdownMenuItem>Home</DropdownMenuItem>
+              </Link>
+              <Link href={"/dashboard/profile"}>
+                <DropdownMenuItem>Profile</DropdownMenuItem>
+              </Link>
+              <Link href={"/dashboard"}>
+                <DropdownMenuItem>Settings</DropdownMenuItem>
+              </Link>
+              <Link href={"/dashboard"}>
+                <DropdownMenuItem>Sync leetcode</DropdownMenuItem>
+              </Link>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="text-red-500"
-                onClick={handleLogout} // Trigger logout
+                onClick={handleLogout}
               >
                 Logout
               </DropdownMenuItem>

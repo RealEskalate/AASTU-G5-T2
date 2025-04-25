@@ -47,7 +47,7 @@ export default function Login({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          disabled={loading}
+          // disabled={loading}
           className="flex justify-between items-center bg-green-600 text-white rounded-full px-6 hover:bg-green-700"
         >
           {btnname} {icon && <span className="ml-2">{icon}</span>}
@@ -102,7 +102,7 @@ export default function Login({
           <Button
             type="submit"
             className="w-full bg-green-600 hover:bg-green-700"
-            disabled={loading}
+            // disabled={loading}
           >
             {loading ? "Logging in…" : "Login"}
           </Button>

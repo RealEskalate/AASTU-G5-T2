@@ -1,14 +1,14 @@
-import ContestsList from "@/app/components/contests-list";
-import RatingsList from "@/app/components/ratings-list";
-import { ChevronDown } from "lucide-react";
-
+"use client";
+import ContestsList from '@/app/components/contests-list';
+import RatingsList from '@/app/components/ratings-list';
+import { ChevronDown } from 'lucide-react';
 
 export default function ContestsPage() {
   return (
     <div className="container mx-auto p-6 max-w-7xl">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-800">Contests</h1>
-        <p className="text-gray-500">Ratings & contests</p>
+        <p className="text-gray-600">Ratings & contests</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

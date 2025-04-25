@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -10,16 +10,29 @@ import { TbTrack } from "react-icons/tb";
 import { PiNetwork } from "react-icons/pi";
 import { BsPeople, BsPerson, BsPersonPlus, BsPlusSquare } from "react-icons/bs";
 import logo from "@/public/images/a2sv hub.png";
-import profilepic from "@/public/images/profilepic.jpg";
 import { GiTeamIdea } from "react-icons/gi";
 import { HiHandRaised } from "react-icons/hi2";
 import { MdEvent } from "react-icons/md";
 import { Brain } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProfile } from "@/redux/slices/profileSlice"; // Adjust path to your profileSlice
+import { RootState } from "@/redux/store"; // Adjust path to your store
 
 function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isTrackOpen, setIsTrackOpen] = useState(false);
   const [isContestOpen, setIsContestOpen] = useState(false);
+
+  const dispatch = useDispatch();
+  const { profile, loading, error } = useSelector((state: RootState) => state.profile);
+
+  // Fetch profile data on component mount
+  useEffect(() => {
+    const token = localStorage.getItem("token"); // Adjust based on how you store the token
+    if (token) {
+      dispatch(fetchProfile(token));
+    }
+  }, [dispatch]);
 
   const dropdownVariants = {
     open: { height: "auto", opacity: 1 },
@@ -47,39 +60,47 @@ function Sidebar() {
         </button>
       </div>
 
-      <div className="flex gap-4 items-center bg-gray-100 py-4 px-4 mx-3 rounded-lg">
-        <Image
-          src={profilepic}
-          alt="Profile Picture"
-          className="rounded-full"
-          width={38}
-          height={38}
-        />
-        {!isCollapsed && (
-          <div className="flex flex-col">
-            <span className="font-semibold">John Smith</span>
-            <span className="text-gray-400 text-sm">Head of Academy</span>
-          </div>
-        )}
-      </div>
+      <Link href={"/dashboard/profile"}>
+        <div className="flex gap-4 items-center bg-gray-100 py-4 px-4 mx-3 rounded-lg">
+          {profile?.photo ? (
+            <Image
+              src={profile.photo}
+              alt="Profile Picture"
+              className="rounded-full"
+              width={38}
+              height={38}
+            />
+          ) : (
+            <div className="w-[38px] h-[38px] bg-gray-300 rounded-full" /> // Placeholder
+          )}
+          {!isCollapsed && (
+            <div className="flex flex-col">
+              <span className="font-semibold">
+                {loading ? "Loading..." : profile?.name || "John Smith"}
+              </span>
+              <span className="text-gray-400 text-sm">
+                {loading ? "Loading..." : profile?.role || "Head of Academy"}
+              </span>
+            </div>
+          )}
+        </div>
+      </Link>
 
       {/* Sidebar Navigation */}
       <div className="pl-4 py-2 pt-4">
         {!isCollapsed && <p className="font-semibold text-sm">STUDENT</p>}
         <div>
-          {/* Home Link */}
           <Link
             href="/dashboard"
             className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 focus:text-green-300 py-3 px-4 mx-3 rounded-lg mt-2"
             prefetch
           >
-            <BiHome className="text-gray-500 text-xl  " />
+            <BiHome className="text-gray-500 text-xl" />
             {!isCollapsed && (
-              <span className="text-gray-500 font-semibold ">Home</span>
+              <span className="text-gray-500 font-semibold">Home</span>
             )}
           </Link>
 
-          {/* Track Dropdown */}
           <Link
             href={"/dashboard/tracks"}
             className="flex justify-between items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2 cursor-pointer"
@@ -92,12 +113,14 @@ function Sidebar() {
               )}
             </div>
             {!isCollapsed && (
-              <div className="hover:bg-gray-200 rounded-full p-2" onClick={() => setIsTrackOpen(!isTrackOpen)}>
+              <div
+                className="hover:bg-gray-200 rounded-full p-2"
+                onClick={() => setIsTrackOpen(!isTrackOpen)}
+              >
                 <GrNext
                   className={`text-gray-500 text-sm transition-transform duration-300 ${
                     isTrackOpen ? "rotate-90" : "rotate-0"
                   }`}
-                  
                 />
               </div>
             )}
@@ -128,7 +151,6 @@ function Sidebar() {
             </div>
           </motion.div>
 
-          {/* Problems Link */}
           <Link
             href="/dashboard/problems"
             className="flex gap-3 items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2"
@@ -140,12 +162,8 @@ function Sidebar() {
             )}
           </Link>
 
-          {/* Contests Dropdown */}
           <Link href="/dashboard/contests" prefetch>
-            <div
-              className="flex justify-between items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2 cursor-pointer"
-              
-            >
+            <div className="flex justify-between items-center hover:bg-gray-100 focus:bg-green-100 py-3 px-4 mx-3 rounded-lg mt-2 cursor-pointer">
               <div className="flex gap-3 items-center">
                 <BiRun className="text-gray-500 text-xl" />
                 {!isCollapsed && (
@@ -153,7 +171,10 @@ function Sidebar() {
                 )}
               </div>
               {!isCollapsed && (
-                <div className="hover:bg-gray-200 rounded-full p-2" onClick={() => setIsContestOpen(!isContestOpen)}>
+                <div
+                  className="hover:bg-gray-200 rounded-full p-2"
+                  onClick={() => setIsContestOpen(!isContestOpen)}
+                >
                   <GrNext
                     className={`text-gray-500 text-sm transition-transform duration-300 ${
                       isContestOpen ? "rotate-90" : "rotate-0"
@@ -307,7 +328,9 @@ function Sidebar() {
         </div>
       </div>
       <div className="pl-4 py-2 pt-4">
-        {!isCollapsed && <p className="font-semibold text-sm">HEAD OF ACADEMY</p>}
+        {!isCollapsed && (
+          <p className="font-semibold text-sm">HEAD OF ACADEMY</p>
+        )}
         <div>
           <Link
             href="/dashboard"

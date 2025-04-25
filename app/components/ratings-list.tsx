@@ -1,63 +1,63 @@
-import Image from "next/image";
-import Link from "next/link";
-import profilepic from "@/public/images/profilepic.jpg"
+import Image from 'next/image';
+import Link from 'next/link';
+
 export default function RatingsList() {
   const users = [
     {
       id: 1,
-      name: "Amro Adil Mohamedahmed Salman",
-      role: "GSA Student",
+      name: 'Amro Adil Mohamedahmed Salman',
+      role: 'GSA Student',
       rating: 2683,
-      badgeColor: "bg-green-500",
+      badgeColor: 'bg-green-500',
     },
     {
       id: 2,
-      name: "Marouane BENBETKA",
-      role: "GSC Student",
+      name: 'Marouane BENBETKA',
+      role: 'GSC Student',
       rating: 2405,
-      badgeColor: "bg-purple-500",
+      badgeColor: 'bg-purple-500',
     },
     {
       id: 3,
-      name: "Abel Gebeyehu",
-      role: "GSC Student",
+      name: 'Abel Gebeyehu',
+      role: 'GSC Student',
       rating: 2284,
-      badgeColor: "bg-purple-500",
+      badgeColor: 'bg-purple-500',
     },
     {
       id: 4,
-      name: "Kenenisa Alemayehu",
-      role: "G6E Head",
+      name: 'Kenenisa Alemayehu',
+      role: 'G6E Head',
       rating: 2256,
-      badgeColor: "bg-purple-500",
+      badgeColor: 'bg-purple-500',
     },
     {
       id: 5,
-      name: "Merwan",
-      role: "GSA Student",
+      name: 'Merwan',
+      role: 'GSA Student',
       rating: 2228,
-      badgeColor: "bg-purple-500",
+      badgeColor: 'bg-purple-500',
     },
     {
       id: 6,
-      name: "Merwan",
-      role: "GSA Student",
+      name: 'Merwan',
+      role: 'GSA Student',
       rating: 2228,
-      badgeColor: "bg-purple-500",
+      badgeColor: 'bg-purple-500',
     },
     {
       id: 7,
-      name: "Merwan",
-      role: "GSA Student",
+      name: 'Merwan',
+      role: 'GSA Student',
       rating: 2228,
-      badgeColor: "bg-purple-500",
+      badgeColor: 'bg-purple-500',
     },
     {
       id: 8,
-      name: "Merwan",
-      role: "GSA Student",
+      name: 'Merwan',
+      role: 'GSA Student',
       rating: 2228,
-      badgeColor: "bg-purple-500",
+      badgeColor: 'bg-purple-500',
     },
   ];
 
@@ -94,7 +94,7 @@ export default function RatingsList() {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <Image
-                  src= "/images/profilepic.jpg"
+                  src="/images/profilepic.jpg"
                   alt={`${user.name}'s avatar`}
                   width={40}
                   height={40}

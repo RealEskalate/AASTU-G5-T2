@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 interface User {
   id: string;
@@ -10,6 +10,7 @@ interface User {
 interface AuthState {
   user: User | null;
   token: string | null;
+  refresh_token: string | null;
   loading: boolean;
   error: string | null;
 }
@@ -17,6 +18,7 @@ interface AuthState {
 const initialState: AuthState = {
   user: null,
   token: null,
+  refresh_token: null,
   loading: false,
   error: null,
 };
@@ -39,12 +41,11 @@ export const login = createAsyncThunk(
   'auth/login',
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
-      console.log('Login credentials:', credentials);
       const response = await axios.post<LoginResponse>('https://aastu-g5-t2.onrender.com/auth/login', credentials);
       console.log('Login response:', response.data);
       const decoded: JwtPayload = jwtDecode(response.data.access_token);
       const user: User = {
-        id: decoded.email, // Fallback; adjust if id is available
+        id: decoded.email,
         email: decoded.email,
       };
       // Store token in cookies
@@ -52,6 +53,7 @@ export const login = createAsyncThunk(
       return {
         user,
         token: response.data.access_token,
+        refresh_token: response.data.refresh_token,
       };
     } catch (err: any) {
       console.error('Login error:', err.response?.data || err.message);
@@ -68,8 +70,8 @@ const authSlice = createSlice({
       console.log('Logout action dispatched');
       state.user = null;
       state.token = null;
+      state.refresh_token = null;
       localStorage.removeItem('persist:root');
-      // Clear token cookie
       document.cookie = 'auth_token=; path=/; max-age=0; SameSite=Strict';
     },
   },
@@ -81,10 +83,11 @@ const authSlice = createSlice({
       })
       .addCase(
         login.fulfilled,
-        (state, action: PayloadAction<{ user: User; token: string }>) => {
+        (state, action: PayloadAction<{ user: User; token: string; refresh_token: string }>) => {
           state.loading = false;
           state.user = action.payload.user;
           state.token = action.payload.token;
+          state.refresh_token = action.payload.refresh_token;
         }
       )
       .addCase(login.rejected, (state, action) => {
