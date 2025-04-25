@@ -102,7 +102,7 @@ WITH total_problems AS (
         WHERE u.group_id = $2 
         ORDER BY u.id;
 	`
-	
+
 	fmt.Printf("Executing query with trackId: %d, groupId: %d\n", trackId, groupId)
 	rows, err := r.db.Query(query, trackId, groupId)
 	fmt.Printf("rows: %+v\n", rows)
@@ -135,7 +135,6 @@ WITH total_problems AS (
 	return progressList, nil
 }
 
-
 func (r *trackRepository) GetProblemsByDay(trackId int) (map[string]models.DayGroup, error) {
 	query := `SELECT p.id, p.name, p.difficulty, p.platform, p.tag, p.link, 
 			p.created_at::date as day,
@@ -160,14 +159,14 @@ func (r *trackRepository) GetProblemsByDay(trackId int) (map[string]models.DayGr
 		var day string
 		var usersSolved pq.Int64Array
 		var tagsString string // This will hold the comma-separated tags
-		var platform string // Assuming you want to keep this field
+		var platform string   // Assuming you want to keep this field
 
 		// Scan the query results
 		err := rows.Scan(
 			&prob.ID,
 			&prob.Name,
 			&prob.Difficulty,
-			&tagsString,  // Scan the comma-separated tags
+			&tagsString, // Scan the comma-separated tags
 			&prob.Link,
 			&platform,
 			&day,
@@ -178,7 +177,7 @@ func (r *trackRepository) GetProblemsByDay(trackId int) (map[string]models.DayGr
 		}
 
 		// Split the comma-separated tags into a slice
-		prob.Tags = splitTags(tagsString)
+		prob.Tag = splitTags(tagsString)
 
 		// Convert usersSolved (pq.Int64Array) to []int
 		prob.UsersSolved = make([]int, len(usersSolved))
@@ -189,14 +188,14 @@ func (r *trackRepository) GetProblemsByDay(trackId int) (map[string]models.DayGr
 		// If the dayMap doesn't contain the current day, initialize it
 		if _, ok := dayMap[day]; !ok {
 			dayMap[day] = models.DayGroup{
-				Tags:    []string{},
+				Tags:     []string{},
 				Problems: []models.Problem{},
 			}
 		}
 
 		// Add tags if they don't already exist
 		group := dayMap[day]
-		for _, tag := range prob.Tags {
+		for _, tag := range prob.Tag {
 			if !contains(group.Tags, tag) {
 				group.Tags = append(group.Tags, tag)
 			}
