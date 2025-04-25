@@ -73,7 +73,7 @@ func (r *problemRepository) GetAllProblems() ([]models.Problem, *errors.CustomEr
 		for i := range tags {
 			tags[i] = strings.TrimSpace(tags[i])
 		}
-		problem.Tags = tags
+		problem.Tag = tags
 
 		problems = append(problems, problem)
 	}
@@ -87,7 +87,7 @@ func (r *problemRepository) AddProblem(problem models.Problem) *errors.CustomErr
 		VALUES ($1, $2, $3, $4, NOW(), NOW(), $5, $6, $7)
 	`
 
-	tagsStr := strings.Join(problem.Tags, ",") // convert []string to comma-separated string
+	tagsStr := strings.Join(problem.Tag, ",") // convert []string to comma-separated string
 
 	_, err := r.db.Exec(query,
 		problem.Name,
@@ -154,7 +154,7 @@ func (r *problemRepository) GetProblemById(id int) (models.Problem, *errors.Cust
 
 	// Unmarshal the JSON from the database into the Tags slice.
 	if tagsJSON != nil { // Important:  Check for null!
-		err = json.Unmarshal(tagsJSON, &problem.Tags)
+		err = json.Unmarshal(tagsJSON, &problem.Tag)
 		if err != nil {
 			return models.Problem{}, &errors.CustomError{StatusCode: 500, Message: "Failed to unmarshal tags", Error: err}
 		}
