@@ -14,7 +14,7 @@ func setupProblemRoutes(router *gin.Engine, controller controller.ProblemControl
 	problemRoutes := router.Group("/problems")
 	problemRoutes.Use(middleware.AuthMiddleWare(tokenService), middleware.RoleMiddleWare(tokenService, "head", "super_admin", "student"))
 	problemRoutes.GET("/", controller.GetAllProblems)
-	problemRoutes.GET("/:problem_id", controller.GetAllProblems)
+	problemRoutes.GET("/:problem_id", controller.GetProblemById)
 
 	problemRoutesHead := router.Group("/problems")
 	problemRoutesHead.Use(middleware.AuthMiddleWare(tokenService), middleware.RoleMiddleWare(tokenService, "head", "super_admin"))
