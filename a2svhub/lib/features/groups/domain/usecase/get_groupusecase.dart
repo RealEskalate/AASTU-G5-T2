@@ -9,7 +9,7 @@ class GetGroupUseCase {
   final GroupRepository groupRepository;
   GetGroupUseCase( this.groupRepository);
 
-  Future<Either<Failure, GroupEntity>> execute(String id) {
+  Future<Either<Failure, GroupEntity>> execute(int id) {
     return groupRepository.getgroup(id);
   }
 }

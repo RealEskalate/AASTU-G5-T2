@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class GroupLocalDataSource {
   Future<List<GroupModel>> getGroups();
-  Future<GroupModel> getGroup(String id);
+  Future<GroupModel> getGroup(int id);
   
   Future<void> cacheGroup(GroupModel group);
   Future<void>  cacheGroups(List<GroupModel> products);
@@ -51,8 +51,8 @@ class GroupLocalDataSourceImpl extends GroupLocalDataSource {
 
   
   @override
-  Future<GroupModel> getGroup(String id) async {
-    final Groupjson = _sharedPreferences.getString(_getProductCachekey(id));
+  Future<GroupModel> getGroup(int id) async {
+    final Groupjson = _sharedPreferences.getString(_getProductCachekey(id.toString()));
     if (Groupjson != null) {
       return GroupModel.fromJson(jsonDecode(Groupjson));
     } else {

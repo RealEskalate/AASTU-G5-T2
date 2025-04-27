@@ -20,7 +20,7 @@ class GroupRepositoryImpl extends GroupRepository {
   );
 
    @override
-  Future<Either<Failure, GroupEntity>> getgroup(String id) async {
+  Future<Either<Failure, GroupEntity>> getgroup(int id) async {
     if (await _networkInfo.isConnected) {
       // Network is available, fetch from remote data source
       try {

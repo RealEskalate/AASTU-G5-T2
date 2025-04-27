@@ -6,13 +6,13 @@ import 'package:a2svhub/features/groups/data/models/group_model.dart';
 import 'package:http/http.dart' as http;
 
 abstract class GroupRemoteDataSource {
-  Future<GroupModel> getGroup(String id);
+  Future<GroupModel> getGroup(int id);
   Future<List<GroupModel>> getGroups();
 }
 
 class GroupRemoteDataSourceImpl extends GroupRemoteDataSource {
-  static const String _token =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVua3V0YXRhc2guZXNoZXR1QGEyc3Yub3JnIiwiZXhwIjoxNzc1ODUwMzY3LCJyb2xlIjoic3VwZXJfYWRtaW4iLCJ0b2tlblR5cGUiOiJyZWZyZXNoX3Rva2VuIn0.RTJLatFRFyFlk2wauV6hsiz_q_-aD6vMhZ-bGfNzk4g';
+  static const String _token =  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVua3V0YXRhc2guZXNoZXR1QGEyc3Yub3JnIiwiZXhwIjoxNzc1ODUwMzY3LCJyb2xlIjoic3VwZXJfYWRtaW4iLCJ0b2tlblR5cGUiOiJyZWZyZXNoX3Rva2VuIn0.RTJLatFRFyFlk2wauV6hsiz_q_-aD6vMhZ-bGfNzk4g'
+      ;
   final http.Client client;
   Map<String, String> _headers = {
   'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ class GroupRemoteDataSourceImpl extends GroupRemoteDataSource {
 };
   GroupRemoteDataSourceImpl({required this.client});
 
-  Future<GroupModel> getGroup(String id) async {
+  Future<GroupModel> getGroup(int id) async {
     final response = await client.get(Uri.parse(Urls.getgroupbyid(id), 
     ),headers: _headers,);
     if (response.statusCode == 200) {

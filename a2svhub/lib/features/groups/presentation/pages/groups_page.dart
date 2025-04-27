@@ -1,3 +1,5 @@
+import 'package:a2svhub/core/widgets/navbar.dart';
+import 'package:a2svhub/core/widgets/sidebar.dart';
 import 'package:a2svhub/features/groups/presentation/widgets/group_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +16,11 @@ class GroupsPage extends StatelessWidget {
     context.read<GroupPageBloc>().add(GroupPageLoadEvent());
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Groups & Users')),
+      appBar: TopNavBar(),
+      drawer: Drawer(
+        width: MediaQuery.of(context).size.width * 0.75, // 75% width
+        child: SidebarWidget(),
+      ),
       body: BlocBuilder<GroupPageBloc, GrouppageState>(
         builder: (context, state) {
           // Show loading indicator while data is loading
@@ -30,15 +36,48 @@ class GroupsPage extends StatelessWidget {
           // Show loaded data
           if (state is GroupPageLoaded) {
             return SingleChildScrollView(
-              child: Column(
-                children: state.groups.map((group) {
-                  return GroupCard(
-                    groupName: group.name,       // Assuming 'name' is a property of GroupEntity
-                    groupCode: group.description,       // Assuming 'code' is a property of GroupEntity
-                    members: group.country, 
-                   
-                  );
-                }).toList(),
+              child: Padding(
+                padding: const EdgeInsets.all(
+                    5), // Optional: to give some spacing from the screen edges
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment
+                      .start, // This makes children align to the left
+                  children: [
+                    // "Groups" and "All" texts
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text(
+                          'Groups',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                            height:
+                                4), // small spacing between "Groups" and "All"
+                        Text(
+                          'All',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        SizedBox(
+                            height: 16), // spacing before group cards start
+                      ],
+                    ),
+                    // List of group cards
+                    ...state.groups.map((group) {
+                      return GroupCard(
+                        groupName: group.name,
+                        groupCode: group.description,
+                        members: group.country,
+                      );
+                    }).toList(),
+                  ],
+                ),
               ),
             );
           }
