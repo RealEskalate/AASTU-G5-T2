@@ -1,0 +1,31 @@
+import 'package:equatable/equatable.dart';
+import 'package:a2svhub/features/contests/domain/entity/contest.dart';
+
+abstract class ContestState extends Equatable {
+  const ContestState();
+
+  @override
+  List<Object> get props => [];
+}
+
+class ContestInitial extends ContestState {}
+
+class ContestLoading extends ContestState {}
+
+class ContestLoaded extends ContestState {
+  final List<ContestEntity> contests;
+
+  const ContestLoaded(this.contests);
+
+  @override
+  List<Object> get props => [contests];
+}
+
+class ContestError extends ContestState {
+  final String message;
+
+  const ContestError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
