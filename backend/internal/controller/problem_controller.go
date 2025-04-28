@@ -39,8 +39,29 @@ func (p *problemController) GetDailyProblem(c *gin.Context) {
 }
 
 func (p *problemController) GetAllProblems(c *gin.Context) {
+	// Read query params
+	pageStr := c.Query("page")
+	limitStr := c.Query("limit")
 
-	problems, err := p.problemUsecase.GetAllProblems()
+	// Defaults if not provided
+	page := 1
+	limit := 10
+
+	// Parse if provided
+	if pageStr != "" {
+		if parsedPage, err := strconv.Atoi(pageStr); err == nil && parsedPage > 0 {
+			page = parsedPage
+		}
+	}
+
+	if limitStr != "" {
+		if parsedLimit, err := strconv.Atoi(limitStr); err == nil && parsedLimit > 0 {
+			limit = parsedLimit
+		}
+	}
+
+	// Call Usecase with pagination
+	problems, err := p.problemUsecase.GetAllProblems(page, limit)
 	if err != nil {
 		c.JSON(err.StatusCode, gin.H{
 			"error":   err.Error,
@@ -49,6 +70,7 @@ func (p *problemController) GetAllProblems(c *gin.Context) {
 		})
 		return
 	}
+
 	c.JSON(http.StatusOK, problems)
 }
 
