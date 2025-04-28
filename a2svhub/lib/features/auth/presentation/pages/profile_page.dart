@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:a2svhub/core/widgets/navbar.dart';
+import 'package:a2svhub/core/widgets/sidebar.dart';
 import 'package:a2svhub/features/auth/presentation/Bloc/auth_bloc.dart';
 import 'package:a2svhub/features/auth/presentation/Bloc/auth_event.dart';
 import 'package:a2svhub/features/auth/presentation/Bloc/auth_state.dart';
@@ -7,6 +9,7 @@ import 'package:a2svhub/features/auth/presentation/pages/sign_in_page.dart';
 import 'package:a2svhub/features/auth/presentation/widget/textfield_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:image_picker/image_picker.dart';
 
@@ -102,13 +105,16 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('Profile Page')),
+      appBar: TopNavBar(),
+      drawer: Drawer(
+        width: MediaQuery.of(context).size.width * 0.75,
+        child: SidebarWidget(),
+      ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) async {
           if (state is ProfileUpdated) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            context.read<AuthBloc>().add(GetMyProfileEvent());
+          } else if (state is MyProfileLoaded) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => MyProfilePage()),
@@ -131,7 +137,7 @@ class _ProfilePageState extends State<ProfilePage> {
           }
         },
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16.sp),
           child: Form(
             key: _formKey,
             onChanged: _validateForm,
@@ -140,15 +146,15 @@ class _ProfilePageState extends State<ProfilePage> {
                 GestureDetector(
                   onTap: _pickImage,
                   child: CircleAvatar(
-                    radius: 40,
+                    radius: 40.w,
                     backgroundImage: _selectedImage != null
                         ? FileImage(_selectedImage!)
                         : null,
                   ),
                 ),
-                const SizedBox(height: 12),
-                const Text("Allowed: *jpeg, *jpg, *png, *.gif"),
-                const SizedBox(height: 10),
+                SizedBox(height: 12.sp),
+                Text("Allowed: *jpeg, *jpg, *png, *.gif"),
+                SizedBox(height: 10.sp),
                 AppTextField(label: 'Name', controller: nameController, isRequired: true),
                 AppTextField(label: 'Password', controller: passwordController),
                 AppTextField(label: 'University', controller: universityController),
@@ -175,8 +181,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     );
                     if (pickedDate != null) {
                       setState(() {
-                        birthdateController.text =
-                            "${pickedDate.toLocal()}".split(' ')[0];
+                        birthdateController.text = "${pickedDate.toLocal()}".split(' ')[0];
                       });
                     }
                   },
@@ -189,7 +194,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 AppTextField(label: 'T-shirt Color', controller: tshirtColorController),
                 AppTextField(label: 'T-shirt Size', controller: tshirtSizeController),
                 
-                // 👉 Updated Gender Field (Dropdown)
                 DropdownButtonFormField<String>(
                   value: selectedGender,
                   decoration: const InputDecoration(
@@ -209,11 +213,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       _validateForm();
                     });
                   },
-                  validator: (value) => value == null ? 'Please select your gender' : null,
+                  validator: (value) =>
+                      value == null ? 'Please select your gender' : null,
                 ),
-
+                
                 AppTextField(label: 'Department', controller: departmentController),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.sp),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(

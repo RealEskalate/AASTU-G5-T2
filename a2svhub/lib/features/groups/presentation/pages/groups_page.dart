@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:a2svhub/features/groups/presentation/bloc/group_page_bloc.dart';
 import 'package:a2svhub/features/groups/presentation/bloc/group_page_state.dart';
 import 'package:a2svhub/features/groups/presentation/bloc/group_page_event.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class GroupsPage extends StatelessWidget {
   const GroupsPage({super.key});
@@ -37,35 +38,35 @@ class GroupsPage extends StatelessWidget {
           if (state is GroupPageLoaded) {
             return SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(
-                    5), // Optional: to give some spacing from the screen edges
+                padding: EdgeInsets.all(5.w), // Responsive padding using .w
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment
-                      .start, // This makes children align to the left
+                  crossAxisAlignment: CrossAxisAlignment.start, // Align to the left
                   children: [
                     // "Groups" and "All" texts
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
-                          'Groups',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 4.h), // Responsive bottom padding using .h
+                          child: Text(
+                            'Groups',
+                            style: TextStyle(
+                              fontSize: 24.sp, // Responsive font size using .sp
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        SizedBox(
-                            height:
-                                4), // small spacing between "Groups" and "All"
-                        Text(
-                          'All',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
+                        // small spacing between "Groups" and "All"
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 16.h), // Responsive bottom padding using .h
+                          child: Text(
+                            'All',
+                            style: TextStyle(
+                              fontSize: 16.sp, // Responsive font size using .sp
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
-                        SizedBox(
-                            height: 16), // spacing before group cards start
                       ],
                     ),
                     // List of group cards

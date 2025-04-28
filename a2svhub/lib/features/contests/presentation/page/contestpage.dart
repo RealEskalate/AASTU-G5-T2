@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:a2svhub/features/contests/presentation/widget/contestcard.dart';
-import 'package:a2svhub/servicelocator.dart'; // Assuming you registered GetContestsUseCase in your DI
+import 'package:a2svhub/servicelocator.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Assuming you registered GetContestsUseCase in your DI
 
 class ContestScreen extends StatelessWidget {
   const ContestScreen({super.key});
@@ -20,11 +21,11 @@ class ContestScreen extends StatelessWidget {
       child: Scaffold(
         appBar: TopNavBar(),  // Top navbar added here
         drawer: Drawer(
-          width: MediaQuery.of(context).size.width * 0.75,  // 75% width
+          width: MediaQuery.of(context).size.width * 0.75.w,  // 75% width, .w for responsiveness
           child: SidebarWidget(),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16.w),  // .w for responsive padding
           child: BlocBuilder<ContestBloc, ContestState>(
             builder: (context, state) {
               if (state is ContestLoading) {
@@ -32,21 +33,21 @@ class ContestScreen extends StatelessWidget {
               } else if (state is ContestLoaded) {
                 return ListView(
                   children: [
-                    const Text(
+                    Text(
                       "Contests",
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.bold),  // .sp for responsive font size
                     ),
-                    const SizedBox(height: 4),
-                    const Text("Ratings & contests", style: TextStyle(color: Colors.grey)),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 4.h),  // .h for responsive spacing
+                    Text("Ratings & contests", style: TextStyle(color: Colors.grey)),
+                    SizedBox(height: 20.h),  // .h for responsive spacing
                     Row(
                       children: [
                         Expanded(
                           child: DropdownButtonFormField<String>(
                             decoration: InputDecoration(
                               hintText: 'Groups',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),  // .r for responsive border radius
+                              contentPadding: EdgeInsets.symmetric(horizontal: 12.w),  // .w for responsive padding
                             ),
                             items: const [
                               DropdownMenuItem(value: 'A2SV', child: Text('A2SV')),
@@ -54,13 +55,13 @@ class ContestScreen extends StatelessWidget {
                             onChanged: (value) {},
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        SizedBox(width: 10.w),  // .w for responsive spacing
                         Expanded(
                           child: DropdownButtonFormField<String>(
                             decoration: InputDecoration(
                               hintText: 'Countries',
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),  // .r for responsive border radius
+                              contentPadding: EdgeInsets.symmetric(horizontal: 12.w),  // .w for responsive padding
                             ),
                             items: const [
                               DropdownMenuItem(value: 'Ethiopia', child: Text('Ethiopia')),
@@ -70,7 +71,7 @@ class ContestScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20.h),  // .h for responsive spacing
                     ...state.contests.map((contest) => ContestCard(
                           title: contest.name,
                           problems: "${contest.problemCount} problems",

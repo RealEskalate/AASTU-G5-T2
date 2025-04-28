@@ -15,6 +15,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Import the locator setup
 import 'package:a2svhub/features/groups/presentation/bloc/group_page_bloc.dart';
+// Import ScreenUtil
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Import ScreenUtil
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +29,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugshowbannercheckmodeBanner: false; // Disable the debug banner
     return MultiBlocProvider(
       providers: [
         // Add your Bloc providers here
@@ -44,57 +45,61 @@ class MyApp extends StatelessWidget {
               sl<ContestBloc>(), // Use GetIt to access ContestBloc
         ),
       ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: const SignInScreen(),
-        onGenerateRoute: (settings) {
-          switch (settings.name) {
-            case '/':
-              return CustomPageRoute(page:Homepage(), settings: settings);
-            case '/contest-page':
-              return CustomPageRoute(
-                page: const ContestScreen(),
-                settings: settings,
-              );
-            case '/users':
-              return CustomPageRoute(
-                page: const UsePage(),
-                settings: settings,
-              );
-
-            case '/my-profile-page':
-              return CustomPageRoute(
-                page: const MyProfilePage(),
-                settings: settings,
-              );
-            case '/group-page':
-              return CustomPageRoute(
-                page: const GroupsPage(),
-                settings: settings,
-              );
-            case '/signin':
-              return CustomPageRoute(
-                page: const SignInScreen(),
-                settings: settings,
-              );
-            case '/profile':
-              return CustomPageRoute(
-                page: const ProfilePage(),
-                settings: settings,
-              );
-             case '/progress':
-              return CustomPageRoute(
-                page:  ProgressScreen(),
-                settings: settings,
-              );
-
-            default:
-              return null;
-          }
+      child: ScreenUtilInit(
+        designSize: Size(375, 812),
+        minTextAdapt: true,
+        builder: (context, child) {
+          return MaterialApp(
+            title: 'Flutter Demo',
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+              useMaterial3: true,
+            ),
+            home: const SignInScreen(),
+            onGenerateRoute: (settings) {
+              switch (settings.name) {
+                case '/home':
+                  return CustomPageRoute(page: Homepage(), settings: settings);
+                case '/contest-page':
+                  return CustomPageRoute(
+                    page: const ContestScreen(),
+                    settings: settings,
+                  );
+                case '/users':
+                  return CustomPageRoute(
+                    page: const UsePage(),
+                    settings: settings,
+                  );
+                case '/my-profile-page':
+                  return CustomPageRoute(
+                    page: const MyProfilePage(),
+                    settings: settings,
+                  );
+                case '/group-page':
+                  return CustomPageRoute(
+                    page: const GroupsPage(),
+                    settings: settings,
+                  );
+                case '/signin':
+                  return CustomPageRoute(
+                    page: const SignInScreen(),
+                    settings: settings,
+                  );
+                case '/profile':
+                  return CustomPageRoute(
+                    page: const ProfilePage(),
+                    settings: settings,
+                  );
+                case '/progress':
+                  return CustomPageRoute(
+                    page: ProgressScreen(),
+                    settings: settings,
+                  );
+                default:
+                  return null;
+              }
+            },
+          );
         },
       ),
     );

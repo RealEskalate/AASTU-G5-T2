@@ -7,6 +7,7 @@ import 'package:a2svhub/features/home/presentation/widgets/dailyproblem.dart';
 import 'package:a2svhub/features/home/presentation/widgets/latestproblem.dart';
 import 'package:a2svhub/features/home/presentation/widgets/latestsubmission.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Added for responsiveness
 
 class Homepage extends StatelessWidget {
   const Homepage({super.key});
@@ -16,12 +17,12 @@ class Homepage extends StatelessWidget {
     return Scaffold(
       appBar: TopNavBar(),
       drawer: Drawer(
-        width: MediaQuery.of(context).size.width * 0.75, // 75% width
+        width: MediaQuery.of(context).size.width * 0.75.w, // 75% width with .w for responsiveness
         child: SidebarWidget(),
       ),
       body: Center(
         child: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.9,
+          width: MediaQuery.of(context).size.width * 0.9.w, // 90% width with .w for responsiveness
           child: Stack(
             children: [
               SingleChildScrollView(
@@ -42,8 +43,7 @@ class Homepage extends StatelessWidget {
                           ),
                         ],
                       ),
-
-                      padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                      padding: EdgeInsets.only(left: 10.w, right: 10.w, bottom: 10.h), // Added .w and .h for responsiveness
                       child: Column(
                         children: [
                           Row(
@@ -52,7 +52,7 @@ class Homepage extends StatelessWidget {
                                 children: [
                                   Icon(Icons.campaign_outlined),
                                   SizedBox(
-                                    width: 8,
+                                    width: 8.w, // .w for responsiveness
                                   ),
                                   Text(
                                     "Info",
@@ -84,7 +84,7 @@ class Homepage extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      height: 20,
+                      height: 20.h, // .h for responsiveness
                     ),
                     Container(
                       //second container
@@ -101,8 +101,7 @@ class Homepage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      padding: EdgeInsets.all(20),
-
+                      padding: EdgeInsets.all(20.w), // .w for responsiveness
                       child: Column(
                         children: [
                           Text(
@@ -111,23 +110,23 @@ class Homepage extends StatelessWidget {
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           SizedBox(
-                            height: 8,
+                            height: 8.h, // .h for responsiveness
                           ),
                           Text(
                             "- Arnold Schwarzenegger",
                             style: TextStyle(fontStyle: FontStyle.italic),
                           ),
                           SizedBox(
-                            height: 5,
+                            height: 5.h, // .h for responsiveness
                           ),
                           SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.3,
+                              width: MediaQuery.of(context).size.width * 0.3.w,
                               child: Text(
                                 "Welcome Back, User!",
                                 textAlign: TextAlign.center,
                               )),
                           SizedBox(
-                            height: 10,
+                            height: 10.h, // .h for responsiveness
                           ),
                           ElevatedButton(
                             onPressed: () {},
@@ -144,21 +143,21 @@ class Homepage extends StatelessWidget {
                                     fontWeight: FontWeight.bold)),
                           ),
                           SizedBox(
-                            height: 20,
+                            height: 20.h, // .h for responsiveness
                           ),
                           Container(
-                            width: 300,
-                            height: 300,
+                            width: 300.w, // .w for responsiveness
+                            height: 300.h, // .h for responsiveness
                             color: Colors.green.shade200,
                           ),
                           SizedBox(
-                            height: 10,
+                            height: 10.h, // .h for responsiveness
                           )
                         ],
                       ),
                     ),
                     SizedBox(
-                      height: 20,
+                      height: 20.h, // .h for responsiveness
                     ),
                     Custom(
                       text1: "Solutions",
@@ -166,7 +165,7 @@ class Homepage extends StatelessWidget {
                       num2: 414,
                     ),
                     SizedBox(
-                      height: 30,
+                      height: 30.h, // .h for responsiveness
                     ),
                     Custom(
                       text1: "Time Spent",
@@ -174,7 +173,7 @@ class Homepage extends StatelessWidget {
                       num2: 1000,
                     ),
                     SizedBox(
-                      height: 30,
+                      height: 30.h, // .h for responsiveness
                     ),
                     Custom(
                       text1: "Rating",
@@ -182,7 +181,7 @@ class Homepage extends StatelessWidget {
                       num2: 1200,
                     ),
                     SizedBox(
-                      height: 30,
+                      height: 30.h, // .h for responsiveness
                     ),
                     DailyProblemCard(
                       title: "Daily problem",
@@ -202,14 +201,15 @@ class Homepage extends StatelessWidget {
                       },
                     ),
                     SizedBox(
-                      height: 16,
+                      height: 16.h, // .h for responsiveness
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text("Latest Problems",
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20)),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20.sp)), // .sp for responsiveness
                         LatestProblemTile(
                           difficulty: "Hard",
                           name: "F - Malak’s Stack",
@@ -224,16 +224,16 @@ class Homepage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16),
+                    SizedBox(height: 16.h), // .h for responsiveness
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           "Latest Submissions",
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
+                              fontWeight: FontWeight.bold, fontSize: 20.sp), // .sp for responsiveness
                         ),
-                        SizedBox(height: 8),
+                        SizedBox(height: 8.h), // .h for responsiveness
                         LatestSubmissionTile(
                           name: "Firaol",
                           problem: "B - The Ethiopian Lakes",
@@ -252,13 +252,11 @@ class Homepage extends StatelessWidget {
                 ),
               ),
               Positioned(
-                right: -20,
-                top: (MediaQuery.of(context).size.height - 300) /
-                    2, // Center vertically
-
+                right: -20.w, // .w for responsiveness
+                top: (MediaQuery.of(context).size.height - 300.h) / 2, // .h for responsiveness
                 child: SizedBox(
-                  width: 50,
-                  height: 50,
+                  width: 50.w, // .w for responsiveness
+                  height: 50.h, // .h for responsiveness
                   child: FloatingActionButton(
                     onPressed: () {},
                     shape: CircleBorder(),

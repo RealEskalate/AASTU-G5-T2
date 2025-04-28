@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class UserProgressCard extends StatelessWidget {
@@ -23,12 +24,12 @@ class UserProgressCard extends StatelessWidget {
     int completionPercentage = (progress * 100).round();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w), // .h and .w for padding
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(12.h), // .h for padding
         decoration: BoxDecoration(
           color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.w), // .w for border radius
           boxShadow: [
             BoxShadow(
               color: Colors.black12,
@@ -45,9 +46,9 @@ class UserProgressCard extends StatelessWidget {
                 // Column 1: Avatar
                 CircleAvatar(
                   backgroundImage: userImage,
-                  radius: 25,
+                  radius: 25.w, // .w for radius
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12.w), // .w for width
 
                 // Column 2: User Name
                 Expanded(
@@ -55,7 +56,7 @@ class UserProgressCard extends StatelessWidget {
                   child: Text(
                     userName,
                     style: GoogleFonts.poppins(
-                      fontSize: 11,
+                      fontSize: 11.sp, // .sp for font size
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -74,25 +75,25 @@ class UserProgressCard extends StatelessWidget {
                             children: [
                               Container(
                                 width: constraints.maxWidth,
-                                height: 10,
+                                height: 10.h, // .h for height
                                 decoration: BoxDecoration(
                                   color: Colors.green[100],
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(10.h), // .h for radius
                                 ),
                               ),
                               Container(
                                 width: constraints.maxWidth * progress,
-                                height: 10,
+                                height: 10.h, // .h for height
                                 decoration: BoxDecoration(
                                   color: Colors.green[700],
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(10.h), // .h for radius
                                 ),
                               ),
                             ],
                           );
                         },
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8.h), // .h for spacing
 
                       // Stats Row
                       Row(
@@ -101,25 +102,24 @@ class UserProgressCard extends StatelessWidget {
                           Text(
                             "$solvedExercises Solved | $completionPercentage%",
                             style: GoogleFonts.poppins(
-                              fontSize: 12,
+                              fontSize: 12.sp, // .sp for font size
                               color: Colors.grey[600],
                             ),
                           ),
-                          
                         ],
                       ),
                       Row(
-                        children :[
+                        children: [
                           Text(
                             "$availableExercises Available",
                             style: GoogleFonts.poppins(
-                              fontSize: 12,
+                              fontSize: 12.sp, // .sp for font size
                               fontWeight: FontWeight.w600,
                               color: Colors.green[700],
                             ),
                           ),
-                        ]
-                      )
+                        ],
+                      ),
                     ],
                   ),
                 ),

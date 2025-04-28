@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Added for responsiveness
 
 class DailyProblemCard extends StatelessWidget {
   final String title;
@@ -37,7 +38,7 @@ class DailyProblemCard extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.all(30),
+      padding: EdgeInsets.all(30.w), // .w for responsiveness
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -45,9 +46,9 @@ class DailyProblemCard extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 20,
+                  fontSize: 20.sp, // .sp for responsiveness
                 ),
               ),
               const SizedBox(width: 5),
@@ -58,37 +59,37 @@ class DailyProblemCard extends StatelessWidget {
               const Icon(Icons.arrow_downward, size: 16, color: Colors.grey),
             ],
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: 6.h), // .h for responsiveness
           Text(
             subtitle,
             style: TextStyle(
-              fontSize: 15,
+              fontSize: 15.sp, // .sp for responsiveness
               color: Colors.grey[700],
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12.h), // .h for responsiveness
           Text(
             description,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 23,
+              fontSize: 23.sp, // .sp for responsiveness
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h), // .h for responsiveness
           Text(
             difficultyInfo,
-            style: const TextStyle(
-              fontSize: 20,
+            style: TextStyle(
+              fontSize: 20.sp, // .sp for responsiveness
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h), // .h for responsiveness
           ElevatedButton.icon(
             onPressed: onSolvePressed,
             icon: const Icon(Icons.open_in_new, size: 27),
-            label: const Text("Solve It Now", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+            label: Text("Solve It Now", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17.sp)), // .sp for responsiveness
             style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 40),
+              minimumSize: Size(double.infinity, 40.h), // .h for responsiveness
               backgroundColor: Colors.transparent,
               foregroundColor: Colors.black,
               side: BorderSide(color: Colors.green.shade400),
@@ -98,33 +99,33 @@ class DailyProblemCard extends StatelessWidget {
               elevation: 0,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h), // .h for responsiveness
           SizedBox(
             width: double.infinity,
             child: TextButton.icon(
               onPressed: onNewSolutionPressed,
               icon: const Icon(Icons.add, size: 30),
-              label: const Text("New Solution", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+              label: Text("New Solution", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17.sp)), // .sp for responsiveness
               style: TextButton.styleFrom(
                 foregroundColor: Colors.black,
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h), // .h for responsiveness
           Center(
             child: Column(
               children: [
                 Text(
                   "$solvedCount",
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 40,
+                    fontSize: 40.sp, // .sp for responsiveness
                   ),
                 ),
                 Text(
                   "Solved it",
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: 18.sp, // .sp for responsiveness
                     color: Colors.grey[800],
                   ),
                 ),

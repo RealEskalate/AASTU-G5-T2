@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ContestCard extends StatelessWidget {
   final String title;
@@ -15,21 +16,23 @@ class ContestCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: EdgeInsets.symmetric(vertical: 8.h),  // .h for responsive margin
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),  // .r for responsive border radius
       ),
       elevation: 1,
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        title: Text(title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),  // .w and .h for responsive padding
+        title: Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.sp),  // .sp for responsive font size
+        ),
         subtitle: Text('$problems • $timeAgo'),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children:  [
             Icon(Icons.group, color: Colors.green),
-            SizedBox(width: 8),
+            SizedBox(width: 8.w),  // .w for responsive spacing
             Icon(Icons.open_in_new, color: Colors.green),
           ],
         ),

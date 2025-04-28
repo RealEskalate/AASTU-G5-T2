@@ -1,14 +1,15 @@
+import 'package:a2svhub/core/widgets/navbar.dart';
+import 'package:a2svhub/core/widgets/sidebar.dart';
 import 'package:a2svhub/features/auth/presentation/Bloc/auth_bloc.dart';
 import 'package:a2svhub/features/auth/presentation/Bloc/auth_event.dart';
 import 'package:a2svhub/features/auth/presentation/Bloc/auth_state.dart';
 import 'package:a2svhub/features/auth/presentation/pages/Link_Title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyProfilePage extends StatelessWidget {
-  const MyProfilePage ({super.key});
+  const MyProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,13 +17,13 @@ class MyProfilePage extends StatelessWidget {
     context.read<AuthBloc>().add(GetMyProfileEvent());
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F8F8),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text('Profile', style: TextStyle(color: Colors.black)),
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+      appBar: TopNavBar(),
+      drawer: Drawer(
+        width: MediaQuery.of(context).size.width * 0.75, // 75% width
+        child: SidebarWidget(),
       ),
+      backgroundColor: const Color(0xFFF8F8F8),
+
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthError) {
@@ -43,33 +44,33 @@ class MyProfilePage extends StatelessWidget {
               final profile = state.user;
 
               return SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16.w), // .w for padding
                 child: Column(
                   children: [
                     // Profile Card
                     Container(
                       decoration: BoxDecoration(
                         color: const Color(0xFF0D5B4C),
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(16.w), // .w for borderRadius
                       ),
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16.w), // .w for padding
                       child: Row(
                         children: [
                           CircleAvatar(
-                            radius: 30,
+                            radius: 30.w, // .w for radius
                             backgroundImage: NetworkImage(
                               profile.photo ?? 'https://via.placeholder.com/150',
                             ),
                           ),
-                          const SizedBox(width: 16),
+                          SizedBox(width: 16.w), // .w for spacing
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 profile.name ?? 'N/A',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 18,
+                                  fontSize: 18.sp, // .sp for fontSize
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -78,9 +79,9 @@ class MyProfilePage extends StatelessWidget {
                                 style: const TextStyle(color: Colors.white70),
                               ),
                               Row(
-                                children: const [
-                                  Icon(Icons.circle, size: 10, color: Colors.green),
-                                  SizedBox(width: 4),
+                                children:  [
+                                  Icon(Icons.circle, size: 10.sp, color: Colors.green), // .sp for icon size
+                                  SizedBox(width: 4.w), // .w for spacing
                                   Text('online', style: TextStyle(color: Colors.greenAccent)),
                                 ],
                               ),
@@ -90,52 +91,52 @@ class MyProfilePage extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16.h), // .h for height spacing
 
                     // About Section
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16.w), // .w for padding
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(16.w), // .w for borderRadius
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'About',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold), // .sp for fontSize
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12.h), // .h for spacing
                           if (profile.shortBio != null && profile.shortBio!.isNotEmpty)
                             Text(
                               profile.shortBio!,
                               style: const TextStyle(color: Colors.black87),
                             ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: 16.h), // .h for spacing
                           if (profile.country != null && profile.country!.isNotEmpty)
                             Row(
                               children: [
-                                const Icon(Icons.location_on, size: 20),
-                                const SizedBox(width: 8),
+                                Icon(Icons.location_on, size: 20.sp), // .sp for icon size
+                                SizedBox(width: 8.w), // .w for spacing
                                 Text(profile.country!),
                               ],
                             ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8.h), // .h for spacing
                           if (profile.email != null && profile.email!.isNotEmpty)
                             Row(
                               children: [
-                                const Icon(Icons.email, size: 20),
-                                const SizedBox(width: 8),
+                                Icon(Icons.email, size: 20.sp), // .sp for icon size
+                                SizedBox(width: 8.w), // .w for spacing
                                 Text(profile.email!),
                               ],
                             ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8.h), // .h for spacing
                           if (profile.university != null && profile.university!.isNotEmpty)
                             Row(
                               children: [
-                                const Icon(Icons.school, size: 20),
-                                const SizedBox(width: 8),
+                                Icon(Icons.school, size: 20.sp), // .sp for icon size
+                                SizedBox(width: 8.w), // .w for spacing
                                 Text(profile.university!),
                               ],
                             ),
@@ -143,23 +144,23 @@ class MyProfilePage extends StatelessWidget {
                       ),
                     ),
 
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24.h), // .h for spacing
 
                     // Links Section
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16.w), // .w for padding
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(16.w), // .w for borderRadius
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'Links',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold), // .sp for fontSize
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: 12.h), // .h for spacing
                           if (profile.leetcode != null && profile.leetcode!.isNotEmpty)
                             LinkTile(
                               icon: Icons.code,

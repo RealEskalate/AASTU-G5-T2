@@ -2,6 +2,7 @@ import 'package:a2svhub/core/widgets/navbar.dart';
 import 'package:a2svhub/core/widgets/sidebar.dart';
 import 'package:a2svhub/features/users/presentation/widgets/usercard.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class UsePage extends StatefulWidget {
   const UsePage({Key? key}) : super(key: key);
@@ -28,13 +29,13 @@ class _UsePageState extends State<UsePage> {
     return Scaffold(
       appBar: TopNavBar(),
       drawer: Drawer(
-        width: MediaQuery.of(context).size.width * 0.75, // 75% width
+        width: MediaQuery.of(context).size.width * 0.75.w, // .w for width
         child: SidebarWidget(),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 50),
+            SizedBox(height: 50.h), // .h for height
 
             // 🔘 Icon Toggles
             Row(
@@ -44,7 +45,7 @@ class _UsePageState extends State<UsePage> {
                   child: IconButton(
                     icon: Icon(
                       Icons.window,
-                      size: 20,
+                      size: 20.sp, // .sp for size
                       color:
                           _currentView == 'users' ? Colors.blue : Colors.grey,
                     ),
@@ -59,7 +60,7 @@ class _UsePageState extends State<UsePage> {
                   child: IconButton(
                     icon: Icon(
                       Icons.menu,
-                      size: 20,
+                      size: 20.sp, // .sp for size
                       color:
                           _currentView == 'stats' ? Colors.blue : Colors.grey,
                     ),
@@ -70,7 +71,7 @@ class _UsePageState extends State<UsePage> {
                     },
                   ),
                 ),
-                const SizedBox(width: 20),
+                SizedBox(width: 20.w), // .w for width
               ],
             ),
 
@@ -86,24 +87,24 @@ class _UsePageState extends State<UsePage> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: EdgeInsets.symmetric(horizontal: 20.w), // .w for padding
           child: TextField(
             decoration: InputDecoration(
               prefixIcon: const Icon(Icons.search),
               labelText: "Search User",
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.w), // .w for radius
                 borderSide: BorderSide(
                   color: Colors.grey.withOpacity(0.3), // 30% visible grey
-                  width: 0.2,
+                  width: 0.2.w, // .w for width
                 ),
               ),
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20.h), // .h for height
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: EdgeInsets.symmetric(horizontal: 20.w), // .w for padding
           child: TextField(
             readOnly: true,
             onTap: () {
@@ -117,10 +118,10 @@ class _UsePageState extends State<UsePage> {
                     : Icons.keyboard_arrow_down,
               ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.w), // .w for radius
                 borderSide: BorderSide(
                   color: Colors.grey.withOpacity(0.2), // 30% visible grey
-                  width: 1,
+                  width: 1.w, // .w for width
                 ),
               ),
             ),
@@ -128,7 +129,7 @@ class _UsePageState extends State<UsePage> {
         ),
         if (_showExtraText)
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(20.w), // .w for padding
             child: Column(
               children: _filters.map((filter) {
                 final isSelected = _selectedFilter == filter;
@@ -146,12 +147,12 @@ class _UsePageState extends State<UsePage> {
               }).toList(),
             ),
           ),
-        const SizedBox(height: 30),
+        SizedBox(height: 30.h), // .h for height
         const UserCard(
             username: 'bruno fernandes', group: 'Competitive Programmers'),
-        const SizedBox(height: 30),
+        SizedBox(height: 30.h), // .h for height
         const UserCard(username: 'Amina Yusuf', group: 'Dev Team'),
-        const SizedBox(height: 30),
+        SizedBox(height: 30.h), // .h for height
       ],
     );
   }
@@ -160,24 +161,24 @@ class _UsePageState extends State<UsePage> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: EdgeInsets.symmetric(horizontal: 20.w), // .w for padding
           child: TextField(
             decoration: InputDecoration(
               prefixIcon: const Icon(Icons.search),
               labelText: "Search User",
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.w), // .w for radius
                 borderSide: BorderSide(
                   color: Colors.grey.withOpacity(0.3), // 30% visible grey
-                  width: 0.2,
+                  width: 0.2.w, // .w for width
                 ),
               ),
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: 20.h), // .h for height
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: EdgeInsets.symmetric(horizontal: 20.w), // .w for padding
           child: TextField(
             readOnly: true,
             onTap: () {
@@ -191,10 +192,10 @@ class _UsePageState extends State<UsePage> {
                     : Icons.keyboard_arrow_down,
               ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.w), // .w for radius
                 borderSide: BorderSide(
                   color: Colors.grey.withOpacity(0.2), // 30% visible grey
-                  width: 1,
+                  width: 1.w, // .w for width
                 ),
               ),
             ),
@@ -202,7 +203,7 @@ class _UsePageState extends State<UsePage> {
         ),
         if (_showExtraText)
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(20.w), // .w for padding
             child: Column(
               children: _filters.map((filter) {
                 final isSelected = _selectedFilter == filter;
@@ -220,10 +221,10 @@ class _UsePageState extends State<UsePage> {
               }).toList(),
             ),
           ),
-        const SizedBox(height: 30),
+        SizedBox(height: 30.h), // .h for height
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(20.w), // .w for padding
           child: DataTable(
             columns: const [
               DataColumn(label: Text('Person')),
@@ -254,8 +255,8 @@ class _UsePageState extends State<UsePage> {
       cells: [
         DataCell(Row(
           children: [
-            CircleAvatar(backgroundImage: AssetImage(imagePath), radius: 16),
-            const SizedBox(width: 8),
+            CircleAvatar(backgroundImage: AssetImage(imagePath), radius: 16.w), // .w for radius
+            SizedBox(width: 8.w), // .w for width
             Text(name),
           ],
         )),

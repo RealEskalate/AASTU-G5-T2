@@ -7,7 +7,7 @@ import 'package:a2svhub/features/progress/widgets/teaminfo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Added for responsiveness
 
 class ProgressScreen extends StatefulWidget {
   @override
@@ -25,17 +25,17 @@ class _ProgressScreenState extends State<ProgressScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: TopNavBar(),
-       drawer: Drawer(
-        width: MediaQuery.of(context).size.width * 0.75, // 75% width
+      drawer: Drawer(
+        width: MediaQuery.of(context).size.width * 0.75.w, // 75% width
         child: SidebarWidget(),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(16.h),
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                minHeight: constraints.maxHeight - 32,
+                minHeight: constraints.maxHeight - 32.h,
               ),
               child: Stack(
                 children: [
@@ -50,13 +50,13 @@ class _ProgressScreenState extends State<ProgressScreen> {
                             child: Text(
                               "Exercises",
                               style: GoogleFonts.poppins(
-                                fontSize: 20,
+                                fontSize: 20.sp, // .sp for responsive font size
                                 fontWeight: FontWeight.w600,
                                 color: Colors.black,
                               ),
                             ),
                           ),
-                          SizedBox(width: 16),
+                          SizedBox(width: 16.w), // .w for responsive width
                           Flexible(
                             child: _buildDropdownButton(
                               value: selectedExpanded,
@@ -79,7 +79,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: 20.h), // .h for responsive height
                       // Second row - Tracks/Progress and All dropdown
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -94,7 +94,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                     child: Text(
                                       'Tracks',
                                       style: GoogleFonts.poppins(
-                                        fontSize: 12,
+                                        fontSize: 12.sp, // .sp for responsive font size
                                         fontWeight: FontWeight.w600,
                                         color: Colors.grey,
                                       ),
@@ -102,9 +102,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                   ),
                                 ),
                                 Container(
-                                  width: 8,
-                                  height: 8,
-                                  margin: EdgeInsets.symmetric(horizontal: 8),
+                                  width: 8.w, // .w for responsive width
+                                  height: 8.h, // .h for responsive height
+                                  margin: EdgeInsets.symmetric(horizontal: 8.w),
                                   decoration: BoxDecoration(
                                     color: Colors.black,
                                     shape: BoxShape.circle,
@@ -118,7 +118,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                       child: Text(
                                         'Progress',
                                         style: GoogleFonts.poppins(
-                                          fontSize: 14,
+                                          fontSize: 14.sp, // .sp for responsive font size
                                           fontWeight: FontWeight.w600,
                                           color: Colors.grey[600],
                                         ),
@@ -129,7 +129,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                               ],
                             ),
                           ),
-                          SizedBox(width: 16),
+                          SizedBox(width: 16.w), // .w for responsive width
                           Flexible(
                             child: _buildDropdownButton(
                               value: selectedAll,
@@ -152,27 +152,27 @@ class _ProgressScreenState extends State<ProgressScreen> {
                         ],
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 40),
+                        padding: EdgeInsets.only(top: 40.h),
                         child: Center(
                             child: Text(
                           "Personal Completion",
                           style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w500,
-                            fontSize: 20,
+                            fontSize: 20.sp, // .sp for responsive font size
                           ),
                         )),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 20),
+                        padding: EdgeInsets.only(top: 20.h),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              height: 29,
-                              width: 400,
+                              height: 29.h, // .h for responsive height
+                              width: 400.w, // .w for responsive width
                               decoration: BoxDecoration(
                                 color: Colors.green[120],
-                                borderRadius: BorderRadius.circular(35),
+                                borderRadius: BorderRadius.circular(35.w), // .w for responsive radius
                               ),
                               child: LayoutBuilder(
                                 builder: (context, constraints) {
@@ -185,7 +185,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                         decoration: BoxDecoration(
                                           color: Colors.green[700],
                                           borderRadius:
-                                              BorderRadius.circular(10),
+                                              BorderRadius.circular(10.w), // .w for responsive radius
                                         ),
                                       ),
                                     ],
@@ -193,25 +193,25 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                 },
                               ),
                             ),
-                            SizedBox(height: 8),
+                            SizedBox(height: 8.h), // .h for responsive height
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   "225 Exercises | 195 Solved | 87% Completion",
                                   style: GoogleFonts.poppins(
-                                    fontSize: 12,
+                                    fontSize: 12.sp, // .sp for responsive font size
                                     color: Colors.grey[600],
                                   ),
                                 ),
                               ],
                             ),
                             Padding(
-                              padding: EdgeInsets.only(bottom: 20),
+                              padding: EdgeInsets.only(bottom: 20.h),
                               child: Text(
                                 "30 Available",
                                 style: GoogleFonts.poppins(
-                                  fontSize: 12,
+                                  fontSize: 12.sp, // .sp for responsive font size
                                   color: Colors.grey[600],
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -227,11 +227,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
                           Row(
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(right: 100),
+                                padding: EdgeInsets.only(right: 98.w), // .w for responsive padding
                                 child: Text(
                                   "Detail Team Completion",
                                   style: GoogleFonts.poppins(
-                                    fontSize: 16,
+                                    fontSize: 16.sp, // .sp for responsive font size
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -251,7 +251,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                             ],
                           ),
                           if (showTeamDetails) ...[
-                            const SizedBox(height: 12),
+                             SizedBox(height: 12.h), // .h for responsive height
                             UserProgressCard(
                               userName: "Alice Brown",
                               userImage:
@@ -281,19 +281,19 @@ class _ProgressScreenState extends State<ProgressScreen> {
                       ),
                       // Date and Question Tags section
                       Padding(
-                        padding: EdgeInsets.only(top: 20),
+                        padding: EdgeInsets.only(top: 20.h), // .h for responsive height
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               "WED Nov 06 2024",
                               style: GoogleFonts.poppins(
-                                fontSize: 15,
+                                fontSize: 15.sp, // .sp for responsive font size
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            SizedBox(height: 8),
-                            Wrap(spacing: 8, runSpacing: 8, children: [
+                            SizedBox(height: 8.h), // .h for responsive height
+                            Wrap(spacing: 8.w, runSpacing: 8.h, children: [
                               _buildQuestionTag("geometry"),
                               _buildQuestionTag("constructive algorithm"),
                               _buildQuestionTag("greedy"),
@@ -382,8 +382,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
                   // Positioned dropdown menus
                   if (isExpandedDropdownVisible)
                     Positioned(
-                      top: 50,
-                      right: 16,
+                      top: 50.h, // .h for responsive height
+                      right: 16.w, // .w for responsive width
                       child: _buildDropdownMenu(
                         items: ["Expanded", "Compact"],
                         selectedValue: selectedExpanded,
@@ -397,8 +397,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     ),
                   if (isAllDropdownVisible)
                     Positioned(
-                      top: 100,
-                      right: 16,
+                      top: 100.h, // .h for responsive height
+                      right: 16.w, // .w for responsive width
                       child: _buildDropdownMenu(
                         items: ["All", "Solved", "Unsolved"],
                         selectedValue: selectedAll,
@@ -421,15 +421,15 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   Widget _buildQuestionTag(String text) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h), // .w and .h for responsiveness
       decoration: BoxDecoration(
         color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.w), // .w for responsive radius
       ),
       child: Text(
         text,
         style: GoogleFonts.poppins(
-          fontSize: 12,
+          fontSize: 12.sp, // .sp for responsive font size
           color: Colors.grey[800],
         ),
       ),
@@ -446,33 +446,30 @@ class _ProgressScreenState extends State<ProgressScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        constraints: BoxConstraints(maxWidth: 150),
+        constraints: BoxConstraints(maxWidth: 150.w), // .w for responsive width
+        padding: EdgeInsets.symmetric(horizontal: 10.w), // .w for responsive padding
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(5),
+          border: Border.all(color: Colors.grey[400]!, width: 1),
+          borderRadius: BorderRadius.circular(8.w), // .w for responsive radius
         ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Text(
-                  value,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black.withOpacity(0.5) // 50% opacity
-                      ),
-                ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              value,
+              style: GoogleFonts.poppins(
+                fontSize: 12.sp, // .sp for responsive font size
+                color: Colors.grey[600],
               ),
-              Icon(
-                isVisible ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                color: Colors.black,
-              ),
-            ],
-          ),
+            ),
+            Icon(
+              isVisible
+                  ? Icons.arrow_drop_up
+                  : Icons.arrow_drop_down,
+              size: 24.w, // .w for responsive size
+              color: Colors.grey[600],
+            ),
+          ],
         ),
       ),
     );
@@ -484,41 +481,36 @@ class _ProgressScreenState extends State<ProgressScreen> {
     required Function(String) onSelected,
   }) {
     return Material(
-      elevation: 4,
-      borderRadius: BorderRadius.circular(5),
+      color: Colors.transparent,
       child: Container(
-        width: 150,
+        padding: EdgeInsets.all(8.w), // .w for responsive padding
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(10.w), // .w for responsive radius
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey[300]!,
+              blurRadius: 10,
+              offset: Offset(0, 4.h), // .h for responsive height offset
+            ),
+          ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: items.map((item) {
-            return InkWell(
-              onTap: () => onSelected(item),
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: item == selectedValue
-                      ? Colors.grey[200]
-                      : Colors.transparent,
-                ),
-                child: Text(
-                  item,
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: item == selectedValue
-                        ? FontWeight.w600
-                        : FontWeight.w500,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
+          children: items
+              .map((item) => GestureDetector(
+                    onTap: () => onSelected(item),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 8.h), // .h for responsive height
+                      child: Text(
+                        item,
+                        style: GoogleFonts.poppins(
+                          fontSize: 14.sp, // .sp for responsive font size
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ))
+              .toList(),
         ),
       ),
     );

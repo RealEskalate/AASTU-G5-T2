@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SolutionCard extends StatelessWidget {
   final String title;
@@ -26,127 +27,119 @@ class SolutionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
-      margin: const EdgeInsets.all(8),
+      margin: EdgeInsets.all(8.w), // .w for responsive margin
       child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header row with title and checkbox
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        padding: EdgeInsets.all(16.h), // .h for responsive padding
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header row with title and checkbox
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                        vertical: 4.h, horizontal: 8.w), // .h and .w for padding
+                    decoration: BoxDecoration(
+                      color: _getDifficultyColor(
+                          difficulty), // Dynamic background color
+                      borderRadius: BorderRadius.circular(8.w), // .w for radius
+                    ),
+                    child: Text(
+                      difficulty,
+                      style: TextStyle(
+                        fontSize: 18.sp, // .sp for responsive font size
+                        fontWeight: FontWeight.bold,
+                        color: _getTextColor(difficulty), // Text color (white)
+                      ),
+                      overflow: TextOverflow.ellipsis, // Handles overflow
+                    ),
+                  ),
+                ),
+                Flexible(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 18.sp, // .sp for responsive font size
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    // TODO: Add your onPressed logic here
+                  },
+                  child: Text(
+                    "+ New Solution",
+                    style: TextStyle(
+                      fontSize: 16.sp, // .sp for responsive font size
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black, // You can change this color as needed
+                    ),
+                  ),
+                )
+              ],
+            ),
+
+            SizedBox(height: 8.h), // .h for responsive height
+
+            // Subtitle with "+ New Solution" indicator
+            SizedBox(height: 12.h), // .h for responsive height
+
+            // Tags row with Wrap to handle overflow
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal, // Makes the text scrollable horizontally
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.w), // .w for padding
+                decoration: BoxDecoration(
+                  color: Colors.grey[200], // Background color
+                  borderRadius: BorderRadius.circular(8.w), // .w for radius
+                ),
+                child: Text(
+                  tags.join(', '), // Joins tags with commas
+                  style: TextStyle(
+                    fontSize: 12.sp, // .sp for responsive font size
+                    fontWeight: FontWeight.normal, // Style of the text
+                    color: Colors.black, // Text color
+                  ),
+                ),
+              ),
+            ),
+
+            Padding(
+              padding: EdgeInsets.only(top: 12.h), // .h for responsive height
+              child: Row(
                 children: [
                   Flexible(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 4, horizontal: 8), // Padding for spacing
-                      decoration: BoxDecoration(
-                        color: _getDifficultyColor(
-                            difficulty), // Dynamic background color
-                        borderRadius: BorderRadius.circular(
-                            8), // Optional: rounded corners
-                      ),
-                      child: Text(
-                        difficulty,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color:
-                              _getTextColor(difficulty), // Text color (white)
-                        ),
-                        overflow: TextOverflow.ellipsis, // Handles overflow
-                      ),
-                    ),
+                    child: Text(platform),
                   ),
-                  Flexible(
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      // overflow: TextOverflow.ellipsis, // Handles overflow
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // TODO: Add your onPressed logic here
-                    },
-                    child: Text(
-                      "+ New Solution",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color:
-                            Colors.black, // You can change this color as needed
-                      ),
-                    ),
-                  )
                 ],
               ),
+            ),
 
-              const SizedBox(height: 8),
-
-              // Subtitle with "+ New Solution" indicator
-              const SizedBox(height: 12),
-
-              // Tags row with Wrap to handle overflow
-              SingleChildScrollView(
-                scrollDirection:
-                    Axis.horizontal, // Makes the text scrollable horizontally
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal:
-                          8), // Optional: padding for better visual spacing
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200], // Background color
-                    borderRadius:
-                        BorderRadius.circular(8), // Optional: rounded corners
-                  ),
-                  child: Text(
-                    tags.join(', '), // Joins tags with commas
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.normal, // Style of the text
-                      color: Colors.black, // Text color
-                    ),
-                  ),
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: Row(
-                  children: [
-                    Flexible(
-                      child: Text(platform),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Optional image (if needed)
-              // if (image != null) ...[
-              //   const SizedBox(height: 12),
-              //   Image(image: image!, height: 150, fit: BoxFit.cover),
-              // ],
-            ],
-          )),
+            // Optional image (if needed)
+            // if (image != null) ...[
+            //   SizedBox(height: 12.h),
+            //   Image(image: image!, height: 150.h, fit: BoxFit.cover), // .h for responsive height
+            // ],
+          ],
+        ),
+      ),
     );
   }
 
   Color _getDifficultyColor(String difficulty) {
-  if (difficulty.toLowerCase() == 'hard') {
-    return Colors.red.withOpacity(0.2); // Red with reduced opacity
-  } else if (difficulty.toLowerCase() == 'medium') {
-    return Colors.orange.withOpacity(0.2); // Orange with reduced opacity
-  } else if (difficulty.toLowerCase() == 'easy') {
-    return Colors.green.withOpacity(0.2); // Green with reduced opacity
-  } else {
-    return Colors.grey.withOpacity(0.2); // Grey with reduced opacity (for default)
+    if (difficulty.toLowerCase() == 'hard') {
+      return Colors.red.withOpacity(0.2); // Red with reduced opacity
+    } else if (difficulty.toLowerCase() == 'medium') {
+      return Colors.orange.withOpacity(0.2); // Orange with reduced opacity
+    } else if (difficulty.toLowerCase() == 'easy') {
+      return Colors.green.withOpacity(0.2); // Green with reduced opacity
+    } else {
+      return Colors.grey.withOpacity(0.2); // Grey with reduced opacity (for default)
+    }
   }
-}
-
 
   Color _getTextColor(String difficulty) {
     if (difficulty.toLowerCase() == 'hard') {

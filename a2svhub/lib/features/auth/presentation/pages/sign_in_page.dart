@@ -4,8 +4,7 @@ import 'package:a2svhub/features/auth/presentation/Bloc/auth_state.dart';
 import 'package:a2svhub/features/auth/presentation/pages/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Added this import for responsiveness
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -30,8 +29,7 @@ class _SignInScreenState extends State<SignInScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Login successful')),
             );
-            Navigator.push(context, MaterialPageRoute(builder: (context) =>  ProfilePage()));
-            // You can also navigate to another page here
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
           } else if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message)),
@@ -40,7 +38,7 @@ class _SignInScreenState extends State<SignInScreen> {
         },
         builder: (context, state) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 64),
+            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 64.h), // Added .w and .h for responsiveness
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -53,20 +51,20 @@ class _SignInScreenState extends State<SignInScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h), // Added .w and .h for responsiveness
                     ),
                     child: const Text("Login"),
                   ),
                 ),
-                const SizedBox(height: 40),
-                const Text(
+                SizedBox(height: 40.h), // Added .h for responsiveness
+               Text(
                   'Sign in to A2SV Hub',
                   style: TextStyle(
-                    fontSize: 22,
+                    fontSize: 22.sp, // Added .sp for responsiveness
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h), // Added .h for responsiveness
                 TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
@@ -77,7 +75,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16.h), // Added .h for responsiveness
                 TextField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
@@ -98,7 +96,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.h), // Added .h for responsiveness
                 Row(
                   children: [
                     Checkbox(
@@ -122,7 +120,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24.h), // Added .h for responsiveness
                 ElevatedButton(
                   onPressed: state is AuthLoading
                       ? null
@@ -133,23 +131,23 @@ class _SignInScreenState extends State<SignInScreen> {
                         },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF00A859),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: EdgeInsets.symmetric(vertical: 16.h), // Added .h for responsiveness
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   child: state is AuthLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
+                      ?  SizedBox(
+                          height: 20.h,
+                          width: 20.w, // Added .w for responsiveness
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             color: Colors.white,
                           ),
                         )
-                      : const Text(
+                      : Text(
                           'Login',
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 16.sp), // Added .sp for responsiveness
                         ),
                 ),
               ],

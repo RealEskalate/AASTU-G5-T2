@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Added for responsiveness
 
 class LatestSubmissionTile extends StatelessWidget {
   final String name;
@@ -19,9 +20,20 @@ class LatestSubmissionTile extends StatelessWidget {
     return ListTile(
       leading: CircleAvatar(
         backgroundImage: NetworkImage(imageUrl),
+        radius: 30.w, // .w for responsive radius
       ),
-      title: Text(name),
-      subtitle: Text(problem),
+      title: Text(
+        name,
+        style: TextStyle(
+          fontSize: 16.sp, // .sp for responsive font size
+        ),
+      ),
+      subtitle: Text(
+        problem,
+        style: TextStyle(
+          fontSize: 14.sp, // .sp for responsive font size
+        ),
+      ),
       onTap: onTap,
     );
   }

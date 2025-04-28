@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Added for responsiveness
 
 class LatestProblemTile extends StatelessWidget {
   final String difficulty;
@@ -17,11 +18,11 @@ class LatestProblemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(vertical: 8.h), // .h for responsiveness
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h), // .w and .h for responsiveness
             decoration: BoxDecoration(
               color: difficultyColor,
               borderRadius: BorderRadius.circular(8),
@@ -29,25 +30,25 @@ class LatestProblemTile extends StatelessWidget {
             child: Text(
               difficulty,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 12.sp, // .sp for responsiveness
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          SizedBox(width: 12),
+          SizedBox(width: 12.w), // .w for responsiveness
           Expanded(
             child: Text(
               name,
               style: TextStyle(
                 fontWeight: FontWeight.w500,
-                fontSize: 14,
+                fontSize: 14.sp, // .sp for responsiveness
               ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
           IconButton(
             onPressed: onTap,
-            icon: Icon(Icons.open_in_new, size: 18),
+            icon: Icon(Icons.open_in_new, size: 18.sp), // .sp for responsiveness
           ),
         ],
       ),

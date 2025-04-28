@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class GroupCard extends StatelessWidget {
   final String groupName;
@@ -19,45 +20,47 @@ class GroupCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 370,
+      height: 370.h, // Responsive height using .h
       child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 15.w), // Responsive margin using .w and .h
         elevation: 3,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r), // Responsive border radius using .r
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(16.w), // Responsive padding using .w
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 groupName,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 18.sp, // Responsive font size using .sp
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              const SizedBox(height: 6),
+              SizedBox(height: 6.h), // Responsive height using .h
               Text(
                 '$groupCode • $members Members',
                 style: TextStyle(color: Colors.grey[700]),
               ),
-              const SizedBox(height: 150),
+              SizedBox(height: 150.h), // Responsive height using .h
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                   Container(
-                    width: 3,
-                    height: 40,
+                  Container(
+                    width: 3.w, // Responsive width using .w
+                    height: 40.h, // Responsive height using .h
                     color: Colors.grey[300],
-                    margin: const EdgeInsets.only(right: 10),
+                    margin: EdgeInsets.only(right: 10.w), // Responsive margin using .w
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 20),
+                    padding: EdgeInsets.only(right: 20.w), // Responsive padding using .w
                     child: Column(
                       children: [
-                        const Text('Time Spent',
+                        Text('Time Spent',
                             style: TextStyle(color: Colors.grey)),
-                        const SizedBox(height: 4),
+                        SizedBox(height: 4.h), // Responsive height using .h
                         // Text('$timeSpent',
                         //     style: const TextStyle(
                         //         fontSize: 16, fontWeight: FontWeight.w500)),
@@ -65,16 +68,16 @@ class GroupCard extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    width: 3,
-                    height: 40,
+                    width: 3.w, // Responsive width using .w
+                    height: 40.h, // Responsive height using .h
                     color: Colors.grey[300],
-                    margin: const EdgeInsets.only(right: 10),
+                    margin: EdgeInsets.only(right: 10.w), // Responsive margin using .w
                   ),
                   Column(
                     children: [
-                      const Text('Avg. Rating',
+                      Text('Avg. Rating',
                           style: TextStyle(color: Colors.grey)),
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4.h), // Responsive height using .h
                       // Text('$avgRating',
                       //     style: const TextStyle(
                       //         fontSize: 16, fontWeight: FontWeight.w500)),
