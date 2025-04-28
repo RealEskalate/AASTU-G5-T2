@@ -1,8 +1,11 @@
 package repository
 
 import (
+	"bytes"
 	"database/sql"
+	"encoding/json"
 	"log"
+	"net/http"
 
 	"strings"
 
@@ -10,7 +13,10 @@ import (
 	"a2sv_hub/internal/models"
 )
 
+const leetcodeAPI = "https://leetcode.com/graphql"
+
 type ProblemRepository interface {
+	GetDailyProblem() (*models.DailyResponse, *errors.CustomError)
 	GetAllProblems() ([]models.Problem, *errors.CustomError)
 	AddProblem(problem models.Problem) *errors.CustomError
 	AddProblemToTrack(problemID int, trackID string) *errors.CustomError
@@ -19,6 +25,41 @@ type ProblemRepository interface {
 
 type problemRepository struct {
 	db *sql.DB
+}
+
+// GetDailyProblem implements ProblemRepository.
+func (r *problemRepository) GetDailyProblem() (*models.DailyResponse, *errors.CustomError) {
+	query := models.Query{
+		Query: `
+          query questionOfToday {
+            activeDailyCodingChallengeQuestion {
+              date
+              link
+              question {
+                title
+                titleSlug
+                difficulty
+              }
+            }
+          }
+        `,
+		OperationName: "questionOfToday",
+	}
+
+	body, _ := json.Marshal(query)
+	resp, err := http.Post(leetcodeAPI, "application/json", bytes.NewBuffer(body))
+	if err != nil {
+		return nil, &errors.CustomError{
+			Message:    "failed to fetch daily problem",
+			StatusCode: 500,
+			Error:      err,
+		}
+	}
+	defer resp.Body.Close()
+
+	var result models.DailyResponse
+	json.NewDecoder(resp.Body).Decode(&result)
+	return &result, nil
 }
 
 func NewProblemRepository(db *sql.DB) ProblemRepository {

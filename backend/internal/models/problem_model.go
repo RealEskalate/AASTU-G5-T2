@@ -16,3 +16,22 @@ type Problem struct {
 	UsersSolved []int     `json:"users_solved,omitempty"`
 	Index       *string   `json:"index,omitempty" db:"index"` // populated at query time
 }
+
+type Query struct {
+	Query         string `json:"query"`
+	OperationName string `json:"operationName"`
+}
+
+type DailyResponse struct {
+	Data struct {
+		ActiveDailyCodingChallengeQuestion struct {
+			Date     string `json:"date"`
+			Link     string `json:"link"`
+			Question struct {
+				Title      string `json:"title"`
+				TitleSlug  string `json:"titleSlug"`
+				Difficulty string `json:"difficulty"`
+			} `json:"question"`
+		} `json:"activeDailyCodingChallengeQuestion"`
+	} `json:"data"`
+}
