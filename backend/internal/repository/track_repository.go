@@ -166,9 +166,9 @@ func (r *trackRepository) GetProblemsByDay(trackId int) (map[string]models.DayGr
 			&prob.ID,
 			&prob.Name,
 			&prob.Difficulty,
-			&tagsString, // Scan the comma-separated tags
+			&platform,   // <- platform first
+			&tagsString, // <- then tags
 			&prob.Link,
-			&platform,
 			&day,
 			&usersSolved,
 		)
