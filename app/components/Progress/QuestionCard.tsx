@@ -17,7 +17,7 @@ function QuestionCard({
   tags,
   platform,
   link,
-  users_solved
+  users_solved,
 }: QuestionCardProps) {
   // Map difficulty to colors
   const difficultyStyles: Record<string, string> = {
@@ -51,18 +51,18 @@ function QuestionCard({
       </div>
       <div className="pt-10">
         <div className="py-5">
-          <span className="inline-flex gap-2 items-center bg-gray-200 text-sm rounded-full px-3 py-1 whitespace-nowrap">
-            {link}
-          </span>
+          {tags.map((tag, index) => (
+            <span key={index} className="inline-flex gap-2 items-center bg-gray-200 text-sm rounded-full px-3 py-1 whitespace-nowrap">
+              {tag}
+            </span>
+          ))}
         </div>
         <div className="flex gap-4 items-center justify-between px-2">
           <div className="w-32 flex gap-2 items-center bg-gray-200 text-sm rounded-full px-3 py-1">
             <BarChart2 />
             <span>{platform}</span>
           </div>
-          <div>
-            {users_solved}
-          </div>
+          <div>{users_solved}</div>
         </div>
       </div>
     </div>

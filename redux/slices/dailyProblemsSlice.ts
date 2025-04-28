@@ -102,7 +102,7 @@ export const fetchDailyProblems = createAsyncThunk<
             }
             // Retry the original request with new token
             const response = await axios.get<DailyProblemsData>(
-              'https://aastu-g5-t2.onrender.com/tracks/5/problems',
+              'https://aastu-g5-t2.onrender.com/tracks/5/problems/',
               {
                 headers: {
                   Authorization: `Bearer ${newToken}`,

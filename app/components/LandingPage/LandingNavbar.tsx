@@ -16,7 +16,7 @@ export default function LandingNavbar() {
       <div className="flex space-x-6 items-center py-4">
         <Link
           href="/"
-          className="text-gray-700 focus:text-green-600 focus:font-bold focus:underline focus:underline-offset-8"
+          className=" text-green-600 font-bold underline underline-offset-8"
         >
           Home
         </Link>

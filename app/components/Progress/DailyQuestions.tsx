@@ -21,7 +21,6 @@ const formatDate = (dateStr: string): string => {
 function DailyQuestions() {
   const dispatch = useDispatch<AppDispatch>();
   const { data, status, error } = useSelector((state: RootState) => state.dailyProblems);
-  console.log("DailyProblems", data);
 
   // Fetch data on mount
   useEffect(() => {
@@ -64,7 +63,7 @@ function DailyQuestions() {
                      <span
                   
                      className="bg-gray-200 rounded-full flex items-center px-3 py-1 text-center text-sm"
-                   >{problem.link}</span>
+                   >{problem.tag}</span>
                   ))} 
                 
               

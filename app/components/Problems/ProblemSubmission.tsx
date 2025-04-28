@@ -21,6 +21,19 @@ import { fetchSubmissionsByProblemId } from '@/redux/slices/submissionSlice';
 import { RootState, AppDispatch } from '@/redux/store';
 import { useSearchParams } from 'next/navigation';
 
+const submission = [
+  {
+    name: "Yosef Solomon Teferra",
+    timeSpent: 2,
+    tries: 1,
+    language: "Python",
+    inContest: 1,
+    added: "4h",
+    image: "/images/profilepic.jpg",
+  },
+ 
+];
+
 const ProblemSubmission: React.FC = () => {
   const searchParams = useSearchParams();
   const problemId = searchParams.get('id');
@@ -92,14 +105,7 @@ const ProblemSubmission: React.FC = () => {
       </div>
 
       <div className="px-3 overflow-auto">
-        {submissionsStatus === 'loading' && <p>Loading submissions...</p>}
-        {submissionsStatus === 'failed' && submissionsError && (
-          <p className="text-red-500">Error: {submissionsError}</p>
-        )}
-        {submissionsStatus === 'succeeded' && submissions.length === 0 && (
-          <p>No submissions found.</p>
-        )}
-        {submissionsStatus === 'succeeded' && submissions.length > 0 && (
+        
           <Table>
             <TableHeader>
               <TableRow className="grid grid-cols-[60px_2fr_100px_80px_140px_100px_60px] border-b-2 border-gray-100 hover:bg-transparent">
@@ -121,9 +127,9 @@ const ProblemSubmission: React.FC = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {submissions.map((sub) => (
+              {submission.map((sub, index) => (
                 <TableRow
-                  key={sub.id}
+                  key={index}
                   className="grid grid-cols-[60px_2fr_100px_80px_140px_100px_60px] hover:bg-muted border-b border-gray-200"
                 >
                   <TableCell className="flex items-center justify-center py-3">
@@ -157,7 +163,7 @@ const ProblemSubmission: React.FC = () => {
               ))}
             </TableBody>
           </Table>
-        )}
+
       </div>
     </div>
   );
