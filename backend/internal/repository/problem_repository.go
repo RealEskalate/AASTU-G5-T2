@@ -90,7 +90,7 @@ func (r *problemRepository) GetAllProblems(page, limit int) ([]models.Problem, *
 
 	log.Println("Executing query with offset", offset, "and limit", limit)
 
-	var problems []models.Problem
+	problems := make([]models.Problem, 0)
 
 	for rows.Next() {
 		var problem models.Problem
