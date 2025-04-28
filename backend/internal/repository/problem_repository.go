@@ -17,7 +17,7 @@ const leetcodeAPI = "https://leetcode.com/graphql"
 
 type ProblemRepository interface {
 	GetDailyProblem() (*models.DailyResponse, *errors.CustomError)
-	GetAllProblems() ([]models.Problem, *errors.CustomError)
+	GetAllProblems(page, limit int) ([]models.Problem, *errors.CustomError)
 	AddProblem(problem models.Problem) *errors.CustomError
 	AddProblemToTrack(problemID int, trackID string) *errors.CustomError
 	GetProblemById(id int) (models.Problem, *errors.CustomError)
@@ -68,12 +68,16 @@ func NewProblemRepository(db *sql.DB) ProblemRepository {
 	}
 }
 
-func (r *problemRepository) GetAllProblems() ([]models.Problem, *errors.CustomError) {
+func (r *problemRepository) GetAllProblems(page, limit int) ([]models.Problem, *errors.CustomError) {
+	offset := (page - 1) * limit // calculate the offset
+
 	query := `
-		SELECT id, name,contest_id , platform, link, created_at, updated_at, tag, track_id, difficulty
-		FROM problems;
+		SELECT id, name, contest_id, platform, link, created_at, updated_at, tag, track_id, difficulty
+		FROM problems
+		ORDER BY created_at DESC
+		OFFSET $1 LIMIT $2;
 	`
-	rows, err := r.db.Query(query)
+	rows, err := r.db.Query(query, offset, limit)
 	if err != nil {
 		log.Println("Error querying problems:", err)
 		return nil, &errors.CustomError{
@@ -84,12 +88,13 @@ func (r *problemRepository) GetAllProblems() ([]models.Problem, *errors.CustomEr
 	}
 	defer rows.Close()
 
-	log.Println("Executing query:", rows)
+	log.Println("Executing query with offset", offset, "and limit", limit)
+
 	var problems []models.Problem
 
 	for rows.Next() {
 		var problem models.Problem
-		var tagsStr string // scan into a string, not []string
+		var tagsStr string
 
 		err := rows.Scan(
 			&problem.ID,
@@ -99,7 +104,7 @@ func (r *problemRepository) GetAllProblems() ([]models.Problem, *errors.CustomEr
 			&problem.Link,
 			&problem.CreatedAt,
 			&problem.UpdatedAt,
-			&tagsStr, // receive the string directly
+			&tagsStr,
 			&problem.TrackID,
 			&problem.Difficulty,
 		)
@@ -108,7 +113,7 @@ func (r *problemRepository) GetAllProblems() ([]models.Problem, *errors.CustomEr
 			continue
 		}
 
-		// Split the tags by comma and trim spaces
+		// Split and clean tags
 		tags := strings.Split(tagsStr, ",")
 		for i := range tags {
 			tags[i] = strings.TrimSpace(tags[i])

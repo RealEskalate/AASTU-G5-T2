@@ -8,7 +8,7 @@ import (
 
 type ProblemUsecase interface {
 	GetDailyProblem() (*models.DailyResponse, *errors.CustomError)
-	GetAllProblems() ([]models.Problem, *errors.CustomError)
+	GetAllProblems(page, limit int) ([]models.Problem, *errors.CustomError)
 	GetProblemById(id int) (models.Problem, *errors.CustomError)
 	AddProblem(problem models.Problem) *errors.CustomError
 	AddProblemToTrack(problemID int, trackID string) *errors.CustomError
@@ -33,8 +33,8 @@ func NewProblemUsecase(repo repository.ProblemRepository) ProblemUsecase {
 	}
 }
 
-func (p *problemUsecase) GetAllProblems() ([]models.Problem, *errors.CustomError) {
-	problems, err := p.problemRepo.GetAllProblems()
+func (p *problemUsecase) GetAllProblems(page, limit int) ([]models.Problem, *errors.CustomError) {
+	problems, err := p.problemRepo.GetAllProblems(page, limit)
 	if err != nil {
 		return nil, err
 	}
