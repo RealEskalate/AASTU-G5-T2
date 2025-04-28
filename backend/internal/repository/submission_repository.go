@@ -21,8 +21,8 @@ func NewSubmissionRepository(db *sql.DB) SubmissionRepository {
 }
 
 func (r *submissionRepository) CreateSubmission(sub models.SubmissionModel) *errors.CustomError {
-	query := `INSERT INTO submissions (problem_id, user_id, time_spent, tries, code, language, created_at, updated_at, verified)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+	query := `INSERT INTO submissions (problem_id, user_id, time_spent, tries, code, language, verified, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())`
 
 	_, err := r.db.Exec(query,
 		sub.ProblemID,
@@ -31,8 +31,6 @@ func (r *submissionRepository) CreateSubmission(sub models.SubmissionModel) *err
 		sub.Tries,
 		sub.Code,
 		sub.Language,
-		sub.CreatedAt,
-		sub.UpdatedAt,
 		sub.Verified,
 	)
 	if err != nil {
