@@ -7,6 +7,7 @@ import (
 )
 
 type ProblemUsecase interface {
+	GetDailyProblem() (*models.DailyResponse, *errors.CustomError)
 	GetAllProblems() ([]models.Problem, *errors.CustomError)
 	GetProblemById(id int) (models.Problem, *errors.CustomError)
 	AddProblem(problem models.Problem) *errors.CustomError
@@ -15,6 +16,15 @@ type ProblemUsecase interface {
 
 type problemUsecase struct {
 	problemRepo repository.ProblemRepository
+}
+
+// GetDailyProblem implements ProblemUsecase.
+func (p *problemUsecase) GetDailyProblem() (*models.DailyResponse, *errors.CustomError) {
+	dailyProblem, err := p.problemRepo.GetDailyProblem()
+	if err != nil {
+		return nil, err
+	}
+	return dailyProblem, nil
 }
 
 func NewProblemUsecase(repo repository.ProblemRepository) ProblemUsecase {

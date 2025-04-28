@@ -12,6 +12,7 @@ import (
 )
 
 type ProblemController interface {
+	GetDailyProblem(c *gin.Context)
 	GetAllProblems(c *gin.Context)
 	GetProblemById(c *gin.Context)
 	AddProblem(c *gin.Context)
@@ -20,6 +21,21 @@ type ProblemController interface {
 
 type problemController struct {
 	problemUsecase usecase.ProblemUsecase
+}
+
+// GetDailyProblem implements ProblemController.
+func (p *problemController) GetDailyProblem(c *gin.Context) {
+	dailyProblem, err := p.problemUsecase.GetDailyProblem()
+	if err != nil {
+		c.JSON(err.StatusCode, gin.H{
+			"error":   err.Error,
+			"message": err.Message,
+			"status":  err.StatusCode,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, dailyProblem)
 }
 
 func (p *problemController) GetAllProblems(c *gin.Context) {

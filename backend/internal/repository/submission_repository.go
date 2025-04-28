@@ -4,6 +4,7 @@ import (
 	"a2sv_hub/internal/errors"
 	"a2sv_hub/internal/models"
 	"database/sql"
+	"log"
 )
 
 type SubmissionRepository interface {
@@ -33,6 +34,7 @@ func (r *submissionRepository) CreateSubmission(sub models.SubmissionModel) *err
 		sub.Verified,
 	)
 	if err != nil {
+		log.Println("Error inserting submission:", err)
 		return &errors.CustomError{StatusCode: 400, Message: "Failed to insert submission", Error: err}
 	}
 	return nil
