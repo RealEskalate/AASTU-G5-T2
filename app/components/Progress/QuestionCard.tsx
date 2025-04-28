@@ -8,6 +8,7 @@ interface QuestionCardProps {
   tags: string[];
   platform: string;
   link: string;
+  users_solved?: number[];
 }
 
 function QuestionCard({
@@ -16,6 +17,7 @@ function QuestionCard({
   tags,
   platform,
   link,
+  users_solved
 }: QuestionCardProps) {
   // Map difficulty to colors
   const difficultyStyles: Record<string, string> = {
@@ -53,10 +55,14 @@ function QuestionCard({
             {link}
           </span>
         </div>
-
-        <div className="w-32 flex gap-2 items-center bg-gray-200 text-sm rounded-full px-3 py-1">
-          <BarChart2 />
-          <span>{platform}</span>
+        <div className="flex gap-4 items-center justify-between px-2">
+          <div className="w-32 flex gap-2 items-center bg-gray-200 text-sm rounded-full px-3 py-1">
+            <BarChart2 />
+            <span>{platform}</span>
+          </div>
+          <div>
+            {users_solved}
+          </div>
         </div>
       </div>
     </div>

@@ -14,12 +14,13 @@ interface Problem {
   added: string;
   votes: number;
   link: string;
-  platform: string; 
+  platform: string;
 }
 
 // Define the state shape
 interface ProblemsState {
   problems: Problem[];
+  problem: Problem | null; // Store single problem
   loading: boolean;
   error: string | null;
 }
@@ -27,6 +28,7 @@ interface ProblemsState {
 // Initial state
 const initialState: ProblemsState = {
   problems: [],
+  problem: null,
   loading: false,
   error: null,
 };
@@ -49,7 +51,6 @@ const refreshAccessToken = async (refreshToken: string): Promise<string> => {
       refresh_token: refreshToken,
     });
     const { access_token } = response.data;
-    // Update cookie
     document.cookie = `auth_token=${access_token}; path=/; max-age=3600; SameSite=Strict`;
     return access_token;
   } catch (error) {
@@ -57,7 +58,7 @@ const refreshAccessToken = async (refreshToken: string): Promise<string> => {
   }
 };
 
-// Async thunk to fetch problems
+// Async thunk to fetch all problems
 export const fetchProblems = createAsyncThunk<
   Problem[],
   void,
@@ -83,14 +84,12 @@ export const fetchProblems = createAsyncThunk<
         return response.data;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 401) {
-          // Attempt to refresh token
           const refreshToken = getState().auth.refresh_token;
           if (!refreshToken) {
             return rejectWithValue('No refresh token available. Please log in.');
           }
           try {
             const newToken = await refreshAccessToken(refreshToken);
-            // Update auth state with new token
             const { user } = getState().auth;
             if (user) {
               dispatch(
@@ -101,7 +100,6 @@ export const fetchProblems = createAsyncThunk<
                 )
               );
             }
-            // Retry the original request with new token
             const response = await axios.get<Problem[]>(
               'https://aastu-g5-t2.onrender.com/problems',
               {
@@ -126,12 +124,80 @@ export const fetchProblems = createAsyncThunk<
   }
 );
 
+// Async thunk to fetch a single problem by ID
+export const fetchProblemById = createAsyncThunk<
+  Problem,
+  string,
+  { state: RootState; rejectValue: string; dispatch: AppDispatch }
+>(
+  'problems/fetchProblemById',
+  async (id, { getState, rejectWithValue, dispatch }) => {
+    try {
+      let token = getState().auth.token;
+      if (!token) {
+        return rejectWithValue('No access token found. Please log in.');
+      }
+
+      try {
+        const response = await axios.get(
+          `https://aastu-g5-t2.onrender.com/problems/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        // console.log("API Response:", response.data);
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          const refreshToken = getState().auth.refresh_token;
+          if (!refreshToken) {
+            return rejectWithValue('No refresh token available. Please log in.');
+          }
+          try {
+            const newToken = await refreshAccessToken(refreshToken);
+            const { user } = getState().auth;
+            if (user) {
+              dispatch(
+                login.fulfilled(
+                  { user, token: newToken, refresh_token: refreshToken },
+                  'auth/login',
+                  { email: user.email, password: '' }
+                )
+              );
+            }
+            const response = await axios.get<Problem>(
+              `https://aastu-g5-t2.onrender.com/problems/${id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${newToken}`,
+                },
+              }
+            );
+            return response.data;
+          } catch (refreshError) {
+            return rejectWithValue('Unauthorized: Unable to refresh access token.');
+          }
+        }
+        throw error;
+      }
+    } catch (error) {
+      console.error('Fetch Error:', error);
+      return rejectWithValue(
+        (error as any).response?.data?.message || 'Failed to fetch problem'
+      );
+    }
+  }
+);
+
 const problemsSlice = createSlice({
   name: 'problems',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // Fetch all problems
       .addCase(fetchProblems.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -143,14 +209,41 @@ const problemsSlice = createSlice({
           id: item.id,
           difficulty: item.difficulty,
           name: item.name,
-          tag: item.tag?.filter((tag: string) => tag).join(', ') || 'None', // Updated to use 'tag' from API
+          tag: item.tag?.filter((tag: string) => tag).join(', ') || 'None',
           added: getTimeSince(item.created_at),
           votes: 0,
           link: item.link,
-          platform: item.platform, // Added platform mapping
+          platform: item.platform,
         }));
       })
       .addCase(fetchProblems.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      // Fetch single problem by ID
+      .addCase(fetchProblemById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProblemById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.problem = {
+          created_at: action.payload.created_at,
+          id: action.payload.id,
+          difficulty: action.payload.difficulty,
+          name: action.payload.name,
+          tag: typeof action.payload.tag === 'string'
+            ? action.payload.tag.split(',').filter((tag: string) => tag.trim()).join(', ')
+            : Array.isArray(action.payload.tag)
+            ? (action.payload.tag as string[]).filter((tag: string) => tag.trim()).join(', ')
+            : 'None', // Fallback if tag is null or another type
+          added: getTimeSince(action.payload.created_at),
+          votes: 0,
+          link: action.payload.link,
+          platform: action.payload.platform,
+        };
+      })
+      .addCase(fetchProblemById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

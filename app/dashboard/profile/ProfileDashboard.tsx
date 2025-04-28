@@ -2,6 +2,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { Calendar } from "lucide-react";
 import ratepic from "@/public/rate.png";
+import ConsistencyGrid from "./ConsistencyGrid";
 type AttendanceDay = {
   date: string;
   status: "present" | "excused" | "absent";
@@ -43,60 +44,8 @@ export default function ProfileDashboard() {
   return (
     <div className="w-full mx-auto p-6 bg-white">
       {/* Consistency Section */}
-      <div className="mb-8">
-        <h2 className="text-lg font-medium mb-2 text-gray-800">Consistency</h2>
-        <div className="border rounded-md p-2 bg-gray-50 shadow-md">
-          <div className="grid grid-cols-[60px_repeat(12,1fr)] gap-1">
-            <div className="col-span-1"></div>
-            {[
-              "Jan",
-              "Feb",
-              "Mar",
-              "Apr",
-              "May",
-              "Jun",
-              "Jul",
-              "Aug",
-              "Sep",
-              "Oct",
-              "Nov",
-              "Dec",
-            ].map((month) => (
-              <div key={month} className="text-xs text-center text-gray-500">
-                {month}
-              </div>
-            ))}
-
-            {["Mon", "Wed", "Fri"].map((day) => (
-              <div
-                key={day}
-                className="grid grid-cols-[60px_repeat(12,1fr)] col-span-13 gap-1"
-              >
-                <div className="text-xs text-gray-500">{day}</div>
-                {Array(12)
-                  .fill(0)
-                  .map((_, i) => (
-                    <div
-                      key={i}
-                      className="aspect-square w-full bg-gray-200 border border-gray-100"
-                    ></div>
-                  ))}
-              </div>
-            ))}
-          </div>
-
-          {/* January activity indicators - hardcoded for the example */}
-          <div className="absolute mt-[-68px] ml-[70px] grid grid-cols-4 gap-1">
-            <div className="w-[calc(100%/12-4px)] h-[calc(100%/3-4px)] bg-green-300"></div>
-            <div className="w-[calc(100%/12-4px)] h-[calc(100%/3-4px)] bg-green-400"></div>
-            <div className="w-[calc(100%/12-4px)] h-[calc(100%/3-4px)] bg-green-500"></div>
-            <div className="w-[calc(100%/12-4px)] h-[calc(100%/3-4px)] bg-green-600"></div>
-          </div>
-
-          <div className="text-xs text-right text-gray-500 mt-1">2025 →</div>
-        </div>
-      </div>
-
+      <ConsistencyGrid/>
+      
       {/* Attendance Section */}
       <div>
         <div className="flex justify-between items-center mb-2">
@@ -116,7 +65,7 @@ export default function ProfileDashboard() {
           {attendanceData.map((day, idx) => (
             <div
               key={idx}
-              className={`w-4 h-4 rounded-sm ${colorMap[day.status]}`}
+              className={`w-4 h-4  ${colorMap[day.status]}`}
               title={`${day.date} - ${day.status}`}
             />
           ))}
@@ -171,7 +120,7 @@ export default function ProfileDashboard() {
           <div className="shadow-md col-span-2 rounded-md  flex flex-col items-center">
             <div className="mt-8 text-center">
               <div className="font-semibold text-lg">Div 3</div>
-              <div className="text-sm text-blue-500">Division III</div>
+              <div className="text-sm ">Division III</div>
             </div>
           </div>
         </div>
@@ -231,13 +180,13 @@ export default function ProfileDashboard() {
             <h3 className="text-lg font-medium mb-6">Links</h3>
             <div className="space-y-4">
               <div className="flex items-center">
-                <div className="w-6 h-6 bg-blue-600 rounded-sm flex items-center justify-center text-white mr-3">
+                <div className="w-6 h-6  rounded-sm flex items-center justify-center text-white mr-3">
                   in
                 </div>
                 <span className="mr-2 font-medium">LinkedIn:</span>
                 <a
                   href="https://www.linkedin.com/in/samuel-mulugeta-8638f12f7/"
-                  className="text-blue-600 hover:underline"
+                  className=" hover:underline"
                 >
                   https://www.linkedin.com/in/samuel-mulugeta-8638f12f7/
                 </a>
@@ -258,7 +207,7 @@ export default function ProfileDashboard() {
                 <span className="mr-2 font-medium">Telegram:</span>
                 <a
                   href="https://t.me/samuels5"
-                  className="text-blue-600 hover:underline"
+                  className=" hover:underline"
                 >
                   https://t.me/samuels5
                 </a>
@@ -279,7 +228,7 @@ export default function ProfileDashboard() {
                 <span className="mr-2 font-medium">Instagram:</span>
                 <a
                   href="https://instagram.com/s5samuel/"
-                  className="text-blue-600 hover:underline"
+                  className=" hover:underline"
                 >
                   https://instagram.com/s5samuel/
                 </a>
@@ -300,7 +249,7 @@ export default function ProfileDashboard() {
                 <span className="mr-2 font-medium">Leetcode:</span>
                 <a
                   href="https://leetcode.com/samuels5"
-                  className="text-blue-600 hover:underline"
+                  className=" hover:underline"
                 >
                   https://leetcode.com/samuels5
                 </a>
@@ -321,7 +270,7 @@ export default function ProfileDashboard() {
                 <span className="mr-2 font-medium">Codeforces:</span>
                 <a
                   href="https://codeforces.com/profile/samuels5"
-                  className="text-blue-600 hover:underline"
+                  className=" hover:underline"
                 >
                   https://codeforces.com/profile/samuels5
                 </a>
@@ -342,7 +291,7 @@ export default function ProfileDashboard() {
                 <span className="mr-2 font-medium">HackerRank:</span>
                 <a
                   href="https://www.hackerrank.com/samuelmulugeta51"
-                  className="text-blue-600 hover:underline"
+                  className=" hover:underline"
                 >
                   https://www.hackerrank.com/samuelmulugeta51
                 </a>
@@ -363,7 +312,7 @@ export default function ProfileDashboard() {
                 <span className="mr-2 font-medium">Github:</span>
                 <a
                   href="https://github.com/Samuels5"
-                  className="text-blue-600 hover:underline"
+                  className=" hover:underline"
                 >
                   https://github.com/Samuels5
                 </a>

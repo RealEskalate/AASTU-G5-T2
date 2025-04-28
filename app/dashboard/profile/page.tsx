@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { AppDispatch, RootState } from "@/redux/store";
 import { fetchProfile } from "@/redux/slices/profileSlice";
-import ConsistencyAndAttendance from "./ConsistencyHeatmap";
+import ConsistencyAndAttendance from "./ConsistencyCalendar";
 import ProfileDashboard from "./ProfileDashboard";
 
 export default function ProfilePage() {

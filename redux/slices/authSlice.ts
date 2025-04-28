@@ -42,7 +42,6 @@ export const login = createAsyncThunk(
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
       const response = await axios.post<LoginResponse>('https://aastu-g5-t2.onrender.com/auth/login', credentials);
-      console.log('Login response:', response.data);
       const decoded: JwtPayload = jwtDecode(response.data.access_token);
       const user: User = {
         id: decoded.email,

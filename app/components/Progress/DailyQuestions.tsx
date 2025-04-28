@@ -6,8 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchDailyProblems } from '@/redux/slices/dailyProblemsSlice';
 import { RootState, AppDispatch } from '@/redux/store';
 import Link from 'next/link';
-import Problems from "../Problems/Problems";
-import { span } from "framer-motion/client";
+
 
 // Format date for display (e.g., "Wed Nov 06 2024")
 const formatDate = (dateStr: string): string => {
@@ -30,6 +29,8 @@ function DailyQuestions() {
       dispatch(fetchDailyProblems());
     }
   }, [dispatch, status]);
+
+  console.log("DailyProblems", data);
 
   // Handle loading and error states
   if (status === 'loading') {
@@ -79,6 +80,7 @@ function DailyQuestions() {
                 tags={problem.tag}
                 platform={problem.platform || 'LeetCode'}
                 link={problem.link}
+                users_solved={problem.users_solved}
               />
             ))}
           </div>

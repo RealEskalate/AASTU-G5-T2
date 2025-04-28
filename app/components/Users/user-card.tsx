@@ -6,6 +6,14 @@ interface UserCardProps {
   viewMode: "grid" | "list"
 }
 
+// Static social media data for icons and bgColor
+const socialLinks = [
+  { name: "Link 1", icon: "/icons/leetcode.svg", bgColor: "#ff9800" },
+  { name: "Link 2", icon: "/icons/code-forces.svg", bgColor: "#2196f3" },
+  { name: "Link 3", icon: "/icons/hackerrank.svg", bgColor: "#4caf50" },
+  { name: "Link 4", icon: "/icons/telegram.svg", bgColor: "#e91e63" },
+]
+
 export default function UserCard({ user, viewMode }: UserCardProps) {
   return (
     <div className={`bg-white border rounded-lg overflow-hidden shadow-sm ${viewMode === "list" ? "flex" : ""}`}>
@@ -13,7 +21,7 @@ export default function UserCard({ user, viewMode }: UserCardProps) {
       <div className={`relative ${viewMode === "list" ? "w-1/4" : "h-48"}`}>
         <div
           className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-50"
-          style={{ backgroundColor: user.bgColor }}
+          style={{ backgroundColor: user.bgColor || "#000000" }}
         ></div>
         <Image
           src={user.backgroundImage || "/placeholder.svg"}
@@ -46,15 +54,29 @@ export default function UserCard({ user, viewMode }: UserCardProps) {
 
         {/* Social icons */}
         <div className="flex justify-center gap-3 my-4">
-          {user.socialLinks.map((social, index) => (
-            <div
-              key={index}
-              className="w-8 h-8 rounded-full flex items-center justify-center"
-              
-            >
-              <Image src={social.icon || "/placeholder.svg"} alt={social.name} width={16} height={16} />
-            </div>
-          ))}
+          {socialLinks.map((staticSocial, index) => {
+            // Find the corresponding dynamic social link from user.socialLinks
+            const dynamicSocial = user.socialLinks.find(
+              (link) => link.name === staticSocial.name
+            );
+            return (
+              <a
+                key={index}
+                href={dynamicSocial?.url || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-8 h-8 rounded-full flex items-center justify-center"
+                
+              >
+                <Image
+                  src={staticSocial.icon}
+                  alt={staticSocial.name}
+                  width={16}
+                  height={16}
+                />
+              </a>
+            );
+          })}
         </div>
 
         {/* Stats */}

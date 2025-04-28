@@ -24,7 +24,6 @@ const Problems: React.FC = () => {
   const { problems, loading, error } = useSelector(
     (state: RootState) => state.problems
   );
-  console.log("response:",problems);
 
   useEffect(() => {
     dispatch(fetchProblems());

@@ -15,15 +15,16 @@ import { HiHandRaised } from "react-icons/hi2";
 import { MdEvent } from "react-icons/md";
 import { Brain } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProfile } from "@/redux/slices/profileSlice"; // Adjust path to your profileSlice
-import { RootState } from "@/redux/store"; // Adjust path to your store
+import { fetchProfile } from "@/redux/slices/profileSlice"; 
+import { RootState, AppDispatch } from "@/redux/store"; 
 
 function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isTrackOpen, setIsTrackOpen] = useState(false);
   const [isContestOpen, setIsContestOpen] = useState(false);
 
-  const dispatch = useDispatch();
+  
+  const dispatch: AppDispatch = useDispatch();
   const { profile, loading, error } = useSelector((state: RootState) => state.profile);
 
   // Fetch profile data on component mount
@@ -195,7 +196,7 @@ function Sidebar() {
             <div className="text-gray-400 flex items-center gap-2 py-2 px-4 mx-3 rounded-lg ml-6">
               <div className="border-l h-12"></div>
               <Link
-                href="/dashboard/problems"
+                href="/dashboard/progress"
                 className="flex items-center justify-between w-full hover:bg-gray-100 focus:bg-green-100 hover:rounded-lg p-3 px-4"
                 prefetch
               >

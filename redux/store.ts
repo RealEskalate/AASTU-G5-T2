@@ -8,6 +8,8 @@ import groupsReducer from  './slices/groupsSlice';
 import profileReducer from './slices/profileSlice';
 import sessionsReducer from './slices/sessionsSlice';
 import contestsReducer from './slices/contestsSlice';
+import submissionReducer from './slices/submissionSlice';
+import usersReducer from './slices/usersSlice';
 
 import {
   persistStore,
@@ -20,6 +22,7 @@ import {
   REGISTER,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import { users } from '@/data/users';
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -31,7 +34,9 @@ const rootReducer = combineReducers({
   profile: profileReducer,
   sessions: sessionsReducer,
   contests: contestsReducer,
-  
+  submission: submissionReducer,
+  users: usersReducer,
+
 });
 
 const persistConfig = {

@@ -1,18 +1,28 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSelector, useDispatch } from "react-redux"
 import { Search, Grid, List } from "lucide-react"
 import UserCard from "./user-card"
 import GroupCard from "./group-card"
 import CountryCard from "./country-card"
-import { users } from "@/data/users"
+import { fetchUsers } from "@/redux/slices/usersSlice"
 import { groups } from "@/data/groups"
 import { countries } from "@/data/countries"
+import type { RootState } from "@/redux/store"
 
 export default function UserManagement() {
   const [activeTab, setActiveTab] = useState("Users")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
+  const dispatch = useDispatch()
+  const { users, loading, error } = useSelector((state: RootState) => state.users)
 
+  useEffect(() => {
+    if (activeTab === "Users" && users.length === 0 && !loading && !error) {
+      dispatch(fetchUsers() as any)
+    }
+  }, [dispatch, activeTab, users.length, loading, error])
+  console.log("users", users)
   return (
     <div className="w-full max-w-7xl mx-auto pb-10">
       {/* Tabs */}
@@ -78,16 +88,35 @@ export default function UserManagement() {
             </div>
           </div>
 
+          {/* Loading and Error States */}
+          {loading && (
+            <div className="text-center py-10">
+              <p className="text-gray-500">Loading users...</p>
+            </div>
+          )}
+          {error && (
+            <div className="text-center py-10">
+              <p className="text-red-500">{error}</p>
+            </div>
+          )}
+
           {/* User cards grid */}
-          <div
-            className={`grid ${
-              viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
-            } gap-6`}
-          >
-            {users.map((user) => (
-              <UserCard key={user.id} user={user} viewMode={viewMode} />
-            ))}
-          </div>
+          {!loading && !error && users.length > 0 && (
+            <div
+              className={`grid ${
+                viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"
+              } gap-6`}
+            >
+              {users.map((user) => (
+                <UserCard key={user.id} user={user} viewMode={viewMode} />
+              ))}
+            </div>
+          )}
+          {!loading && !error && users.length === 0 && (
+            <div className="text-center py-10">
+              <p className="text-gray-500">No users found.</p>
+            </div>
+          )}
         </>
       )}
 
