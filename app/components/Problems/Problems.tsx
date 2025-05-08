@@ -29,6 +29,8 @@ const Problems: React.FC = () => {
     dispatch(fetchProblems());
   }, [dispatch]);
 
+  console.log("problems", problems);
+
   return (
     <div className="px-10">
       <div>

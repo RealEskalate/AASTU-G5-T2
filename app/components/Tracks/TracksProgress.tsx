@@ -69,7 +69,7 @@ function TracksProgress() {
       <Link href={"/dashboard/progress"} className="flex justify-center items-center mb-4 text-white font-semibold bg-green-600 hover:bg-green-700 rounded-lg py-1.5 text-center">
         Exercises
       </Link>
-      <Link href={"/dashboard/problem"} className="flex justify-center items-center mb-4 border border-green-600  font-semibold text-green-600 hover:text-green-700 rounded-lg py-1.5 text-center">
+      <Link href={"/dashboard/problems"} className="flex justify-center items-center mb-4 border border-green-600  font-semibold text-green-600 hover:text-green-700 rounded-lg py-1.5 text-center">
         Problems
       </Link>
     </div>

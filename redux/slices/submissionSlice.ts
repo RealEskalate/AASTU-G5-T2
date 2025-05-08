@@ -71,14 +71,16 @@ export const submitProblem = createAsyncThunk<
 
       console.log('Submitting Problem:', { problemId, timeSpent, tries, code, language });
 
+      // Use the NEXT_PUBLIC_API_URL environment variable for the base URL
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://aastu-g5-t2.onrender.com';
       const response = await axios.post(
-        'https://aastu-g5-t2.onrender.com/submission/', 
+        `${baseUrl}/submission`,
         {
           problem_id: problemId,
           time_spent: timeSpent,
-          tries: tries,
-          code: code,
-          language: language,
+          tries,
+          code,
+          language,
         },
         {
           headers: {

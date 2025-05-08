@@ -24,7 +24,7 @@ export default function UserCard({ user, viewMode }: UserCardProps) {
           style={{ backgroundColor: user.bgColor || "#000000" }}
         ></div>
         <Image
-          src={user.backgroundImage || "/placeholder.svg"}
+          src={user.backgroundImage ? user.backgroundImage : "/images/profilepic.jpg"}
           alt={`${user.name} background`}
           className="w-full h-full object-cover"
           width={400}
@@ -35,7 +35,7 @@ export default function UserCard({ user, viewMode }: UserCardProps) {
         >
           <div className="relative w-20 h-20 rounded-full border-4 border-white overflow-hidden">
             <Image
-              src={user.avatar || "/placeholder.svg"}
+              src={user.backgroundImage ? user.backgroundImage : "/images/profilepic.jpg"}
               alt={user.name}
               className="w-full h-full object-cover"
               width={80}
