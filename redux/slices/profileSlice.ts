@@ -40,7 +40,7 @@ export const fetchProfile = createAsyncThunk(
   'profile/fetchProfile',
   async (token: string, { rejectWithValue }) => {
     try {
-      const response = await axios.get('https://aastu-g5-t2.onrender.com/auth/myprofile', {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/myprofile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

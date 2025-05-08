@@ -49,7 +49,7 @@ const getAuthToken = () => {
 // Async function to refresh access token
 const refreshAccessToken = async (refreshToken: string): Promise<string> => {
   try {
-    const response = await axios.post('https://aastu-g5-t2.onrender.com/auth/refresh', {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`, {
       refresh_token: refreshToken,
     });
     const { access_token } = response.data;
@@ -76,7 +76,7 @@ export const fetchAllGroups = createAsyncThunk<
       }
 
       try {
-        const response = await axios.get<Group[]>('https://aastu-g5-t2.onrender.com/groups/', {
+        const response = await axios.get<Group[]>(`${process.env.NEXT_PUBLIC_API_URL}/groups/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -103,7 +103,7 @@ export const fetchAllGroups = createAsyncThunk<
               );
             }
             // Retry the original request with new token
-            const response = await axios.get<Group[]>('https://aastu-g5-t2.onrender.com/groups/', {
+            const response = await axios.get<Group[]>(`${process.env.NEXT_PUBLIC_API_URL}/groups/`, {
               headers: {
                 Authorization: `Bearer ${newToken}`,
               },
@@ -139,7 +139,7 @@ export const fetchGroupById = createAsyncThunk<
 
       try {
         const response = await axios.get<Group>(
-          `https://aastu-g5-t2.onrender.com/groups/${groupId}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/groups/${groupId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -170,7 +170,7 @@ export const fetchGroupById = createAsyncThunk<
             }
             // Retry the original request with new token
             const response = await axios.get<Group>(
-              `https://aastu-g5-t2.onrender.com/groups/${groupId}`,
+              `${process.env.NEXT_PUBLIC_API_URL}/groups/${groupId}`,
               {
                 headers: {
                   Authorization: `Bearer ${newToken}`,

@@ -32,7 +32,7 @@ const initialState: ContestsState = {
 // Async function to refresh access token
 const refreshAccessToken = async (refreshToken: string): Promise<string> => {
   try {
-    const response = await axios.post('https://aastu-g5-t2.onrender.com/auth/refresh', {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`, {
       refresh_token: refreshToken,
     });
     const { access_token } = response.data;
@@ -60,7 +60,7 @@ export const fetchContests = createAsyncThunk<
 
       try {
         const response = await axios.get<Contest[]>(
-          'https://aastu-g5-t2.onrender.com/codeforces/contests',
+          `${process.env.NEXT_PUBLIC_API_URL}/codeforces/contests`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -91,7 +91,7 @@ export const fetchContests = createAsyncThunk<
             }
             // Retry the original request with new token
             const response = await axios.get<Contest[]>(
-              'https://aastu-g5-t2.onrender.com/codeforces/contests',
+              `${process.env.NEXT_PUBLIC_API_URL}/codeforces/contests`,
               {
                 headers: {
                   Authorization: `Bearer ${newToken}`,

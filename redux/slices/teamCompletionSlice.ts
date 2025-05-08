@@ -30,7 +30,7 @@ const initialState: TeamCompletionState = {
 // Async function to refresh access token
 const refreshAccessToken = async (refreshToken: string): Promise<string> => {
   try {
-    const response = await axios.post('https://aastu-g5-t2.onrender.com/auth/refresh', {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`, {
       refresh_token: refreshToken,
     });
     const { access_token } = response.data;
@@ -58,7 +58,7 @@ export const fetchTeamCompletion = createAsyncThunk<
 
       try {
         const response = await axios.get<TeamMember[]>(
-          'https://aastu-g5-t2.onrender.com/tracks/5/progress/1',
+          `${process.env.NEXT_PUBLIC_API_URL}/tracks/5/progress/1`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -88,7 +88,7 @@ export const fetchTeamCompletion = createAsyncThunk<
             }
             // Retry the original request with new token
             const response = await axios.get<TeamMember[]>(
-              'https://aastu-g5-t2.onrender.com/tracks/5/progress/1',
+              `${process.env.NEXT_PUBLIC_API_URL}/tracks/5/progress/1`,
               {
                 headers: {
                   Authorization: `Bearer ${newToken}`,

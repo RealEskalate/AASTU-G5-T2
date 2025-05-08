@@ -47,7 +47,7 @@ const getTimeSince = (createdAt: string): string => {
 // Async function to refresh access token
 const refreshAccessToken = async (refreshToken: string): Promise<string> => {
   try {
-    const response = await axios.post('https://aastu-g5-t2.onrender.com/auth/refresh', {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`, {
       refresh_token: refreshToken,
     });
     const { access_token } = response.data;
@@ -74,7 +74,7 @@ export const fetchProblems = createAsyncThunk<
 
       try {
         const response = await axios.get(
-          'https://aastu-g5-t2.onrender.com/problems/',
+          `${process.env.NEXT_PUBLIC_API_URL}/problems/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -101,7 +101,7 @@ export const fetchProblems = createAsyncThunk<
               );
             }
             const response = await axios.get<Problem[]>(
-              'https://aastu-g5-t2.onrender.com/problems',
+              `${process.env.NEXT_PUBLIC_API_URL}/problems`,
               {
                 headers: {
                   Authorization: `Bearer ${newToken}`,
@@ -140,14 +140,13 @@ export const fetchProblemById = createAsyncThunk<
 
       try {
         const response = await axios.get(
-          `https://aastu-g5-t2.onrender.com/problems/${id}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/problems/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        // console.log("API Response:", response.data);
         return response.data;
       } catch (error) {
         if (axios.isAxiosError(error) && error.response?.status === 401) {
@@ -168,7 +167,7 @@ export const fetchProblemById = createAsyncThunk<
               );
             }
             const response = await axios.get<Problem>(
-              `https://aastu-g5-t2.onrender.com/problems/${id}`,
+              `${process.env.NEXT_PUBLIC_API_URL}/problems/${id}`,
               {
                 headers: {
                   Authorization: `Bearer ${newToken}`,

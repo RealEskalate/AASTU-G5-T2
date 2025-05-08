@@ -108,7 +108,7 @@ export const fetchSubmissionsByProblemId = createAsyncThunk<
   'submission/fetchSubmissionsByProblemId',
   async (problemId: string, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`https://aastu-g5-t2.onrender.com/submission?problemId=${problemId}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/submission?problemId=${problemId}`);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || 'Failed to fetch submissions');

@@ -38,7 +38,7 @@ const initialState: SessionsState = {
 // Async function to refresh access token
 const refreshAccessToken = async (refreshToken: string): Promise<string> => {
   try {
-    const response = await axios.post('https://aastu-g5-t2.onrender.com/auth/refresh', {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`, {
       refresh_token: refreshToken,
     });
     const { access_token } = response.data;
@@ -66,7 +66,7 @@ export const fetchSessions = createAsyncThunk<
 
       try {
         const response = await axios.get<{ sessions: Session[] }>(
-          'https://aastu-g5-t2.onrender.com/sessions/',
+          `${process.env.NEXT_PUBLIC_API_URL}/sessions/`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -96,7 +96,7 @@ export const fetchSessions = createAsyncThunk<
             }
             // Retry the original request with new token
             const response = await axios.get<{ sessions: Session[] }>(
-              'https://aastu-g5-t2.onrender.com/sessions',
+              `${process.env.NEXT_PUBLIC_API_URL}/sessions`,
               {
                 headers: {
                   Authorization: `Bearer ${newToken}`,

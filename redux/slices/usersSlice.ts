@@ -35,7 +35,7 @@ export const fetchUsers = createAsyncThunk(
           }
         : {};
 
-      const response = await axios.get('https://aastu-g5-t2.onrender.com/users?group_short_name=g55', config);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users?group_short_name=g55`, config);
 
       // Map API response to User type
       const mappedUsers: User[] = response.data.users.map((apiUser: any) => ({
