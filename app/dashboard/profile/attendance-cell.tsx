@@ -53,7 +53,7 @@ const AttendanceCell: React.FC<AttendanceCellProps> = ({
           </div>
           <div className="flex flex-col items-center">
             <span className="text-md font-semibold">{monthNames[parseInt(date.month) - 1]}</span>
-            <span className="text-md font-semibold">{date.year.slice(-2)}</span>
+            <span className="text-md font-bold">{date.year.slice(-2)}</span>
           </div>
         </div>
         <div className="mt-2 text-[10px]">
