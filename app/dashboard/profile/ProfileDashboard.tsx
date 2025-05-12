@@ -3,19 +3,33 @@ import { useState } from "react";
 import { Calendar } from "lucide-react";
 import ratepic from "@/public/rate.png";
 import ConsistencyGrid from "./ConsistencyGrid";
+import AttendanceCell from "./attendance-cell";
 type AttendanceDay = {
-  date: string;
+  date: {
+    date: string;
+    month: string;
+    year: string;
+  };
   status: "present" | "excused" | "absent";
+  checkIn: string;
+  checkOut: string;
 };
-
 const attendanceData: AttendanceDay[] = Array.from({ length: 288 }, (_, i) => {
   const status =
     i === 10 || i === 42 || i === 105 || i === 220 || i === 260
       ? "excused"
       : "present";
+  const date = `2025-${Math.floor(i / 30) + 1}-${(i % 30) + 1}`;
+  const [year, month, day] = date.split("-");
   return {
-    date: `2025-${Math.floor(i / 30) + 1}-${(i % 30) + 1}`,
+    date: {
+      date: day,
+      month: month,
+      year: year,
+    },
     status,
+    checkIn: "5:15 PM",
+    checkOut: "7:45 PM",
   };
 });
 
@@ -47,36 +61,40 @@ export default function ProfileDashboard() {
       <ConsistencyGrid/>
       
       {/* Attendance Section */}
-      <div>
-        <div className="flex justify-between items-center mb-2">
-          <h2 className="text-lg font-semibold">Attendance</h2>
-          <label className="flex items-center gap-2 text-sm text-gray-600">
-            Show detail
-            <input
-              type="checkbox"
-              className="toggle toggle-sm"
-              checked={showDetail}
-              onChange={() => setShowDetail((prev) => !prev)}
-            />
-          </label>
-        </div>
+<div>
+  <div className="flex justify-between items-center mb-2">
+    <h2 className="text-lg font-semibold">Attendance</h2>
+    <label className="flex items-center gap-2 text-sm text-gray-600">
+      Show detail
+      <input
+        type="checkbox"
+        className="toggle toggle-sm"
+        checked={showDetail}
+        onChange={() => setShowDetail((prev) => !prev)}
+      />
+    </label>
+  </div>
 
-        <div className="flex flex-wrap gap-1">
-          {attendanceData.map((day, idx) => (
-            <div
-              key={idx}
-              className={`w-4 h-4  ${colorMap[day.status]}`}
-              title={`${day.date} - ${day.status}`}
-            />
-          ))}
-        </div>
+  <div className="flex flex-wrap gap-1">
+  {attendanceData.map((day, idx) => (
+  <AttendanceCell
+    key={idx}
+    status={day.status}
+    date={day.date}
+    checkIn={day.checkIn}
+    checkOut={day.checkOut}
+    showDetail={showDetail}
+    index={idx}
+  />
+))}
+  </div>
 
-        <div className="mt-2 text-sm text-gray-700">
-          Absent: <strong>{absentCount}</strong> | Excused:{" "}
-          <strong>{excusedCount}</strong> | Present:{" "}
-          <strong>{presentCount}</strong> | <strong>{percentage}%</strong>
-        </div>
-      </div>
+  <div className="mt-2 text-sm text-gray-700">
+    Absent: <strong>{absentCount}</strong> | Excused:{" "}
+    <strong>{excusedCount}</strong> | Present:{" "}
+    <strong>{presentCount}</strong> | <strong>{percentage}%</strong>
+  </div>
+</div>
       <div className="flex">
         {/* Profile Badge and Links */}
         <div className="grid grid-cols-2 gap-1 w-full mr-7">

@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { AppDispatch, RootState } from "@/redux/store";
 import { fetchProfile } from "@/redux/slices/profileSlice";
-import ConsistencyAndAttendance from "./ConsistencyCalendar";
+import ConsistencyGrid from "./ConsistencyGrid";
 import ProfileDashboard from "./ProfileDashboard";
 
 export default function ProfilePage() {
@@ -17,18 +17,20 @@ export default function ProfilePage() {
   const { token } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
-    if (!token) {
-      console.log("No token found, redirecting to login");
-      router.push("/login"); // Adjust route as needed
-    } else {
+    if (token) {
       console.log("Fetching profile with token:", token);
       dispatch(fetchProfile(token));
     }
-  }, [dispatch, router, token]);
+  }, [dispatch, token]);
 
-  if (!token) {
-    return null; // Prevent rendering while redirecting
-  }
+  // Provide mock profile data for development if no token
+  const mockProfile = {
+    name: "Dev User",
+    photo: "/images/default-profile.jpg",
+    role: "Developer",
+  };
+
+  const displayProfile = profile || (!token ? mockProfile : null);
 
   if (loading) {
     return <div className="min-h-screen bg-white text-gray-800 w-full px-10">Loading...</div>;
@@ -37,15 +39,15 @@ export default function ProfilePage() {
   if (error) {
     return (
       <div className="min-h-screen bg-white text-gray-800 w-full px-10">
-        Error: {error}. Please try again or log in.
+        Error: {error}. Please try again.
       </div>
     );
   }
 
-  if (!profile) {
+  if (!displayProfile) {
     return (
       <div className="min-h-screen bg-white text-gray-800 w-full px-10">
-        No profile data available. Please ensure you are logged in.
+        No profile data available.
       </div>
     );
   }
@@ -57,7 +59,7 @@ export default function ProfilePage() {
         <div className="px-6 text-sm text-gray-500 font-semibold space-x-1">
           <span>Users</span>
           <span>•</span>
-          <span className="text-gray-600 font-semibold">{profile.name}</span>
+          <span className="text-gray-600 font-semibold">{displayProfile.name}</span>
         </div>
 
         <div className="mt-6 rounded-t-2xl bg-gradient-to-br from-emerald-900 to-emerald-800 relative">
@@ -65,7 +67,7 @@ export default function ProfilePage() {
           <div className="absolute -bottom-10 left-6 flex gap-3 items-center pb-5">
             <div className="w-28 h-28 rounded-full border-4 border-white overflow-hidden">
               <Image
-                src={profile.photo || "/images/default-profile.jpg"}
+                src={displayProfile.photo || "/images/default-profile.jpg"}
                 alt="Profile"
                 width={112}
                 height={112}
@@ -73,9 +75,9 @@ export default function ProfilePage() {
               />
             </div>
             <div className="px-6 flex flex-col gap-2 pb-4">
-              <h1 className="text-3xl font-bold text-white">{profile.name}</h1>
+              <h1 className="text-3xl font-bold text-white">{displayProfile.name}</h1>
               <div className="text-gray-300 flex items-center gap-4">
-                <span>{profile.role}</span>
+                <span>{displayProfile.role}</span>
                 <span className="text-green-500 font-semibold flex items-center gap-1">
                   online{" "}
                   <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
