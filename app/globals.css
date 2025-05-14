@@ -118,4 +118,6 @@
     @apply bg-background text-foreground;
   }
 }
-
+.group:hover .relative {
+  transform: translateZ(4px);
+}
